@@ -1,0 +1,10 @@
+main: me.zombie_striker.pixelprinter.PixelPrinter
+version: PixelPrinter V1.0.1
+name: PixelPrinter
+commands:
+   PixelPrinter:
+      description: lobby1
+   pp:
+      description: lobby1
+author:
+   Zombie_Striker
