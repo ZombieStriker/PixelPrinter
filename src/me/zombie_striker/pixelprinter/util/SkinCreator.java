@@ -16,6 +16,7 @@ public class SkinCreator {
 
 	public static BufferedImage[] getSkin(String uuid)
 			throws NullPointerException, IOException {
+		int linecode = 19;
 		try {
 			StringBuilder code = new StringBuilder();
 			InputStreamReader is = new InputStreamReader(new URL(
@@ -25,21 +26,26 @@ public class SkinCreator {
 			while ((charI = is.read()) != -1) {
 				code.append(((char) charI));
 			}
+			linecode = 29;
 			String[] aaaa = code.toString().split("\"value\":\"");
 			if (aaaa.length == 1) {
-				System.out.println("The user does not exist- Error-Ln31.");
+				System.out.println("The user does not exist- AAAA does not contain value.");
 				throw new NullPointerException();
 			}
 			String decode = new String(
 					DatatypeConverter.parseBase64Binary(aaaa[1]
 							.split("\"}],\"legacy\"")[0]));
+			linecode =38;
 			System.out.println(decode);
-			String url = decode.split("url\":\"")[1].split("\"}")[0];
+			String url = decode.split("url\":\"")[1].split("\"}")[0].split("\",\"")[0];
+			linecode = 41;
 			System.out.println(url);
 			BufferedImage[] images = new BufferedImage[2];
 			images[0] = ImageIO.read(new URL(url));
+			linecode = 45;
 			if (decode.contains("CAPE")) {
 				String urlcape = decode.split("url\":\"")[2].split("\"}")[0];
+				linecode = 48;
 				images[1] = ImageIO.read(new URL(urlcape));
 			}
 			return images;
@@ -48,7 +54,7 @@ public class SkinCreator {
 					.println("The Mojang servers denied the request. Wait a minute or so until you are allowed to get the texture again.");
 			throw new NullPointerException();
 		} catch (IOException e2) {
-			System.out.println("The user does not exist- Error-Ln46.");
+			System.out.println("The user does not exist- ErrorLineCode="+linecode+".");
 			throw new IOException();
 		}
 	}
