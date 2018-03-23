@@ -27,7 +27,7 @@ public class GithubDependDownloader {
 	 * json.get("tag_name").getAsString();
 	 * 
 	 * String finalTagName = tagName.replace(".", ""); int latestVersion =
-	 * Integer.parseInt(finalTagName.substring(1, finalTagName.length()));
+	 * Integer.parseInt(finalTagName.substring(1, finalTagName.length())); 
 	 * 
 	 * if(latestVersion > Integer.parseInt(parsedVersion)) {
 	 * 

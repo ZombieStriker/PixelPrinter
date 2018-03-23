@@ -2,15 +2,17 @@ package me.zombie_striker.pixelprinter.util;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.URL;
 
 import javax.imageio.ImageIO;
-import javax.xml.bind.DatatypeConverter;
 
 import me.zombie_striker.pluginconstructor.*;
 import me.zombie_striker.pluginconstructor.RGBBlockColor.Pixel;
 
 import org.bukkit.Location;
+
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 public class SkinCreator {
 
@@ -32,9 +34,16 @@ public class SkinCreator {
 				System.out.println("The user does not exist- AAAA does not contain value.");
 				throw new NullPointerException();
 			}
-			String decode = new String(
-					DatatypeConverter.parseBase64Binary(aaaa[1]
+			String decode;
+			try{
+				Method m = Class.forName("javax.xml.bind.DatatypeConverter").getMethod("parseBase64Binary", new Class[] {String.class});
+				decode = new String(/*
+					javax.xml.bind.DatatypeConverter.parseBase64Binary(*/(String) m.invoke(null, aaaa[1]
 							.split("\"}],\"legacy\"")[0]));
+			}catch(Error|Exception e4) {
+				decode = new String(Base64.decode(aaaa[1]
+							.split("\"}],\"legacy\"")[0]));
+			}
 			linecode =38;
 			System.out.println(decode);
 			String url = decode.split("url\":\"")[1].split("\"}")[0].split("\",\"")[0];

@@ -1,5 +1,5 @@
 main: me.zombie_striker.pixelprinter.PixelPrinter
-version: 1.0.27
+version: 1.0.29
 name: PixelPrinter
 commands:
   PixelPrinter:
