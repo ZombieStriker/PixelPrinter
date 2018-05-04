@@ -54,9 +54,9 @@ public class AsyncImageHolder extends Image {
 	@SuppressWarnings("deprecation")
 	public void loadImage() {
 
-		final List<DataHolder> holders = new ArrayList<>();
+		// final List<DataHolder> holders = new ArrayList<>();
 		final IntHolder isDone = new IntHolder();
-		final int fHeight = bi.getHeight() / 2;
+		// final int fHeight = bi.getHeight() / 2;
 		isDone.setI(0);
 		for (Player p2 : minCorner.getWorld().getPlayers())
 			p2.sendMessage(PixelPrinter.getInstance().getPrefix() + " Loading image requested by " + p);
@@ -96,38 +96,171 @@ public class AsyncImageHolder extends Image {
 				int delayLoadingMessage = 0;
 				final int maxDelay = 7;
 				int timesTicked = 0;
+
+				final IntHolder blocksUpdated = new IntHolder();
+				final IntHolder didNotHaveToReplace = new IntHolder();
+				
 				for (Entry<String, List<DataHolder>> ent : chunksorter.entrySet()) {
 					final List<DataHolder> gg = ent.getValue();
 					timesTicked++;
 					final int tempDel = delayLoadingMessage++;
 					delayLoadingMessage %= maxDelay;
 					final int currTick = timesTicked;
+
+
 					new BukkitRunnable() {
 						@Override
 						public void run() {
 							for (DataHolder dh : gg) {
 								BlockState bs = dh.b.getBlock().getState();
+
 								if (dh.md.getMaterial() != Material.AIR) {
-									bs.setType(dh.md.getMaterial());
+
+									byte rd = dh.md.getData();
+
 									if (dh.hasFaces) {
 										try {
-											if (bs.getData() instanceof org.bukkit.material.Door) {
-												org.bukkit.material.Door door = (org.bukkit.material.Door) bs.getData();
+											if (dh.md.getMaterial().name().endsWith("_DOOR")&&!dh.md.getMaterial().name().contains("TRAP")) {
+												// org.bukkit.material.Door door = (org.bukkit.material.Door)
+												// bs.getData();
 												if (dir == Direction.UP_NORTH)
-													bs.setRawData((byte) 2);
+													rd = ((byte) 2);
 												if (dir == Direction.UP_EAST)
-													bs.setRawData((byte) 3);
+													rd = ((byte) 3);
 												if (dir == Direction.UP_SOUTH)
-													bs.setRawData((byte) 0);
+													rd = ((byte) 0);
 												if (dir == Direction.UP_WEST)
-													bs.setRawData((byte) 1);
+													rd = ((byte) 1);
+											}
+											if (dh.md.getMaterial()== Material.FURNACE
+													|| dh.md.getMaterial()== Material.BURNING_FURNACE) {
+												// Go eat, then we need south.
+												// Go south, then face west, ect.
+												if (dir == Direction.UP_NORTH)
+													rd = ((byte) 5);
+												if (dir == Direction.UP_EAST)
+													rd = ((byte) 3);
+												if (dir == Direction.UP_SOUTH)
+													rd = ((byte) 4);
+												if (dir == Direction.UP_WEST)
+													rd = ((byte) 2);
+
+											}
+											if (dh.md.getMaterial() == Material.DISPENSER) {
+												// Go eat, then we need south.
+												// Go south, then face west, ect.
+												if (dir == Direction.UP_NORTH)
+													rd = ((byte) 5);
+												if (dir == Direction.UP_EAST)
+													rd = ((byte) 3);
+												if (dir == Direction.UP_SOUTH)
+													rd = ((byte) 4);
+												if (dir == Direction.UP_WEST)
+													rd = ((byte) 2);
+
+											}
+											if (dh.md.getMaterial()== Material.PISTON_BASE
+													|| dh.md.getMaterial()== Material.PISTON_STICKY_BASE) {
+												if (dh.md.getDirection() == BlockFace.UP) {
+													if (dir == Direction.UP_NORTH)
+														rd = ((byte) 5);
+													if (dir == Direction.UP_EAST)
+														rd = ((byte) 3);
+													if (dir == Direction.UP_SOUTH)
+														rd = ((byte) 4);
+													if (dir == Direction.UP_WEST)
+														rd = ((byte) 2);
+												}
+												if (dh.md.getDirection() == BlockFace.WEST) {
+													if (dir == Direction.UP_NORTH)
+														rd = ((byte) 4);
+													if (dir == Direction.UP_EAST)
+														rd = ((byte) 2);
+													if (dir == Direction.UP_SOUTH)
+														rd = ((byte) 5);
+													if (dir == Direction.UP_WEST)
+														rd = ((byte) 3);
+												}
+											}
+											if (dh.md.getMaterial() == Material.PUMPKIN
+													|| dh.md.getMaterial() == Material.JACK_O_LANTERN) {
+												if (dh.md.getDirection() == BlockFace.EAST) {
+													// Go eat, then we need south.
+													// Go south, then face west, ect.
+													if (dir == Direction.UP_NORTH)
+														rd = ((byte) 3);
+													if (dir == Direction.UP_EAST)
+														rd = ((byte) 0);
+													if (dir == Direction.UP_SOUTH)
+														rd = ((byte) 1);
+													if (dir == Direction.UP_WEST)
+														rd = ((byte) 2);
+												}
+
+												if (dh.md.getDirection() == BlockFace.WEST) {
+													if (dir == Direction.UP_NORTH)
+														rd = ((byte) 0);
+													if (dir == Direction.UP_EAST)
+														rd = ((byte) 3);
+													if (dir == Direction.UP_SOUTH)
+														rd = ((byte) 2);
+													if (dir == Direction.UP_WEST)
+														rd = ((byte) 1);
+												}
+
+											}
+
+											if (dh.md.getMaterial()== Material.OBSERVER) {
+												if (dh.md.getDirection() == BlockFace.EAST) {
+													// Go eat, then we need south.
+													// Go south, then face west, ect.
+													if (dir == Direction.UP_NORTH)
+														rd = ((byte) 4);
+													if (dir == Direction.UP_EAST)
+														rd = ((byte) 2);
+													if (dir == Direction.UP_SOUTH)
+														rd = ((byte) 5);
+													if (dir == Direction.UP_WEST)
+														rd = ((byte) 3);
+												}
+
+												if (dh.md.getDirection() == BlockFace.WEST) {
+													// Go eat, then we need south.
+													// Go south, then face west, ect.
+													if (dir == Direction.UP_NORTH)
+														rd = ((byte) 5);
+													if (dir == Direction.UP_EAST)
+														rd = ((byte) 3);
+													if (dir == Direction.UP_SOUTH)
+														rd = ((byte) 4);
+													if (dir == Direction.UP_WEST)
+														rd = ((byte) 2);
+												}
+
+												if (dh.md.getDirection() == BlockFace.NORTH) {
+													// Go eat, then we need south.
+													// Go south, then face west, ect.
+													if (dir == Direction.UP_NORTH)
+														rd = ((byte) 3);
+													if (dir == Direction.UP_EAST)
+														rd = ((byte) 5);
+													if (dir == Direction.UP_SOUTH)
+														rd = ((byte) 2);
+													if (dir == Direction.UP_WEST)
+														rd = ((byte) 4);
+												}
 											}
 										} catch (Error | Exception e54) {
 										}
-									} else {
-										bs.setRawData(dh.md.getData());
+									} 
+									if (dh.md.getMaterial() != bs.getType() || (((int)bs.getRawData()) != ((int)rd))) {
+										bs.setType(dh.md.getMaterial());
+										bs.setRawData(rd);
+										bs.update(true, false);
+										blocksUpdated.setI(blocksUpdated.getI() + 1);
+									}else {
+										didNotHaveToReplace.setI(2);
 									}
-									bs.update(true, false);
 								}
 							}
 							if (tempDel == 0)
@@ -142,8 +275,9 @@ public class AsyncImageHolder extends Image {
 				new BukkitRunnable() {
 					@Override
 					public void run() {
-						for (Player p2 : minCorner.getWorld().getPlayers())
-							p2.sendMessage(PixelPrinter.getInstance().getPrefix() + " Done!");
+						for (Player p2 : minCorner.getWorld().getPlayers()) {
+							p2.sendMessage(PixelPrinter.getInstance().getPrefix() + " Done!"+(didNotHaveToReplace.getI()==2?" Updated "+blocksUpdated.getI()+" blocks.":""));
+						}
 					}
 				}.runTaskLater(PixelPrinter.getInstance(), 3 * timesTicked);
 

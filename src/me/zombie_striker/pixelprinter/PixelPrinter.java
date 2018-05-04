@@ -25,7 +25,6 @@ import javax.imageio.*;
 
 import me.zombie_striker.pixelprinter.data.*;
 import me.zombie_striker.pixelprinter.util.*;
-import me.zombie_striker.pixelprinter.util.DependencyDownloader;
 import me.zombie_striker.pluginconstructor.*;
 import me.zombie_striker.pluginconstructor.RGBBlockColor.Pixel;
 
@@ -87,8 +86,8 @@ public class PixelPrinter extends JavaPlugin {
 		}.runTaskTimer(this, 0, 10);
 
 		instance = this;
-		images = new File(getDataFolder() + File.separator + "images");
-		resoucepackFolder = new File(getDataFolder() + File.separator + "custom_textures");
+		images = new File(getDataFolder() ,"images");
+		resoucepackFolder = new File(getDataFolder() ,"custom_textures");
 
 		Bukkit.getPluginManager().registerEvents(new PPListener(this), this);
 		if (!getDataFolder().exists())

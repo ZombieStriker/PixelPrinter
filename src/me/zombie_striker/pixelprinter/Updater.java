@@ -1,12 +1,14 @@
 package me.zombie_striker.pixelprinter;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -35,8 +37,6 @@ import java.util.zip.ZipFile;
  */
 public class Updater {
 
-    private static final Gson GSON = new Gson();
-
     private static final String HOST = "https://api.curseforge.com";
     private static final String QUERY = "/servermods/files?projectIds=";
     private static final String AGENT = "Mozilla/5.0 Updater by ArsenArsen";
@@ -47,11 +47,11 @@ public class Updater {
     private static final char[] HEX_CHAR_ARRAY = "0123456789abcdef".toCharArray();
     private static final Pattern NAME_MATCH = Pattern.compile(".+\\sv?[0-9.]+");
     private static final String VERSION_SPLIT = "\\sv?";
+    
 
     private int id = -1;
 
     private Plugin p;
-    @SuppressWarnings("FieldCanBeLocal")
     private boolean debug = false;
     private UpdateAvailability lastCheck = null;
     private UpdateResult lastUpdate = UpdateResult.NOT_UPDATED;
@@ -59,12 +59,14 @@ public class Updater {
     private String downloadURL = null;
     private String futuremd5;
     private String downloadName;
-    private EnumSet<Channel> allowedChannels = EnumSet.allOf(Channel.class);
+    private List<Channel> allowedChannels = Arrays.asList(Channel.ALPHA, Channel.BETA, Channel.RELEASE);
     private List<UpdateCallback> callbacks = new ArrayList<>();
     private SyncCallbackCaller caller = new SyncCallbackCaller();
     private List<String> skipTags = new ArrayList<>();
     private String latest;
     private FileConfiguration global;
+    
+    public boolean updaterActive = false;
 
     /**
      * Makes the updater for a plugin
@@ -76,7 +78,8 @@ public class Updater {
         try {
             pluginFile = new File(URLDecoder.decode(p.getClass().getProtectionDomain().getCodeSource().getLocation().getPath(), "UTF-8"));
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("You don't have a good text codec on your system", e);
+            debug(e.toString());
+            // Should not ever happen
         }
         latest = p.getDescription().getVersion();
         if (!CONFIG_FILE.exists()) {
@@ -89,7 +92,7 @@ public class Updater {
             }
         }
         global = YamlConfiguration.loadConfiguration(CONFIG_FILE);
-        global.options().header("Updater by ArsenArsen\nGlobal config\nSets should updates be downloaded globally");
+        global.options().header("Updater by ArsenArsen\nGlobal config\nSets should updates be downloaded globaly");
         if (!global.isSet("update")) {
             global.set("update", true);
             try {
@@ -107,6 +110,7 @@ public class Updater {
                 p.getLogger().log(Level.SEVERE, "Could not create " + LOG_FILE.getName() + "!", e);
             }
         }
+        updaterActive = global.getBoolean("update");
     }
 
     /**
@@ -224,7 +228,7 @@ public class Updater {
                     debug("Update STARTED!");
                     p.getLogger().info("Starting update of " + p.getName());
                     log("Updating " + p.getName() + "!");
-                    lastUpdate = download();
+                    lastUpdate = download(true);
                     p.getLogger().log(Level.INFO, "Update done! Result: " + lastUpdate);
                     caller.call(callbacks, lastUpdate, updater);
                 }
@@ -240,25 +244,31 @@ public class Updater {
         }
     }
 
-    private UpdateResult download() {
+    public UpdateResult download(boolean keepBackups) {
         try {
+        	if(keepBackups){
             Files.copy(pluginFile.toPath(),
                     new File(BACKUP_DIR, "backup-" + System.currentTimeMillis() + "-" + p.getName() + ".jar").toPath(),
                     StandardCopyOption.REPLACE_EXISTING);
-            final File downloadTo = new File(pluginFile.getParentFile().getAbsolutePath() +
+        	//TODO: Considering the amount of times the plugin updates, I don't want there to be a huge file full of old jars. 
+        	}
+            File downloadTo = new File(pluginFile.getParentFile().getAbsolutePath() +
                     File.separator + "AUpdater" + File.separator, downloadName);
             downloadTo.getParentFile().mkdirs();
             downloadTo.delete();
+            if(keepBackups)
             debug("Started download!");
 
             downloadIsSeperateBecauseGotoGotRemoved(downloadTo);
 
+            if(keepBackups){
             debug("Ended download!");
             if (!fileHash(downloadTo).equalsIgnoreCase(futuremd5))
                 return UpdateResult.BAD_HASH;
             if (downloadTo.getName().endsWith(".jar")) {
                 pluginFile.setWritable(true, false);
                 pluginFile.delete();
+                if(keepBackups){
                 debug("Started copy!");
                 InputStream in = new FileInputStream(downloadTo);
                 File file = new File(pluginFile.getParentFile()
@@ -268,10 +278,16 @@ public class Updater {
                 OutputStream out = new FileOutputStream(file);
                 long bytes = copy(in, out);
                 p.getLogger().info("Update done! Downloaded " + bytes + " bytes!");
-                log("Updated plugin " + p.getName() + " with " + bytes + "bytes!");
+                log("Updated plugin " + p.getName() + " with " + bytes + "bytes!");                
+                }
                 return UpdateResult.UPDATE_SUCCEEDED;
             } else
                 return unzip(downloadTo);
+            
+            
+        }else{
+        	return UpdateResult.UPDATE_SUCCEEDED;
+        }
         } catch (IOException e) {
             p.getLogger().log(Level.SEVERE, "Couldn't download update for " + p.getName(), e);
             log("Failed to update " + p.getName() + "!", e);
@@ -325,7 +341,7 @@ public class Updater {
             while ((entry = entries.nextElement()) != null) {
                 File target = new File(updateFile, entry.getName());
                 File inPlugins = new File(pluginFile.getParentFile(), entry.getName());
-                if (!inPlugins.exists()) {
+                if(!inPlugins.exists()){
                     target = inPlugins;
                 }
                 if (!entry.isDirectory()) {
@@ -378,52 +394,62 @@ public class Updater {
                 connection.addRequestProperty("User-Agent", AGENT);
                 connection.connect();
                 debug("Connecting!");
+                BufferedReader responseReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder responseBuffer = new StringBuilder();
+                String line;
+                while ((line = responseReader.readLine()) != null) {
+                    responseBuffer.append(line);
+                }
+                debug("All read!");
+                responseReader.close();
+                String response = responseBuffer.toString();
                 int counter = 1;
                 if (connection.getResponseCode() == 200) {
+
                     try {
                         debug("RESCODE 200");
-                        debug("Counter: " + counter);
-                        UpdateStructure[] json = GSON.fromJson(new InputStreamReader(connection.getInputStream()),
-                                UpdateStructure[].class);
                         while (true) {
-                            if (json.length - counter < 0) {
+                            debug("Counter: " + counter);
+                            JSONParser parser = new JSONParser();
+                            JSONArray json = (JSONArray) parser.parse(response);
+                            if (json.size() - counter < 0) {
                                 lastCheck = UpdateAvailability.NO_UPDATE;
                                 debug("No update!");
                                 break;
                             }
-                            UpdateStructure latest = json[json.length - counter];
-                            futuremd5 = latest.md5;
-                            String channel = latest.releaseType;
-                            String name = latest.name;
-                            if (allowedChannels.contains(Channel.matchChannel(channel))
+                            JSONObject latest = (JSONObject) json.get(json.size() - counter);
+                            futuremd5 = (String) latest.get("md5");
+                            String channel = (String) latest.get("releaseType");
+                            String name = (String) latest.get("name");
+                            if (allowedChannels.contains(Channel.matchChannel(channel.toUpperCase()))
                                     && !hasTag(name)) {
                                 String noTagName = name;
-                                StringBuilder oldVersion = new StringBuilder(p.getDescription().getVersion().replaceAll("-.*", ""));
+                                String oldVersion = p.getDescription().getVersion().replaceAll("-.*", "");
                                 for (String tag : skipTags) {
                                     noTagName = noTagName.replace(tag, "");
-                                    oldVersion = new StringBuilder(oldVersion.toString().replace(tag, ""));
+                                    oldVersion = oldVersion.replace(tag, "");
                                 }
                                 if (!NAME_MATCH.matcher(noTagName).matches()) {
                                     lastCheck = UpdateAvailability.CANT_PARSE_NAME;
                                     return lastCheck;
                                 }
                                 String[] splitName = noTagName.split(VERSION_SPLIT);
-                                StringBuilder version = new StringBuilder(splitName[splitName.length - 1]);
-                                while (oldVersion.length() != version.length()) {
-                                    if (oldVersion.length() > version.length()) {
-                                        version.append(version.length() % 2 == 0 ? ".0" : ".00");
-                                    } else if (oldVersion.length() < version.length()) {
-                                        oldVersion.append(oldVersion.length() % 2 == 0 ? ".0" : ".00");
+                                String version = splitName[splitName.length - 1];
+                                if (oldVersion.length() > version.length()) {
+                                    while (oldVersion.length() > version.length()) {
+                                        version += ".0";
+                                    }
+                                } else if (oldVersion.length() < version.length()) {
+                                    while (oldVersion.length() < version.length()) {
+                                        oldVersion += ".0";
                                     }
                                 }
-                                // The double 0 here is to make the lengths even so they can eventually be the same
-
                                 debug("Versions are same length");
-                                String[] splitOldVersion = oldVersion.toString().split("\\.");
-                                String[] splitVersion = version.toString().split("\\.");
+                                String[] splitOldVersion = oldVersion.split("\\.");
+                                String[] splitVersion = version.split("\\.");
 
-                                int[] parsedOldVersion = new int[splitOldVersion.length];
-                                int[] parsedVersion = new int[splitVersion.length];
+                                Integer[] parsedOldVersion = new Integer[splitOldVersion.length];
+                                Integer[] parsedVersion = new Integer[splitVersion.length];
 
                                 for (int i = 0; i < parsedOldVersion.length; i++) {
                                     parsedOldVersion[i] = Integer.parseInt(splitOldVersion[i]);
@@ -439,19 +465,21 @@ public class Updater {
                                     }
                                 }
                                 if (!update) {
-                                    counter++;
-                                    continue;
+                                    lastCheck = UpdateAvailability.NO_UPDATE;
+                                    //Temp fix for downloads
+                                    downloadURL = ((String) latest.get("downloadUrl")).replace(" ", "%20");
+                                    downloadName = (String) latest.get("fileName");
                                 } else {
                                     lastCheck = UpdateAvailability.UPDATE_AVAILABLE;
-                                    downloadURL = latest.downloadUrl.replace(" ", "%20");
-                                    downloadName = latest.fileName;
+                                    downloadURL = ((String) latest.get("downloadUrl")).replace(" ", "%20");
+                                    downloadName = (String) latest.get("fileName");
                                 }
                                 break;
                             } else
                                 counter++;
                         }
                         debug("While loop over!");
-                    } catch (JsonParseException e) {
+                    } catch (ParseException e) {
                         p.getLogger().log(Level.SEVERE, "Could not parse API Response for " + target, e);
                         log("Could not parse API Response for " + target + " while updating " + p.getName(), e);
                         lastCheck = UpdateAvailability.CANT_UNDERSTAND;
@@ -460,7 +488,6 @@ public class Updater {
                     log("Could not reach API for " + target + " while updating " + p.getName());
                     lastCheck = UpdateAvailability.SM_UNREACHABLE;
                 }
-                connection.disconnect();
             } catch (IOException e) {
                 p.getLogger().log(Level.SEVERE, "Could not check for updates for plugin " + p.getName(), e);
                 log("Could not reach API for " + target + " while updating " + p.getName(), e);
@@ -702,12 +729,6 @@ public class Updater {
      */
     public interface UpdateCallback {
 
-        /**
-         * Called after an update has completed
-         *
-         * @param updateResult Result of the update
-         * @param updater      Caller updater
-         */
         void updated(UpdateResult updateResult, Updater updater);
     }
 
@@ -731,9 +752,5 @@ public class Updater {
             else run();
         }
 
-    }
-
-    private class UpdateStructure {
-        public String downloadUrl, fileName, md5, name, releaseType;
     }
 }
