@@ -1,3 +1,21 @@
+1.0.35
+	Added more blocks faces. Added Pistons, pumpkins, dispencers, and observers.
+
+1.0.34
+	More skin support.
+
+1.0.33
+	Added more skin support
+
+1.0.32
+	Fixed legacy skin issue
+
+1.0.31
+	Added more linecodes.
+
+1.0.30
+	Fixed imports
+
 1.0.29
 	Fixed Java9 JavaX import
 

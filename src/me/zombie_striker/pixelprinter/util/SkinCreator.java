@@ -18,7 +18,7 @@ public class SkinCreator {
 
 	public static BufferedImage[] getSkin(String uuid)
 			throws NullPointerException, IOException {
-		int linecode = 19;
+		int linecode = 21;
 		try {
 			StringBuilder code = new StringBuilder();
 			InputStreamReader is = new InputStreamReader(new URL(
@@ -28,7 +28,7 @@ public class SkinCreator {
 			while ((charI = is.read()) != -1) {
 				code.append(((char) charI));
 			}
-			linecode = 29;
+			linecode = 31;
 			String[] aaaa = code.toString().split("\"value\":\"");
 			if (aaaa.length == 1) {
 				System.out.println("The user does not exist- AAAA does not contain value.");
@@ -36,31 +36,33 @@ public class SkinCreator {
 			}
 			String decode;
 			try{
+				linecode =39;
 				Method m = Class.forName("javax.xml.bind.DatatypeConverter").getMethod("parseBase64Binary", new Class[] {String.class});
 				decode = new String(/*
 					javax.xml.bind.DatatypeConverter.parseBase64Binary(*/(String) m.invoke(null, aaaa[1]
-							.split("\"}],\"legacy\"")[0]));
+							.split("\"}],\"legacy\"")[0].split("\"}}}")[0].split("\"")[0]));
 			}catch(Error|Exception e4) {
+				linecode =45;
 				decode = new String(Base64.decode(aaaa[1]
-							.split("\"}],\"legacy\"")[0]));
+							.split("\"}],\"legacy\"")[0].split("\"}}}")[0].split("\"")[0]));
 			}
-			linecode =38;
+			linecode =49;
 			System.out.println(decode);
 			String url = decode.split("url\":\"")[1].split("\"}")[0].split("\",\"")[0];
-			linecode = 41;
+			linecode = 52;
 			System.out.println(url);
 			BufferedImage[] images = new BufferedImage[2];
 			images[0] = ImageIO.read(new URL(url));
-			linecode = 45;
+			linecode = 56;
 			if (decode.contains("CAPE")) {
 				String urlcape = decode.split("url\":\"")[2].split("\"}")[0];
-				linecode = 48;
+				linecode = 59;
 				images[1] = ImageIO.read(new URL(urlcape));
 			}
 			return images;
 		} catch (NullPointerException e) {
 			System.out
-					.println("The Mojang servers denied the request. Wait a minute or so until you are allowed to get the texture again.");
+					.println("The Mojang servers denied the request. Wait a minute or so until you are allowed to get the texture again."+linecode);
 			throw new NullPointerException();
 		} catch (IOException e2) {
 			System.out.println("The user does not exist- ErrorLineCode="+linecode+".");
