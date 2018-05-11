@@ -49,6 +49,7 @@ public class AsyncImageHolder extends Image {
 		neg = isMinUpNeg(dir);
 		moving = isMovingX(dir);
 		this.enableTransparent = enableTrans;
+		
 	}
 
 	@SuppressWarnings("deprecation")
@@ -74,7 +75,7 @@ public class AsyncImageHolder extends Image {
 						for (int i = 0; i < 4; i++) {
 							int y = (height + 1 < result.length) ? height + (i % 2) : height;
 							int x = (width + 1 < result[y].length) ? width + (i % 2) : width;
-							color[i] = new Color(result[y][x].r, result[y][x].g, result[y][x].b);
+							color[i] = new Color(result[y][x].r, result[y][x].g, result[y][x].b,result[y][x].a);
 						}
 						MaterialData m = RGBBlockColor.getClosestBlockValue(color,
 								(dir == Direction.FLAT_NORTHEAST || dir == Direction.FLAT_NORTHWEST
