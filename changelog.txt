@@ -1,3 +1,10 @@
+1.0.36
+	Added support for transparent images. You can now load item icons without having to break the blocks for the transparent pixels
+	Fixed blocks for custom resourcepacks
+	Fixed RGB for some blocks
+	Made sure most blocks for 1.13 can be loaded
+	Added more non-solid blocks to blacklist
+
 1.0.35
 	Added more blocks faces. Added Pistons, pumpkins, dispencers, and observers.
 
