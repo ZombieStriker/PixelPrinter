@@ -17,26 +17,50 @@ package me.zombie_striker.pixelprinter;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import javax.imageio.*;
-
-import me.zombie_striker.pixelprinter.data.*;
-import me.zombie_striker.pixelprinter.util.*;
-import me.zombie_striker.pluginconstructor.*;
-import me.zombie_striker.pluginconstructor.RGBBlockColor.Pixel;
+import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import me.zombie_striker.pixelprinter.data.FileCreatorData;
+import me.zombie_striker.pixelprinter.util.AsyncImageHolder;
+import me.zombie_striker.pixelprinter.util.GifHolder;
+import me.zombie_striker.pixelprinter.util.SkinCreator;
+import me.zombie_striker.pluginconstructor.Direction;
+import me.zombie_striker.pluginconstructor.MapWallUtil;
+import me.zombie_striker.pluginconstructor.MaterialData;
+import me.zombie_striker.pluginconstructor.MojangAPI;
+import me.zombie_striker.pluginconstructor.PluginConstructorAPI;
+import me.zombie_striker.pluginconstructor.RGBBlockColor;
+import me.zombie_striker.pluginconstructor.RGBBlockColor.Pixel;
+import me.zombie_striker.pluginconstructor.RGBChatColor;
+import me.zombie_striker.pluginconstructor.ReflectionUtilREMOVELATEER;
 
 public class PixelPrinter extends JavaPlugin {
 
@@ -49,6 +73,8 @@ public class PixelPrinter extends JavaPlugin {
 	public int loadCount = 500;
 
 	private static PixelPrinter instance;
+
+	public static boolean isAbove113 = false;
 
 	private static int skin_creator_delay = 0;
 
@@ -72,8 +98,10 @@ public class PixelPrinter extends JavaPlugin {
 		// Download the API dependancy
 		try {
 			if (Bukkit.getPluginManager().getPlugin("PluginConstructorAPI") == null)
-				GithubDependDownloader.autoUpdate(this, new File(getDataFolder().getParentFile(),"PluginConstructorAPI.jar"), "ZombieStriker", "PluginConstructorAPI", "PluginConstructorAPI.jar");
-				//new DependencyDownloader(this, 276723);
+				GithubDependDownloader.autoUpdate(this,
+						new File(getDataFolder().getParentFile(), "PluginConstructorAPI.jar"), "ZombieStriker",
+						"PluginConstructorAPI", "PluginConstructorAPI.jar");
+			// new DependencyDownloader(this, 276723);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -86,8 +114,8 @@ public class PixelPrinter extends JavaPlugin {
 		}.runTaskTimer(this, 0, 10);
 
 		instance = this;
-		images = new File(getDataFolder() ,"images");
-		resoucepackFolder = new File(getDataFolder() ,"custom_textures");
+		images = new File(getDataFolder(), "images");
+		resoucepackFolder = new File(getDataFolder(), "custom_textures");
 
 		Bukkit.getPluginManager().registerEvents(new PPListener(this), this);
 		if (!getDataFolder().exists())
@@ -106,6 +134,7 @@ public class PixelPrinter extends JavaPlugin {
 		try {
 			PluginConstructorAPI.loadCustomTextures(resoucepackFolder);
 		} catch (NoClassDefFoundError e) {
+			e.printStackTrace();
 		}
 
 		initHelp();
@@ -127,8 +156,7 @@ public class PixelPrinter extends JavaPlugin {
 		if (!getConfig().contains("whitelistedMaterialsEnabled") || !getConfig().contains("whitelistedMaterials")) {
 			supportedMaterials = null;
 			getConfig().set("whitelistedMaterialsEnabled", false);
-			getConfig().set("whitelistedMaterials",
-					Arrays.asList(Material.STONE.name(), Material.WOOL.name(), Material.NETHERRACK.name()));
+			getConfig().set("whitelistedMaterials", Arrays.asList(Material.STONE.name(), Material.NETHERRACK.name()));
 			List<String> fullanmes = new ArrayList<>();
 			for (Material m : Material.values()) {
 				if (m.isBlock())
@@ -147,6 +175,13 @@ public class PixelPrinter extends JavaPlugin {
 				} catch (Error | Exception e) {
 				}
 			}
+		} else {
+			supportedMaterials = null;
+		}
+		try {
+			isAbove113 = ReflectionUtilREMOVELATEER.isVersionHigherThan(1, 13);
+		} catch (Error | Exception e45) {
+
 		}
 
 		// bStats metrics
@@ -175,37 +210,44 @@ public class PixelPrinter extends JavaPlugin {
 
 			public void run() {
 				for (GifHolder gif : gifs) {
-					nearPlayers = false;
-					if (gif == null) {
-						System.out.println("gif is null");
-						continue;
-					}
-					if (gif.isLoaded()) {
-						for (Player p : Bukkit.getOnlinePlayers()) {
-							if (p.getLocation().distance(gif.getMinCorner()) < 300) {
-								nearPlayers = true;
-								break;
+					try {
+						nearPlayers = false;
+						if (gif == null) {
+							System.out.println("gif is null");
+							continue;
+						}
+						if (gif.isLoaded()) {
+							for (Player p : Bukkit.getOnlinePlayers()) {
+								if (p.getLocation().distance(gif.getMinCorner()) < 300) {
+									nearPlayers = true;
+									break;
+								}
+							}
+							if (nearPlayers) {
+								gif.loadFrame();
+								// gif.loadFrame();
 							}
 						}
-						if (nearPlayers) {
-							gif.loadFrame();
-							// gif.loadFrame();
-						}
+					} catch (Exception e45) {
+						e45.printStackTrace();
 					}
 				}
 			}
 			// TODO: Doubling loadframe and the delay so it is less taxing on
 			// low end computers
-		}, 10, 8);
+		}, 10, 4);
 
-		/* final Updater updater = new Updater(instance, 98985, getConfig().getBoolean("auto-update"));*/
+		/*
+		 * final Updater updater = new Updater(instance, 98985,
+		 * getConfig().getBoolean("auto-update"));
+		 */
 		/*
 		 * new BukkitRunnable() { public void run() { // TODO: Works well. Make changes
 		 * for the updaters of // PixelPrinter and Music later. if
 		 * (updater.updaterActive) updater.download(false); }
 		 * }.runTaskTimerAsynchronously(this, 20 /* * 60 * /, 20 * 60 * 5);
 		 */
-		GithubUpdater.autoUpdate(this, "ZombieStriker", "PixelPrinter","PixelPrinter.jar");
+		GithubUpdater.autoUpdate(this, "ZombieStriker", "PixelPrinter", "PixelPrinter.jar");
 	}
 
 	public void onDisable() {
@@ -354,19 +396,39 @@ public class PixelPrinter extends JavaPlugin {
 
 			// ======================================================================DEBUG
 			else if (args[0].equalsIgnoreCase("debug")) {
-
-				// for(int i = 0; i < 20; i ++){
-				// sender.sendMessage(ChatColor.values()[i]+" :::: MM OO XX $$ CC **
-				// "+BLACK_BAR+BLACK_BAR);
-				// }
-				final Player player = (Player) sender;
-				new BukkitRunnable() {
-
-					@Override
-					public void run() {
-						player.sendMessage(RGBBlockColor.getFurthestColor() + "");
+				StringBuilder sb = new StringBuilder();
+				List<Material> loaded = new ArrayList<Material>();
+				for (MaterialData k : RGBBlockColor.materialValue.keySet()) {
+					if (!loaded.contains(k.getMaterial()))
+						loaded.add(k.getMaterial());
+				}
+				// int color = 0;
+				List<Material> mat = new ArrayList<Material>();
+				for (Material m : Material.values()) {
+					if (m.isBlock() && !m.isLegacy() && !loaded.contains(m) && !m.name().endsWith("SHULKER_BOX")
+							&& !m.name().endsWith("CORAL_FAN") && !m.name().endsWith("SAPLING")
+							&& !m.name().endsWith("_BANNER") && !m.name().endsWith("_HEAD")
+							&& !m.name().endsWith("CARPET") && !m.name().endsWith("STAINED_GLASS")
+							&& !m.name().endsWith("_TRAPDOOR") && !m.name().endsWith("RAIL")
+							&& !m.name().startsWith("INFESTED") && !m.name().endsWith("_BED")
+							&& !m.name().endsWith("_SLAB") && !m.name().endsWith("_STAIRS")
+							&& !m.name().endsWith("GLASS_PANE") && !m.name().endsWith("FENCE")
+							&& !m.name().endsWith("FENCE_GATE") && !m.name().endsWith("_BUTTON")
+							&& !m.name().endsWith("PRESSURE_PLATE") && !m.name().endsWith("_DOOR")) {
+						mat.add(m);
+						// sb.append(ccc[color] + m.name() + ", &"+ChatColor.RESET.getChar());
+						// color = (color+1) % ccc.length;
 					}
-				}.runTaskLaterAsynchronously(this, 0);
+				}
+				int size = ((mat.size() / 9) + 1) * 9;
+				if (size > 9 * 14)
+					size = 9 * 14;
+				Inventory test = Bukkit.createInventory(null, size);
+				for (Material a : mat)
+					test.addItem(new ItemStack(a));
+				((Player) sender).openInventory(test);
+				// Bukkit.broadcastMessage("unused " +
+				// ChatColor.translateAlternateColorCodes('&', sb.toString()));
 
 			} else if (args.length > 0 && args[0].equalsIgnoreCase("list")) {
 				sender.sendMessage(getPrefix() + " All the saved images:");
@@ -686,6 +748,7 @@ public class PixelPrinter extends JavaPlugin {
 							} catch (Exception e) {
 								sender.sendMessage(
 										getPrefix() + " Something failed. Please check console for more details.");
+								e.printStackTrace();
 							}
 						}
 					} catch (Exception e) {
@@ -838,7 +901,7 @@ public class PixelPrinter extends JavaPlugin {
 		ItemStack[][] im = MapWallUtil.getMaps(bi2);
 		for (int x = 0; x < im.length; x++) {
 			for (int y = 0; y < im[x].length; y++) {
-				MapWallUtil.setBlockAt(dir, p, y, x, im[x][im[x].length - y - 1]);
+				MapWallUtil.setBlockAt(dir, p, y, x, im[x][(im[x].length - 1) - y]);
 			}
 		}
 	}

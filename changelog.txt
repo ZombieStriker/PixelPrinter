@@ -1,3 +1,6 @@
+1.0.37
+	Added full 1.13 support
+
 1.0.36
 	Added support for transparent images. You can now load item icons without having to break the blocks for the transparent pixels
 	Fixed blocks for custom resourcepacks

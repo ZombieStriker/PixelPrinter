@@ -32,6 +32,8 @@ import me.zombie_striker.pluginconstructor.RGBBlockColor.Pixel;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -62,11 +64,9 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 
 	public static List<Integer> freeID = new ArrayList<Integer>();;
 
-	public GifHolder(String filename, Location minLocation, int height,
-			String dir, UUID owner) {
+	public GifHolder(String filename, Location minLocation, int height, String dir, UUID owner) {
 		this.dir = Direction.getDir(dir);
-		this.p = Bukkit.getPlayer(owner) == null ? "null" : Bukkit.getPlayer(
-				owner).getName();
+		this.p = Bukkit.getPlayer(owner) == null ? "null" : Bukkit.getPlayer(owner).getName();
 		this.minCorner = minLocation;
 		this.height = height * 2;
 		this.fileName = filename;
@@ -78,8 +78,8 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 				break;
 			}
 		}
-		createFrames(new File(PixelPrinter.getInstance().getImageFile()
-				+ File.separator + this.fileName), this.height, owner);
+		createFrames(new File(PixelPrinter.getInstance().getImageFile() + File.separator + this.fileName), this.height,
+				owner);
 	}
 
 	public void init() {
@@ -103,13 +103,14 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 					holders.clear();
 
 					final BufferedImage bi = getFrames()[frame];
-					final Pixel[][] result = RGBBlockColor
-							.convertTo2DWithoutUsingGetRGB(bi);
+					final Pixel[][] result = RGBBlockColor.convertTo2DWithoutUsingGetRGB(bi);
 
 					for (int width = 0; width < bi.getWidth(); width += 2) {
 						for (int height = (bi.getHeight() - 1); height >= 0; height -= 2) {
-							Location b = getBlockAt(height, width,
-									bi.getHeight());
+							if (width / 2 >= fWidth || height / 2 >= fHeight)
+								continue;
+								
+							Location b = getBlockAt(height, width, bi.getHeight());
 							Color[] color = new Color[4];
 							boolean allTrans = true;
 
@@ -118,52 +119,36 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 							int defaultB = 0;
 
 							for (int iT = 0; iT < 4; iT++) {
-								int yT = (1 + height < result.length) ? height
-										+ (iT % 2) : height;
-								int xT = (width + 1 < result[height].length) ? width
-										+ (iT / 2)
-										: width;
-									Pixel rgb = result[yT][xT];
-								if (rgb.r != 0
-										|| rgb.g != 0
-										|| rgb.b != 0) {
+								int yT = (1 + height < result.length) ? height + (iT % 2) : height;
+								int xT = (width + 1 < result[height].length) ? width + (iT / 2) : width;
+								Pixel rgb = result[yT][xT];
+								if (rgb.r != 0 || rgb.g != 0 || rgb.b != 0) {
 									allTrans = false;
-									defaultR =rgb.r;
+									defaultR = rgb.r;
 									defaultG = rgb.g;
 									defaultB = rgb.b;
 									break;
 								}
 							}
-							if (allTrans){
+							if (allTrans) {
 								isTrans[frame][width / 2][height / 2] = true;
-							}else {
+							} else {
 								for (int i = 0; i < 4; i++) {
-									int y = (1 + height < result.length) ? height
-											+ (i % 2)
-											: height;
-									int x = (width + 1 < result[height].length) ? width
-											+ (i / 2)
-											: width;
-											Pixel rgb = result[y][x];
-									if (rgb .r != 0
-											|| rgb .g != 0
-											|| rgb .b != 0) {
-										color[i] = new Color(rgb.r,
-												rgb.g, rgb.b);
+									int y = (1 + height < result.length) ? height + (i % 2) : height;
+									int x = (width + 1 < result[height].length) ? width + (i / 2) : width;
+									Pixel rgb = result[y][x];
+									if (rgb.r != 0 || rgb.g != 0 || rgb.b != 0) {
+										color[i] = new Color(rgb.r, rgb.g, rgb.b);
 									} else {
-										color[i] = new Color(defaultR,
-												defaultG, defaultB);
+										color[i] = new Color(defaultR, defaultG, defaultB);
 									}
 								}
-								MaterialData m = RGBBlockColor
-										.getClosestBlockValue(
-												color,
-												(dir == Direction.FLAT_NORTHEAST
-														|| dir == Direction.FLAT_NORTHWEST
-														|| dir == Direction.FLAT_SOUTHEAST || dir == Direction.FLAT_SOUTHWEST));
+								MaterialData m = RGBBlockColor.getClosestBlockValue(color,
+										(dir == Direction.FLAT_NORTHEAST || dir == Direction.FLAT_NORTHWEST
+												|| dir == Direction.FLAT_SOUTHEAST || dir == Direction.FLAT_SOUTHWEST));
 								DataHolder dh = new DataHolder(b, m);
 								holders.add(dh);
-								materials[frame][width / 2][height / 2] = dh;
+									materials[frame][width / 2][height / 2] = dh;
 							}
 						}
 					}
@@ -193,6 +178,7 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 	public void loadFrame() {
 		if (getFrames() == null || getFrames().length < 1)
 			return;
+
 		for (int x = 0; x < materials[currentFrame].length; x++) {
 			for (int y = materials[currentFrame][x].length - 1; y >= 0; y--) {
 				if (!isTrans[currentFrame][x][y]) {
@@ -200,14 +186,37 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 					if (dh == null)
 						continue;
 					Block b = dh.b.getBlock();
-					if (b.getType() != dh.md.getMaterial())
-						b.setType(dh.md.getMaterial());
-					try {
-						if (b.getData() != dh.md.getData()
-								&& dh.md.getData() != 0)
-							b.setData(dh.md.getData());
-					} catch (Exception e) {
-						e.printStackTrace();
+					if (b.getType() != dh.md.getMaterial()) {
+						BlockState state = b.getState();
+						BlockFace bf=null;
+						byte rd = dh.md.getData();
+						if (dh.hasFaces()) {
+							bf = AsyncImageHolder.getBlockFace(dh, dir);
+							rd=AsyncImageHolder.getBlockData(dh, dir);
+						}
+						if (PixelPrinter.isAbove113) {
+							b.setType(dh.md.getMaterial());
+							try {
+								if (bf != null) {
+									org.bukkit.block.data.Directional d = ((org.bukkit.block.data.Directional) b.getBlockData());
+									d.setFacing(bf);
+									b.setBlockData(d);													
+								}
+							} catch (Error | Exception e45) {
+								e45.printStackTrace();
+							}
+						} else {
+							state.setType(dh.md.getMaterial());
+							//b.setType(dh.md.getMaterial());
+						try {
+							if (dh.md.getData() != 0&&b.getData() != rd)
+								state.setRawData(rd);
+								//b.setData(dh.md.getData());
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						state.update(true, false);
+						}
 					}
 				}
 			}
@@ -275,48 +284,38 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 		this.moving = (boolean) data.get("moving");
 		this.neg = (boolean) data.get("neg");
 		this.owner = UUID.fromString((String) data.get("owner"));
-		createFrames(new File(PixelPrinter.getInstance().getImageFile()
-				+ File.separator + this.fileName), this.height, owner);
+		createFrames(new File(PixelPrinter.getInstance().getImageFile() + File.separator + this.fileName), this.height,
+				owner);
 		final IntHolder temp = new IntHolder();
-		temp.setI(Bukkit.getScheduler().scheduleSyncRepeatingTask(
-				PixelPrinter.getInstance(), new Runnable() {
-					public void run() {
-						if (Bukkit.getWorld((String) tempData
-								.get("minCorner.w")) != null) {
-							minCorner = Bukkit
-									.getWorld(
-											(String) tempData
-													.get("minCorner.w"))
-									.getBlockAt(
-											(int) tempData.get("minCorner.x"),
-											(int) tempData.get("minCorner.y"),
-											(int) tempData.get("minCorner.z"))
-									.getLocation();
-							Bukkit.getScheduler().cancelTask(temp.getI());
-						}
-					}
-				}, 0, 20));
+		temp.setI(Bukkit.getScheduler().scheduleSyncRepeatingTask(PixelPrinter.getInstance(), new Runnable() {
+			public void run() {
+				if (Bukkit.getWorld((String) tempData.get("minCorner.w")) != null) {
+					minCorner = Bukkit.getWorld((String) tempData.get("minCorner.w"))
+							.getBlockAt((int) tempData.get("minCorner.x"), (int) tempData.get("minCorner.y"),
+									(int) tempData.get("minCorner.z"))
+							.getLocation();
+					Bukkit.getScheduler().cancelTask(temp.getI());
+				}
+			}
+		}, 0, 20));
 		final IntHolder temp2 = new IntHolder();
-		temp2.setI(Bukkit.getScheduler().scheduleSyncRepeatingTask(
-				PixelPrinter.getInstance(), new Runnable() {
-					public void run() {
-						if (minCorner != null && getFrames() != null
-								&& getFrames().length > 1) {
-							init();
-							Bukkit.getScheduler().cancelTask(temp2.getI());
-						}
-					}
-				}, 0, 20));
+		temp2.setI(Bukkit.getScheduler().scheduleSyncRepeatingTask(PixelPrinter.getInstance(), new Runnable() {
+			public void run() {
+				if (minCorner != null && getFrames() != null && getFrames().length > 1) {
+					init();
+					Bukkit.getScheduler().cancelTask(temp2.getI());
+				}
+			}
+		}, 0, 20));
 	}
 
 	@SuppressWarnings("deprecation")
 	public void createFrames(final File gif, final int height, UUID owner) {
-		Bukkit.getScheduler().scheduleAsyncDelayedTask(
-				PixelPrinter.getInstance(), new Runnable() {
-					public void run() {
-						setFrames(getFrames(gif, height));
-					}
-				}, 0);
+		Bukkit.getScheduler().scheduleAsyncDelayedTask(PixelPrinter.getInstance(), new Runnable() {
+			public void run() {
+				setFrames(getFrames(gif, height));
+			}
+		}, 0);
 
 	}
 
@@ -341,16 +340,15 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 
 	private static BufferedImage[] getFrames(ImageInputStream gif, int height) {
 		try {
-			ImageReader reader = (ImageReader) ImageIO
-					.getImageReadersByFormatName("gif").next();
+			ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName("gif").next();
 			reader.setInput((ImageInputStream) gif, true);
 			Iterator<IIOImage> iter = reader.readAll(null);
 			List<BufferedImage> bii = new ArrayList<>();
 			while (iter.hasNext()) {
 				IIOImage img = iter.next();
 				BufferedImage frame = (BufferedImage) img.getRenderedImage();
-				frame = RGBBlockColor.resize(frame, (int) (frame.getWidth()
-						* ((double) height) / frame.getHeight()), height);// .createResizedCopy(frame,
+				frame = RGBBlockColor.resize(frame, (int) (frame.getWidth() * ((double) height) / frame.getHeight()),
+						height);// .createResizedCopy(frame,
 				// height, false);
 				bii.add(frame);
 			}
@@ -373,41 +371,3 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 	}
 }
 
-class DataHolder implements ConfigurationSerializable {
-	MaterialData md;
-	Location b;
-
-	public DataHolder(Location b2, MaterialData md) {
-		this.b = b2;
-		this.md = md;
-	}
-
-	public DataHolder(Map<String, Object> data) {
-		final Map<String, Object> tempData = data;
-		final IntHolder temp = new IntHolder();
-		temp.setI(Bukkit.getScheduler().scheduleSyncRepeatingTask(
-				PixelPrinter.getInstance(), new Runnable() {
-					public void run() {
-						if (Bukkit.getWorld((String) tempData.get("b.w")) != null) {
-							b = new Location(Bukkit.getWorld((String) tempData
-									.get("b.w")), (int) tempData.get("b.x"),
-									(int) tempData.get("b.y"), (int) tempData
-											.get("b.z"));
-							Bukkit.getScheduler().cancelTask(temp.getI());
-						}
-					}
-				}, 0, 20));
-		this.md = (MaterialData) data.get("md");
-	}
-
-	@Override
-	public Map<String, Object> serialize() {
-		Map<String, Object> data = new HashMap<String, Object>();
-		data.put("b.x", this.b.getBlockX());
-		data.put("b.y", this.b.getBlockY());
-		data.put("b.z", this.b.getBlockZ());
-		data.put("b.w", this.b.getWorld().getName());
-		data.put("md", this.md);
-		return data;
-	}
-}
