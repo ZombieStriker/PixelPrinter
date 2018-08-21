@@ -1,3 +1,6 @@
+1.0.38
+	Added back support for lower versions.
+
 1.0.37
 	Added full 1.13 support
 

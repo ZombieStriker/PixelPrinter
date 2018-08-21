@@ -85,7 +85,7 @@ public class AsyncImageHolder extends Image {
 						String tempkey = (b.getBlockX() / 16) + "," + (b.getBlockZ() / 16);
 						if (chunksorter.containsKey(tempkey)) {
 							List<DataHolder> temp = chunksorter.get(tempkey);
-							if(temp==null)
+							if (temp == null)
 								temp = new ArrayList<DataHolder>();
 							temp.add(new DataHolder(b, m, m.hasDirection()));
 							chunksorter.put(tempkey, temp);
@@ -124,7 +124,7 @@ public class AsyncImageHolder extends Image {
 
 									if (dh.hasFaces()) {
 										bf = getBlockFace(dh, dir);
-										rd=getBlockData(dh, dir);
+										rd = getBlockData(dh, dir);
 									}
 									if (dh.md.getMaterial() != bs.getType()
 											|| (((int) bs.getRawData()) != ((int) rd))) {
@@ -157,13 +157,15 @@ public class AsyncImageHolder extends Image {
 
 											@Override
 											public void run() {
+												boolean tryBoolean = false;
+												try {
+													tryBoolean = (((org.bukkit.block.data.Directional) bs.getBlock()
+															.getBlockData()).getFacing() != bf2);
+												} catch (Error | Exception e5) {
+												}
+
 												if (bs.getBlock().getType() != dh.md.getMaterial()
-														|| (PixelPrinter.isAbove113
-																? (bf2 != null
-																		? (((org.bukkit.block.data.Directional) bs
-																				.getBlock().getBlockData())
-																						.getFacing() != bf2)
-																		: false)
+														|| (PixelPrinter.isAbove113 ? (bf2 != null ? tryBoolean : false)
 																: bs.getBlock().getData() != dh.md.getData())
 														|| bs.getBlock().getType() == Material.AIR)
 													Bukkit.broadcastMessage(PixelPrinter.getInstance().getPrefix()
@@ -275,24 +277,15 @@ public class AsyncImageHolder extends Image {
 			 */
 	}
 
-	/*class DataHolder {
-		MaterialData md;
-		Location b;
-		boolean hasFaces = false;
-
-		public DataHolder(Location b, MaterialData md) {
-			this(b, md, false);
-		}
-
-		public DataHolder(Location b, MaterialData md, boolean hasFaces) {
-			this.b = b;
-			this.md = md;
-			this.hasFaces = hasFaces;
-		}
-		public boolean hasFaces() {
-			return hasFaces;
-		}
-	}*/
+	/*
+	 * class DataHolder { MaterialData md; Location b; boolean hasFaces = false;
+	 * 
+	 * public DataHolder(Location b, MaterialData md) { this(b, md, false); }
+	 * 
+	 * public DataHolder(Location b, MaterialData md, boolean hasFaces) { this.b =
+	 * b; this.md = md; this.hasFaces = hasFaces; } public boolean hasFaces() {
+	 * return hasFaces; } }
+	 */
 
 	public static BlockFace getBlockFace(DataHolder dh, Direction dir) {
 
@@ -375,19 +368,45 @@ public class AsyncImageHolder extends Image {
 				// org.bukkit.material.Door door = (org.bukkit.material.Door)
 				// bs.getData();
 				if (dir == Direction.UP_NORTH)
-					return  ((byte) 2);
+					return ((byte) 2);
 				if (dir == Direction.UP_EAST)
-					return  ((byte) 3);
+					return ((byte) 3);
 				if (dir == Direction.UP_SOUTH)
-					return  ((byte) 0);
+					return ((byte) 0);
 				if (dir == Direction.UP_WEST)
-					return  ((byte) 1);
+					return ((byte) 1);
 			}
 			if (dh.md.getMaterial() == Material.FURNACE || dh.md.getMaterial().name().equals("BURNING_FURNACE")) {
 				// Go eat, then we need south.
 				// Go south, then face west, ect.
+				if (dir == Direction.UP_NORTH)
+					return ((byte) 5);
+				if (dir == Direction.UP_EAST)
+					return ((byte) 3);
+				if (dir == Direction.UP_SOUTH)
+					return ((byte) 4);
+				if (dir == Direction.UP_WEST)
+					return ((byte) 2);
+			}
+
+			if (dh.md.getMaterial() == Material.DISPENSER) {
+				// Go eat, then we need south.
+				// Go south, then face west, ect.
+				if (dir == Direction.UP_NORTH)
+					return ((byte) 5);
+				if (dir == Direction.UP_EAST)
+					return ((byte) 3);
+				if (dir == Direction.UP_SOUTH)
+					return ((byte) 4);
+				if (dir == Direction.UP_WEST)
+					return ((byte) 2);
+
+			}
+			if (dh.md.getMaterial().name().equals("PISTON_BASE")
+					|| dh.md.getMaterial().name().equals("PISTON_STICKY_BASE")) {
+				if (dh.md.getDirection() == BlockFace.UP) {
 					if (dir == Direction.UP_NORTH)
-						return  ((byte) 5);
+						return ((byte) 5);
 					if (dir == Direction.UP_EAST)
 						return ((byte) 3);
 					if (dir == Direction.UP_SOUTH)
@@ -395,42 +414,15 @@ public class AsyncImageHolder extends Image {
 					if (dir == Direction.UP_WEST)
 						return ((byte) 2);
 				}
-			
-			if (dh.md.getMaterial() == Material.DISPENSER) {
-				// Go eat, then we need south.
-				// Go south, then face west, ect.
-					if (dir == Direction.UP_NORTH)
-						return  ((byte) 5);
-					if (dir == Direction.UP_EAST)
-						return ((byte) 3);
-					if (dir == Direction.UP_SOUTH)
-						return  ((byte) 4);
-					if (dir == Direction.UP_WEST)
-						return  ((byte) 2);
-				
-
-			}
-			if (dh.md.getMaterial().name().equals("PISTON_BASE")
-					|| dh.md.getMaterial().name().equals("PISTON_STICKY_BASE")) {
-				if (dh.md.getDirection() == BlockFace.UP) {
-					if (dir == Direction.UP_NORTH)
-						return  ((byte) 5);
-					if (dir == Direction.UP_EAST)
-						return  ((byte) 3);
-					if (dir == Direction.UP_SOUTH)
-						return  ((byte) 4);
-					if (dir == Direction.UP_WEST)
-						return  ((byte) 2);
-				}
 				if (dh.md.getDirection() == BlockFace.WEST) {
 					if (dir == Direction.UP_NORTH)
-						return  ((byte) 4);
+						return ((byte) 4);
 					if (dir == Direction.UP_EAST)
-						return  ((byte) 2);
+						return ((byte) 2);
 					if (dir == Direction.UP_SOUTH)
 						return ((byte) 5);
 					if (dir == Direction.UP_WEST)
-						return  ((byte) 3);
+						return ((byte) 3);
 				}
 			}
 			if (dh.md.getMaterial() == Material.PUMPKIN || dh.md.getMaterial() == Material.JACK_O_LANTERN) {
@@ -438,20 +430,20 @@ public class AsyncImageHolder extends Image {
 					// Go eat, then we need south.
 					// Go south, then face west, ect.
 					if (dir == Direction.UP_NORTH)
-						return  ((byte) 3);
+						return ((byte) 3);
 					if (dir == Direction.UP_EAST)
-						return  ((byte) 0);
+						return ((byte) 0);
 					if (dir == Direction.UP_SOUTH)
-						return  ((byte) 1);
+						return ((byte) 1);
 					if (dir == Direction.UP_WEST)
 						return ((byte) 2);
 				}
 
 				if (dh.md.getDirection() == BlockFace.WEST) {
 					if (dir == Direction.UP_NORTH)
-						return  ((byte) 0);
+						return ((byte) 0);
 					if (dir == Direction.UP_EAST)
-						return  ((byte) 3);
+						return ((byte) 3);
 					if (dir == Direction.UP_SOUTH)
 						return ((byte) 2);
 					if (dir == Direction.UP_WEST)
@@ -462,46 +454,45 @@ public class AsyncImageHolder extends Image {
 
 			if (dh.md.getMaterial() == Material.OBSERVER) {
 				if (dh.md.getDirection() == BlockFace.EAST) {
-						// Go eat, then we need south.
-						// Go south, then face west, ect.
-						if (dir == Direction.UP_NORTH)
-							return  ((byte) 4);
-						if (dir == Direction.UP_EAST)
-							return ((byte) 2);
-						if (dir == Direction.UP_SOUTH)
-							return  ((byte) 5);
-						if (dir == Direction.UP_WEST)
-							return ((byte) 3);
-					
+					// Go eat, then we need south.
+					// Go south, then face west, ect.
+					if (dir == Direction.UP_NORTH)
+						return ((byte) 4);
+					if (dir == Direction.UP_EAST)
+						return ((byte) 2);
+					if (dir == Direction.UP_SOUTH)
+						return ((byte) 5);
+					if (dir == Direction.UP_WEST)
+						return ((byte) 3);
+
 				}
 
 				if (dh.md.getDirection() == BlockFace.WEST) {
 					// Go eat, then we need south.
 					// Go south, then face west, ect.
-						if (dir == Direction.UP_NORTH)
-							return  ((byte) 5);
-						if (dir == Direction.UP_EAST)
-							return ((byte) 3);
-						if (dir == Direction.UP_SOUTH)
-							return  ((byte) 4);
-						if (dir == Direction.UP_WEST)
-							return ((byte) 2);
-					}
-				
+					if (dir == Direction.UP_NORTH)
+						return ((byte) 5);
+					if (dir == Direction.UP_EAST)
+						return ((byte) 3);
+					if (dir == Direction.UP_SOUTH)
+						return ((byte) 4);
+					if (dir == Direction.UP_WEST)
+						return ((byte) 2);
+				}
 
 				if (dh.md.getDirection() == BlockFace.NORTH) {
 					// Go eat, then we need south.
 					// Go south, then face west, ect.
-						if (dir == Direction.UP_NORTH)
-							return  ((byte) 3);
-						if (dir == Direction.UP_EAST)
-							return  ((byte) 5);
-						if (dir == Direction.UP_SOUTH)
-							return  ((byte) 2);
-						if (dir == Direction.UP_WEST)
-							return ((byte) 4);
-					}
-				
+					if (dir == Direction.UP_NORTH)
+						return ((byte) 3);
+					if (dir == Direction.UP_EAST)
+						return ((byte) 5);
+					if (dir == Direction.UP_SOUTH)
+						return ((byte) 2);
+					if (dir == Direction.UP_WEST)
+						return ((byte) 4);
+				}
+
 			}
 		} catch (Error | Exception e54) {
 		}

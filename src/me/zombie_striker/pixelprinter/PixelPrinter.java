@@ -396,7 +396,6 @@ public class PixelPrinter extends JavaPlugin {
 
 			// ======================================================================DEBUG
 			else if (args[0].equalsIgnoreCase("debug")) {
-				StringBuilder sb = new StringBuilder();
 				List<Material> loaded = new ArrayList<Material>();
 				for (MaterialData k : RGBBlockColor.materialValue.keySet()) {
 					if (!loaded.contains(k.getMaterial()))
@@ -405,7 +404,7 @@ public class PixelPrinter extends JavaPlugin {
 				// int color = 0;
 				List<Material> mat = new ArrayList<Material>();
 				for (Material m : Material.values()) {
-					if (m.isBlock() && !m.isLegacy() && !loaded.contains(m) && !m.name().endsWith("SHULKER_BOX")
+					if (m.isBlock()  && !loaded.contains(m) && !m.name().endsWith("SHULKER_BOX")
 							&& !m.name().endsWith("CORAL_FAN") && !m.name().endsWith("SAPLING")
 							&& !m.name().endsWith("_BANNER") && !m.name().endsWith("_HEAD")
 							&& !m.name().endsWith("CARPET") && !m.name().endsWith("STAINED_GLASS")
@@ -415,6 +414,10 @@ public class PixelPrinter extends JavaPlugin {
 							&& !m.name().endsWith("GLASS_PANE") && !m.name().endsWith("FENCE")
 							&& !m.name().endsWith("FENCE_GATE") && !m.name().endsWith("_BUTTON")
 							&& !m.name().endsWith("PRESSURE_PLATE") && !m.name().endsWith("_DOOR")) {
+						try{
+							if(!m.isLegacy())
+								continue;
+						}catch(Error|Exception e4) {}
 						mat.add(m);
 						// sb.append(ccc[color] + m.name() + ", &"+ChatColor.RESET.getChar());
 						// color = (color+1) % ccc.length;
