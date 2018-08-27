@@ -1,3 +1,9 @@
+1.0.40
+	Move all 1.13 code to its own class. Should fix error finding the class
+
+1.0.39
+	Removed exception thrower
+
 1.0.38
 	Added back support for lower versions.
 
