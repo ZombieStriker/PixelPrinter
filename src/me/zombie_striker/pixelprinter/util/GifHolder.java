@@ -198,12 +198,9 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 							b.setType(dh.md.getMaterial());
 							try {
 								if (bf != null) {
-									org.bukkit.block.data.Directional d = ((org.bukkit.block.data.Directional) b.getBlockData());
-									d.setFacing(bf);
-									b.setBlockData(d);													
+									Update13Handler.setFacing(b.getState(), bf);
 								}
 							} catch (Error | Exception e45) {
-								e45.printStackTrace();
 							}
 						} else {
 							state.setType(dh.md.getMaterial());

@@ -132,13 +132,10 @@ public class AsyncImageHolder extends Image {
 											bs.getBlock().setType(dh.md.getMaterial());
 											try {
 												if (bf != null) {
-													org.bukkit.block.data.Directional d = ((org.bukkit.block.data.Directional) bs
-															.getBlock().getBlockData());
-													d.setFacing(bf);
-													bs.getBlock().setBlockData(d);
+
+													Update13Handler.setFacing(bs, bf);
 												}
 											} catch (Error | Exception e45) {
-												e45.printStackTrace();
 											}
 										} else {
 											bs.setType(dh.md.getMaterial());
@@ -159,8 +156,8 @@ public class AsyncImageHolder extends Image {
 											public void run() {
 												boolean tryBoolean = false;
 												try {
-													tryBoolean = (((org.bukkit.block.data.Directional) bs.getBlock()
-															.getBlockData()).getFacing() != bf2);
+													tryBoolean = Update13Handler.isFacing(bs, bf2);
+															//(((org.bukkit.block.data.Directional) bs.getBlock()	.getBlockData()).getFacing() != bf2);
 												} catch (Error | Exception e5) {
 												}
 
