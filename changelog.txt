@@ -1,3 +1,7 @@
+1.0.41
+	Fixed error message if the player uses pp di in console.
+	Changed downloader so it saves as PNG
+
 1.0.40
 	Move all 1.13 code to its own class. Should fix error finding the class
 

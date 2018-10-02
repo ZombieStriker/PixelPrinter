@@ -404,7 +404,7 @@ public class PixelPrinter extends JavaPlugin {
 				// int color = 0;
 				List<Material> mat = new ArrayList<Material>();
 				for (Material m : Material.values()) {
-					if (m.isBlock()  && !loaded.contains(m) && !m.name().endsWith("SHULKER_BOX")
+					if (m.isBlock() && !loaded.contains(m) && !m.name().endsWith("SHULKER_BOX")
 							&& !m.name().endsWith("CORAL_FAN") && !m.name().endsWith("SAPLING")
 							&& !m.name().endsWith("_BANNER") && !m.name().endsWith("_HEAD")
 							&& !m.name().endsWith("CARPET") && !m.name().endsWith("STAINED_GLASS")
@@ -414,10 +414,11 @@ public class PixelPrinter extends JavaPlugin {
 							&& !m.name().endsWith("GLASS_PANE") && !m.name().endsWith("FENCE")
 							&& !m.name().endsWith("FENCE_GATE") && !m.name().endsWith("_BUTTON")
 							&& !m.name().endsWith("PRESSURE_PLATE") && !m.name().endsWith("_DOOR")) {
-						try{
-							if(!m.isLegacy())
+						try {
+							if (!m.isLegacy())
 								continue;
-						}catch(Error|Exception e4) {}
+						} catch (Error | Exception e4) {
+						}
 						mat.add(m);
 						// sb.append(ccc[color] + m.name() + ", &"+ChatColor.RESET.getChar());
 						// color = (color+1) % ccc.length;
@@ -594,12 +595,71 @@ public class PixelPrinter extends JavaPlugin {
 					sender.sendMessage(getPrefix() + " You do not have permission to perform this command");
 					return true;
 				}
+			} else if (args[0].equalsIgnoreCase("download") || args[0].equalsIgnoreCase("d")
+					|| args[0].equalsIgnoreCase("downloadimage") || args[0].equalsIgnoreCase("di")) {
+				if (args.length < 2) {
+					sender.sendMessage(prefix + " You must provide the file name");
+					return true;
+				}
+				if (!sender.hasPermission("pixelprinter.download")) {
+					sender.sendMessage(prefix + " You do not have permission to use this command.");
+					return true;
+				}
+				FileCreatorData fcd = new FileCreatorData(((args[0].equalsIgnoreCase("download") || args[0].equalsIgnoreCase("d"))?".txt":"fFind"), args[1]);
+				if (args.length == 2)
+					sender.sendMessage(prefix + " Now paste the link into the chat.");
+				if (args.length > 2) {
+					File outputfile = new File(
+							images + File.separator + fcd.getName() + (fcd.getType().equalsIgnoreCase(".txt") ? ".txt"
+									: (args[2].endsWith("gif") ? ".gif" : ".png")));
+					if (outputfile.exists()) {
+						sender.sendMessage(getPrefix()
+								+ " A file already exists with this name. Either choose a new name or contact the server admin to delete this image.");
+						return true;
+					}
+					if (fcd.getType().equalsIgnoreCase(".txt")) {
+						try {
+							BufferedWriter br = new BufferedWriter(new FileWriter(outputfile));
+							br.write(args[2]);
+							br.flush();
+							br.close();
+							sender.sendMessage(getPrefix() + " Completed downloading image path. File \""
+									+ outputfile.getName() + "\" created.");
+						} catch (IOException e2) {
+							sender.sendMessage(getPrefix()
+									+ " Something failed when downloading the image. Check console for details.");
+							e2.printStackTrace();
+						}
+					} else {
+						try {
+							if (args[2].toLowerCase().endsWith(".gif")) {
+								byte[] bytes = IOUtils.toByteArray(new URL(args[2]).openStream());
+								FileUtils.writeByteArrayToFile(outputfile, bytes);
+								sender.sendMessage(getPrefix() + " Completed downloading gif. File \""
+										+ outputfile.getName() + "\" created.");
+							} else {
+								BufferedImage bi = ImageIO.read(new URL(args[2]));
+								ImageIO.write(bi, "png", outputfile);
+								sender.sendMessage(getPrefix() + " Completed downloading image. File \""
+										+ outputfile.getName() + "\" created.");
+								bi.flush();
+							}
+						} catch (Exception er) {
+							sender.sendMessage(getPrefix()
+									+ " Something failed when downloading the image. Check console for details.");
+							er.printStackTrace();
+
+						}
+					}
+					// downloadFile.remove(player.getUniqueId());
+				}
+				return true;
 			} else
 
 			// Commands that require Player
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
-				if (args[0].equalsIgnoreCase("download") || args[0].equalsIgnoreCase("d")) {
+				/*if (args[0].equalsIgnoreCase("download") || args[0].equalsIgnoreCase("d")) {
 					if (args.length < 2) {
 						sender.sendMessage(prefix + " You must provide the file name");
 						return true;
@@ -676,7 +736,7 @@ public class PixelPrinter extends JavaPlugin {
 								images + File.separator + downloadFile.get(player.getUniqueId()).getName()
 										+ (downloadFile.get(player.getUniqueId()).getType().equalsIgnoreCase(".txt")
 												? ".txt"
-												: (args[2].endsWith("gif") ? ".gif" : ".jpg")));
+												: (args[2].endsWith("gif") ? ".gif" : ".png")));
 						if (outputfile.exists()) {
 							player.sendMessage(getPrefix()
 									+ " A file already exists with this name. Either choose a new name or contact the server admin to delete this image.");
@@ -686,11 +746,11 @@ public class PixelPrinter extends JavaPlugin {
 							if (args[2].toLowerCase().endsWith(".gif")) {
 								byte[] bytes = IOUtils.toByteArray(new URL(args[2]).openStream());
 								FileUtils.writeByteArrayToFile(outputfile, bytes);
-								player.sendMessage(getPrefix() + " Completed downloading image. File \""
+								player.sendMessage(getPrefix() + " Completed downloading gif. File \""
 										+ outputfile.getName() + "\" created.");
 							} else {
 								BufferedImage bi = ImageIO.read(new URL(args[2]));
-								ImageIO.write(bi, "jpg", outputfile);
+								ImageIO.write(bi, "png", outputfile);
 								player.sendMessage(getPrefix() + " Completed downloading image. File \""
 										+ outputfile.getName() + "\" created.");
 								bi.flush();
@@ -703,7 +763,7 @@ public class PixelPrinter extends JavaPlugin {
 						}
 						downloadFile.remove(player.getUniqueId());
 					}
-				} else if (args[0].equalsIgnoreCase("createFrame") || args[0].equalsIgnoreCase("cf")) {
+				} else */if (args[0].equalsIgnoreCase("createFrame") || args[0].equalsIgnoreCase("cf")) {
 					try {
 						if (args.length < 4) {
 							sender.sendMessage(prefix + " You must specify the image you want to render");
@@ -875,18 +935,13 @@ public class PixelPrinter extends JavaPlugin {
 					return true;
 				}
 			} else {
-				sender.sendMessage(getPrefix() + " The subbcomands " + args[0]
-						+ " does not exist. To see all commands or command useages, please type /pp help");
-				return true;
-			}
-			if (!(sender instanceof Player)) {
-
-				if (args[0].equalsIgnoreCase("download") || args[0].equalsIgnoreCase("d")
-						|| args[0].equalsIgnoreCase("downloadimage") || args[0].equalsIgnoreCase("di")) {
-					sender.sendMessage(prefix + " You cannot download images using the console (will fix later)");
+				{
+					sender.sendMessage(getPrefix() + " The subbcomands " + args[0]
+							+ " does not exist. To see all commands or command useages, please type /pp help");
 					return true;
 				}
 			}
+
 		}
 		return false;
 	}
