@@ -130,12 +130,8 @@ public class AsyncImageHolder extends Image {
 											|| (((int) bs.getRawData()) != ((int) rd))) {
 										if (PixelPrinter.isAbove113) {
 											bs.getBlock().setType(dh.md.getMaterial());
-											try {
-												if (bf != null) {
-
-													Update13Handler.setFacing(bs, bf);
-												}
-											} catch (Error | Exception e45) {
+											if (bf != null) {
+												Update13Handler.setFacing(bs, bf);
 											}
 										} else {
 											bs.setType(dh.md.getMaterial());
@@ -154,24 +150,30 @@ public class AsyncImageHolder extends Image {
 
 											@Override
 											public void run() {
-												boolean tryBoolean = false;
-												try {
-													tryBoolean = Update13Handler.isFacing(bs, bf2);
-															//(((org.bukkit.block.data.Directional) bs.getBlock()	.getBlockData()).getFacing() != bf2);
-												} catch (Error | Exception e5) {
-												}
+												boolean tryBoolean = Update13Handler.isFacing(bs, bf2);
 
 												if (bs.getBlock().getType() != dh.md.getMaterial()
-														|| (PixelPrinter.isAbove113 ? (bf2 != null ? tryBoolean : false)
-																: bs.getBlock().getData() != dh.md.getData())
-														|| bs.getBlock().getType() == Material.AIR)
-													Bukkit.broadcastMessage(PixelPrinter.getInstance().getPrefix()
-															+ "Incorrect value: " + dh.md.getMaterial().name() + ":"
-															+ dh.md.getData() + " is " + bs.getBlock().getType() + ":"
-															+ bs.getBlock().getData() + " at "
-															+ bs.getBlock().getLocation().getBlockX() + ","
-															+ bs.getBlock().getLocation().getBlockY() + ","
-															+ bs.getBlock().getLocation().getBlockZ());
+														|| ((bf2 != null) ? (!tryBoolean)
+																: (PixelPrinter.isAbove113 ? false
+																		: bs.getBlock().getData() != dh.md.getData()))
+														|| bs.getBlock().getType() == Material.AIR) {
+													if (bs.getBlock().getType().name().equals("VOID_AIR"))
+														return;
+													BlockFace test = null;
+													if (Update13Handler.isDirectional(bs.getBlock().getState())) {
+														test = Update13Handler.getFacing(bs.getBlock().getState());
+													}
+													for (Player p2 : minCorner.getWorld().getPlayers()) {
+														p2.sendMessage(PixelPrinter.getInstance().getPrefix()
+																+ "Incorrect value: " + dh.md.getMaterial().name() + ":"
+																+ ((bf2 != null) ? bf2.name() : dh.md.getData())
+																+ " is " + bs.getBlock().getType() + ":"
+																+ (test != null ? test.name() : bs.getBlock().getData())
+																+ " at " + bs.getBlock().getLocation().getBlockX() + ","
+																+ bs.getBlock().getLocation().getBlockY() + ","
+																+ bs.getBlock().getLocation().getBlockZ());
+													}
+												}
 											}
 										}.runTaskLater(PixelPrinter.getInstance(), 20 * 3);
 									} else {
@@ -186,6 +188,7 @@ public class AsyncImageHolder extends Image {
 
 						}
 					}.runTaskLater(PixelPrinter.getInstance(), 3 * timesTicked);
+
 				}
 
 				new BukkitRunnable() {

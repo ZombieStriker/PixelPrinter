@@ -1,3 +1,11 @@
+1.0.43
+	Fixed gif maps.
+	Fixed maps for 1.13.
+
+1.0.42
+	Fixed issue where directions were getting mixed up.
+	Fixed VOID AIR error appearing if image is cut off
+	Fixed issue for 1.13 where the materialIDs are stilled checked, even though all items should no longer have them
 1.0.41
 	Fixed error message if the player uses pp di in console.
 	Changed downloader so it saves as PNG
