@@ -1,7 +1,7 @@
 package me.zombie_striker.pixelprinter.util;
 
+import me.zombie_striker.pixelprinter.data.Direction;
 import me.zombie_striker.pixelprinter.data.IntHolder;
-import me.zombie_striker.pluginconstructor.Direction;
 
 import org.bukkit.Location;
 

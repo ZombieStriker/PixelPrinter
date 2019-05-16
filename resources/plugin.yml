@@ -1,0 +1,26 @@
+main: me.zombie_striker.pixelprinter.PixelPrinter
+version: ${project.version}
+name: PixelPrinter
+api-version: 1.13
+commands:
+  PixelPrinter:
+    description: Create images using blocks
+    aliases: [pp]
+permissions:
+   pixelprinter.*:
+     description: Gives access to all PixelPrinter commands
+     children:
+       pixelprinter.create: true
+       pixelprinter.download: true
+       pixelprinter.delete: true
+       pixelprinter.stop: true
+   pixelprinter.create:
+     description: Allows you create PixelPrinter images
+   pixelprinter.download:
+     description: Allows you to download images for the server to use
+   pixelprinter.stop:
+     description: Allows you to stop gifs on the server
+   pixelprinter.delete:
+     description: Allows you to delete images inside the /Pixelprinter/images/ directory
+author:
+   Zombie_Striker

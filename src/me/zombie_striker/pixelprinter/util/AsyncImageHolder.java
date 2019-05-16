@@ -25,8 +25,7 @@ import java.util.Map.Entry;
 
 import me.zombie_striker.pixelprinter.PixelPrinter;
 import me.zombie_striker.pixelprinter.data.*;
-import me.zombie_striker.pluginconstructor.*;
-import me.zombie_striker.pluginconstructor.RGBBlockColor.Pixel;
+import me.zombie_striker.pixelprinter.util.RGBBlockColor.Pixel;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -39,8 +38,14 @@ public class AsyncImageHolder extends Image {
 
 	private final Pixel[][] result;
 	private final BufferedImage bi;
+	private String name = null;
 
 	public AsyncImageHolder(Pixel[][] result1, Player p1, Location loc1, Direction dir1, BufferedImage bi1,
+			boolean enableTrans) {
+		this(null, result1, p1, loc1, dir1, bi1, enableTrans);
+	}
+
+	public AsyncImageHolder(String name, Pixel[][] result1, Player p1, Location loc1, Direction dir1, BufferedImage bi1,
 			boolean enableTrans) {
 		p = (p1 == null ? "Plugin" : p1.getName());
 		result = result1;
@@ -54,14 +59,15 @@ public class AsyncImageHolder extends Image {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void loadImage() {
+	public void loadImage(boolean allowUndo) {
 
-		// final List<DataHolder> holders = new ArrayList<>();
 		final IntHolder isDone = new IntHolder();
-		// final int fHeight = bi.getHeight() / 2;
 		isDone.setI(0);
 		for (Player p2 : minCorner.getWorld().getPlayers())
 			p2.sendMessage(PixelPrinter.getInstance().getPrefix() + " Loading image requested by " + p);
+		Location start = getBlockAt(0, bi.getHeight(), bi.getHeight());
+		Location end = getBlockAt(0, 0, bi.getHeight());
+		UndoUtil.addNewSnapshot(name, start, end);
 		new BukkitRunnable() {
 			public void run() {
 				final HashMap<String, List<DataHolder>> chunksorter = new HashMap<String, List<DataHolder>>();
@@ -69,7 +75,7 @@ public class AsyncImageHolder extends Image {
 				for (int width = 0; width < (bi.getWidth()); width += 2) {
 					for (int height = (bi.getHeight() - 1); height >= 0; height -= 2) {
 						Location b = getBlockAt(height, width, bi.getHeight());
-						if (b == null || b.getY() > 260) {
+						if (b == null || b.getY() > 256) {
 							continue;
 						}
 						Color[] color = new Color[4];
@@ -94,7 +100,6 @@ public class AsyncImageHolder extends Image {
 							temp.add(new DataHolder(b, m));
 							chunksorter.put(tempkey, temp);
 						}
-						// holders.add(new DataHolder(b, m));
 					}
 				}
 				int delayLoadingMessage = 0;
@@ -201,92 +206,10 @@ public class AsyncImageHolder extends Image {
 						}
 					}
 				}.runTaskLater(PixelPrinter.getInstance(), 3 * timesTicked);
-
-				/*
-				 * new BukkitRunnable() {
-				 * 
-				 * @Override public void run() { Chunk previusChunk =
-				 * holders.get(0).b.getChunk(); int lastUsedInt = 0; int timesTicked = 0; for
-				 * (int i = 0; i < holders.size(); i++) { if ((previusChunk.getX() !=
-				 * holders.get(i).b .getChunk().getX() || previusChunk.getZ() != holders
-				 * .get(i).b.getChunk().getZ()) || (i == holders.size() - 1)) { previusChunk =
-				 * holders.get(i).b.getChunk(); timesTicked++; final int starting = lastUsedInt;
-				 * final int end = i; new BukkitRunnable() {
-				 * 
-				 * @Override public void run() { for (int k = starting; k < end; k++) {
-				 * DataHolder dh = holders.get(k);
-				 * 
-				 * BlockState bs = dh.b.getBlock() .getState(); if (dh.md.getMaterial() !=
-				 * Material.AIR) { bs.setType(dh.md.getMaterial());
-				 * bs.setRawData(dh.md.getData()); bs.update(true, false); } }
-				 * 
-				 * if (end == holders.size() - 1) {
-				 * 
-				 * for (Player p2 : minCorner .getWorld().getPlayers())
-				 * p2.sendMessage(PixelPrinter .getInstance() .getPrefix() + " Done!"); } else {
-				 * 
-				 * for (Player p2 : minCorner .getWorld().getPlayers())
-				 * p2.sendMessage(PixelPrinter .getInstance() .getPrefix() + " Loading: " +
-				 * (int) ((((double) end) / holders .size()) * 100) + "%"); } }
-				 * }.runTaskLater(PixelPrinter.getInstance(), 3 * timesTicked);
-				 * 
-				 * lastUsedInt = i; if (i >= holders.size() - 1) break; } } }
-				 * }.runTask(PixelPrinter.getInstance());
-				 */
 			}
 		}.runTaskAsynchronously(PixelPrinter.getInstance());
-
-		/*
-		 * new BukkitRunnable() { public void run() { if (isDone.getI() == 0 ||
-		 * activated.getI() == 1) return; activated.setI(1); // final IntHolder maxSize
-		 * = new IntHolder(); //
-		 * maxSize.setI(fHeight*16/*PixelPrinter.getInstance().loadCount* /);
-		 * total.setI((holders.size() / (fHeight * 8)) /* holders.size() /
-		 * maxSize.getI() /);
-		 * 
-		 * for (int i = 0; i < (holders.size() / (fHeight * 8)) + 1 /* ((fWidth / 16))+
-		 * 1
-		 *//*
-			 * ( holders . size ( ) / maxSize . getI ( ) ) + 1 /; i++) { final int ii = i;
-			 * Bukkit.getScheduler().scheduleSyncDelayedTask( PixelPrinter.getInstance(),
-			 * new Runnable() { int k = ii; long tick = System.currentTimeMillis();
-			 * 
-			 * public void run() { for (int j = 0; j < (((fHeight * 8)))/* maxSize. getI ()
-			 * /; j++) { if (holders.size() <= ((k * (((fHeight * 8))))/* maxSize . getI ( )
-			 * ) /+ j)) { break; } DataHolder dh = holders .get((k * (((fHeight * 8)))/*
-			 * maxSize . getI ( ) /) + j);
-			 * 
-			 * BlockState bs = dh.b.getBlock() .getState(); bs.setType(dh.md.getMaterial());
-			 * bs.setRawData(dh.md.getData()); bs.update(true, false); //
-			 * NMSHandler.setBlockFast(dh.b.getWorld(), // dh.b.getBlockX(), // dh
-			 * .b.getBlockY(),dh.b.getBlockZ(),dh.md.getMaterial().getId(),dh.md
-			 * .getData()); } done.setI(k);
-			 * 
-			 * if (System.currentTimeMillis() - tick > 1000) { tick =
-			 * System.currentTimeMillis(); for (Player p2 : minCorner.getWorld()
-			 * .getPlayers()) p2.sendMessage(PixelPrinter .getInstance().getPrefix() +
-			 * " Loading: " + (int) ((((double) done .getI()) / total .getI()) * 100) +
-			 * "%"); } if (total.getI() <= done.getI()) { for (Player p2 :
-			 * minCorner.getWorld() .getPlayers()) p2.sendMessage(PixelPrinter
-			 * .getInstance().getPrefix() + " Done!"); System.out.println(PixelPrinter
-			 * .getInstance().getPrefix() + " Done creating image.");
-			 * Bukkit.getScheduler().cancelTask( id.getI()); }
-			 * 
-			 * } }, 20/* i * 20 / 5 + (25 * (/*i / 5)) * /); } }
-			 * }.runTaskTimer(PixelPrinter.getInstance(), 4, 5);
-			 */
 	}
-
-	/*
-	 * class DataHolder { MaterialData md; Location b; boolean hasFaces = false;
-	 * 
-	 * public DataHolder(Location b, MaterialData md) { this(b, md, false); }
-	 * 
-	 * public DataHolder(Location b, MaterialData md, boolean hasFaces) { this.b =
-	 * b; this.md = md; this.hasFaces = hasFaces; } public boolean hasFaces() {
-	 * return hasFaces; } }
-	 */
-
+	
 	public static BlockFace getBlockFace(DataHolder dh, Direction dir) {
 
 		try {

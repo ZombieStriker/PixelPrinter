@@ -7,12 +7,12 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
-import me.zombie_striker.pluginconstructor.*;
-import me.zombie_striker.pluginconstructor.RGBBlockColor.Pixel;
-
 import org.bukkit.Location;
 
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+
+import me.zombie_striker.pixelprinter.data.Direction;
+import me.zombie_striker.pixelprinter.util.RGBBlockColor.Pixel;
 
 public class SkinCreator {
 
@@ -494,7 +494,7 @@ public class SkinCreator {
 		BufferedImage temp = skin2;
 		Pixel[][] result = RGBBlockColor.convertTo2DWithoutUsingGetRGB(temp);
 		new AsyncImageHolder(result, null, getOffset(loc, f, x, y, z), d, temp,
-				enableTrans).loadImage();
+				enableTrans).loadImage(false);
 	}
 
 	public static Location getOffset(Location start, Direction d, double xoff,

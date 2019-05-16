@@ -9,7 +9,6 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.zombie_striker.pixelprinter.PixelPrinter;
-import me.zombie_striker.pluginconstructor.MaterialData;
 
 public class DataHolder implements ConfigurationSerializable {
 	public MaterialData md;

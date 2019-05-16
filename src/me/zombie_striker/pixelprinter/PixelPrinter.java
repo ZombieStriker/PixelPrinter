@@ -20,9 +20,12 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,8 +37,6 @@ import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -48,19 +49,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.pixelprinter.data.FileCreatorData;
-import me.zombie_striker.pixelprinter.util.AsyncImageHolder;
-import me.zombie_striker.pixelprinter.util.GifHolder;
-import me.zombie_striker.pixelprinter.util.SkinCreator;
-import me.zombie_striker.pluginconstructor.Direction;
-import me.zombie_striker.pluginconstructor.MapWallUtil;
-import me.zombie_striker.pluginconstructor.MaterialData;
-import me.zombie_striker.pluginconstructor.MojangAPI;
-import me.zombie_striker.pluginconstructor.PluginConstructorAPI;
-import me.zombie_striker.pluginconstructor.RGBBlockColor;
-import me.zombie_striker.pluginconstructor.RGBBlockColor.Pixel;
-import me.zombie_striker.pluginconstructor.RGBChatColor;
-import me.zombie_striker.pluginconstructor.ReflectionUtilREMOVELATEER;
+import me.zombie_striker.pixelprinter.data.*;
+import me.zombie_striker.pixelprinter.util.*;
+import me.zombie_striker.pixelprinter.util.RGBBlockColor.Pixel;
 
 public class PixelPrinter extends JavaPlugin {
 
@@ -90,21 +81,30 @@ public class PixelPrinter extends JavaPlugin {
 
 	private ArrayList<String> cAU = new ArrayList<>();
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void onEnable() {
+		new BukkitRunnable() {
+
+			@Override
+			public void run() {
+				File mapFolder = new File(getDataFolder(), "mapdata");
+				if (!mapFolder.exists())
+					mapFolder.mkdirs();
+				SimilarMapUtil.registerAllMaps(mapFolder);
+			}
+		}.runTaskLater(this, 1);
+
 		GifHolder.registerClass();
 
 		// Download the API dependancy
-		try {
-			if (Bukkit.getPluginManager().getPlugin("PluginConstructorAPI") == null)
-				GithubDependDownloader.autoUpdate(this,
-						new File(getDataFolder().getParentFile(), "PluginConstructorAPI.jar"), "ZombieStriker",
-						"PluginConstructorAPI", "PluginConstructorAPI.jar");
-			// new DependencyDownloader(this, 276723);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		/*
+		 * try { if (Bukkit.getPluginManager().getPlugin("PluginConstructorAPI") ==
+		 * null) GithubDependDownloader.autoUpdate(this, new
+		 * File(getDataFolder().getParentFile(), "PluginConstructorAPI.jar"),
+		 * "ZombieStriker", "PluginConstructorAPI", "PluginConstructorAPI.jar"); // new
+		 * DependencyDownloader(this, 276723); } catch (Exception e) {
+		 * e.printStackTrace(); }
+		 */
 		new BukkitRunnable() {
 			@Override
 			public void run() {
@@ -132,7 +132,8 @@ public class PixelPrinter extends JavaPlugin {
 
 		// This will attempt to load the resourcepack.
 		try {
-			PluginConstructorAPI.loadCustomTextures(resoucepackFolder);
+			RGBBlockColor.activateBlocks();
+			RGBBlockColor.loadResourcepackTextures(resoucepackFolder);
 		} catch (NoClassDefFoundError e) {
 			e.printStackTrace();
 		}
@@ -179,7 +180,7 @@ public class PixelPrinter extends JavaPlugin {
 			supportedMaterials = null;
 		}
 		try {
-			isAbove113 = ReflectionUtilREMOVELATEER.isVersionHigherThan(1, 13);
+			isAbove113 = ReflectionUtil.isVersionHigherThan(1, 13);
 		} catch (Error | Exception e45) {
 
 		}
@@ -268,6 +269,8 @@ public class PixelPrinter extends JavaPlugin {
 					ls.add("HELP");
 				if ("?".toLowerCase().startsWith(args[0].toLowerCase()))
 					ls.add("?");
+				if ("undo".toLowerCase().startsWith(args[0].toLowerCase()))
+					ls.add("undo");
 				if ("create".toLowerCase().startsWith(args[0].toLowerCase()))
 					ls.add("create");
 				if ("createskin".toLowerCase().startsWith(args[0].toLowerCase()))
@@ -311,6 +314,12 @@ public class PixelPrinter extends JavaPlugin {
 							ls.add(f.getName());
 					}
 				}
+				return ls;
+			} else if (args[0].equalsIgnoreCase("undo")) {
+				List<String> ls = new ArrayList<String>();
+				for (String dir : UndoUtil.getSnapshots())
+					if (dir.toLowerCase().startsWith(args[1].toLowerCase()))
+						ls.add(dir);
 				return ls;
 			} else if (args[0].equalsIgnoreCase("createSkin")) {
 				if (args.length == 2) {
@@ -375,13 +384,12 @@ public class PixelPrinter extends JavaPlugin {
 				if (args.length > 1) {
 					try {
 						page = Integer.parseInt(args[1]) - 1;
-						if (page < 1)
-							page = 1;
+						if (page < 0)
+							page = 0;
 					} catch (Exception e) {
 					}
 				}
 				final int msgPerPage = 12;
-
 				sender.sendMessage(
 						getPrefix() + " ===== Page: " + (page + 1) + "/ " + ((cAU.size() / msgPerPage) + 1) + " =====");
 				for (int i = page * msgPerPage; i < (page * msgPerPage) + msgPerPage; i++) {
@@ -431,8 +439,6 @@ public class PixelPrinter extends JavaPlugin {
 				for (Material a : mat)
 					test.addItem(new ItemStack(a));
 				((Player) sender).openInventory(test);
-				// Bukkit.broadcastMessage("unused " +
-				// ChatColor.translateAlternateColorCodes('&', sb.toString()));
 
 			} else if (args.length > 0 && args[0].equalsIgnoreCase("list")) {
 				sender.sendMessage(getPrefix() + " All the saved images:");
@@ -502,7 +508,7 @@ public class PixelPrinter extends JavaPlugin {
 																												// 2,
 																												// true);
 																												// //
-																												// ==================================================
+				// ==================================================
 				final Pixel[][] result = RGBBlockColor.convertTo2DWithoutUsingGetRGB(bi2);
 
 				int wMin = 0;
@@ -635,8 +641,9 @@ public class PixelPrinter extends JavaPlugin {
 					} else {
 						try {
 							if (args[2].toLowerCase().endsWith(".gif")) {
-								byte[] bytes = IOUtils.toByteArray(new URL(args[2]).openStream());
-								FileUtils.writeByteArrayToFile(outputfile, bytes);
+								//byte[] bytes = IOUtils.toByteArray(new URL(args[2]).openStream());
+								//FileUtils.writeByteArrayToFile(outputfile, bytes);
+								saveImage(new URL(args[2]), outputfile);
 								sender.sendMessage(getPrefix() + " Completed downloading gif. File \""
 										+ outputfile.getName() + "\" created.");
 							} else {
@@ -824,6 +831,23 @@ public class PixelPrinter extends JavaPlugin {
 									+ " seconds before issuing the command again.");
 						}
 					}
+				} else if (args[0].equalsIgnoreCase("undo")) {
+					if (args.length < 2) {
+						sender.sendMessage(prefix + " You must provide all the required arguments.");
+						return true;
+					}
+					if (!UndoUtil.snapshotExists(args[1])) {
+						sender.sendMessage(prefix + " There is no snapshot registered with that name,");
+						return true;
+					}
+
+					if (player.hasPermission("pixelprinter.create")) {
+						UndoUtil.undo(args[1]);
+						sender.sendMessage(prefix
+								+ " Image has been undone. If you made a mistake, or wish to have that image again, resend the command to have the image reappear.");
+					} else {
+						sender.sendMessage(prefix + " You do not have permission to undo images.");
+					}
 				} else if (args[0].equalsIgnoreCase("create")) {
 					if (args.length < 4) {
 						sender.sendMessage(prefix + " You must provide all the required arguments.");
@@ -867,7 +891,7 @@ public class PixelPrinter extends JavaPlugin {
 										BufferedImage bi2;
 										try {
 											bi2 = ImageIO.read(new URL(urlString));
-											createImage(player, bi2, dir, height, enableTrans);
+											createImage(player, bi2, dir, height, enableTrans, loadedImage.getName());
 										} catch (IOException e) {
 											sender.sendMessage(prefix
 													+ " Error: The image cannot be found. Make sure that the link is valid and that the image still exists.");
@@ -879,7 +903,7 @@ public class PixelPrinter extends JavaPlugin {
 							} else {
 								try {
 									BufferedImage bi2 = ImageIO.read(loadedImage);
-									createImage(player, bi2, dir, height, enableTrans);
+									createImage(player, bi2, dir, height, enableTrans, loadedImage.getName());
 								} catch (Exception e) {
 									sender.sendMessage(
 											getPrefix() + " Something failed. Please check console for more details.");
@@ -902,6 +926,7 @@ public class PixelPrinter extends JavaPlugin {
 
 		}
 		return false;
+
 	}
 
 	public void createMap(Direction dir, Player p, BufferedImage bi2, int height) {
@@ -922,7 +947,7 @@ public class PixelPrinter extends JavaPlugin {
 		}
 	}
 
-	public void createImage(Player p, BufferedImage bi, String dir, int height, boolean enableTrans) {
+	public void createImage(Player p, BufferedImage bi, String dir, int height, boolean enableTrans, String name) {
 		bi = RGBBlockColor.resize(bi, (int) (bi.getWidth() * (((double) height) * 2 / bi.getHeight())), height * 2);
 		Pixel[][] result = RGBBlockColor.convertTo2DWithoutUsingGetRGB(bi);
 		final Location loc1 = p.getLocation().clone();
@@ -930,7 +955,7 @@ public class PixelPrinter extends JavaPlugin {
 			p.sendMessage(prefix + " You must provide a valid direction.");
 			return;
 		}
-		new AsyncImageHolder(result, p, loc1, Direction.getDir(dir), bi, enableTrans).loadImage();
+		new AsyncImageHolder(name, result, p, loc1, Direction.getDir(dir), bi, enableTrans).loadImage(true);
 	}
 
 	public void createGif(String[] args, final Location loc, int height, final String dir, final Player p) {
@@ -992,7 +1017,22 @@ public class PixelPrinter extends JavaPlugin {
 	public File getImageFile() {
 		return this.images;
 	}
+	
+	public static void saveImage(URL url, File file) throws IOException {
+	    InputStream is = url.openStream();
+	    file.getParentFile().mkdirs();
+	    file.createNewFile();
+	    OutputStream os = new FileOutputStream(file);
 
+	    byte[] b = new byte[2048];
+	    int length;
+
+	    while ((length = is.read(b)) != -1) {
+	        os.write(b, 0, length);
+	    }
+	    is.close();
+	    os.close();
+	}
 	/*
 	 * public BufferedImage createResizedCopy(BufferedImage originalImage, int
 	 * scaledHeight, boolean preserveAlpha) { int imageType =

@@ -26,8 +26,7 @@ import javax.imageio.stream.ImageInputStream;
 
 import me.zombie_striker.pixelprinter.PixelPrinter;
 import me.zombie_striker.pixelprinter.data.*;
-import me.zombie_striker.pluginconstructor.*;
-import me.zombie_striker.pluginconstructor.RGBBlockColor.Pixel;
+import me.zombie_striker.pixelprinter.util.RGBBlockColor.Pixel;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
