@@ -1,18 +1,16 @@
 package me.zombie_striker.pixelprinter.util;
 
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.lang.reflect.Method;
-import java.net.URL;
-
-import javax.imageio.ImageIO;
-
-import org.bukkit.Location;
-
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
-
 import me.zombie_striker.pixelprinter.data.Direction;
 import me.zombie_striker.pixelprinter.util.RGBBlockColor.Pixel;
+import org.bukkit.Location;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Method;
+import java.net.URL;
 
 public class SkinCreator {
 
@@ -35,18 +33,19 @@ public class SkinCreator {
 				throw new NullPointerException();
 			}
 			String decode;
-			try{
-				linecode =39;
-				Method m = Class.forName("javax.xml.bind.DatatypeConverter").getMethod("parseBase64Binary", new Class[] {String.class});
-				decode = new String(/*
-					javax.xml.bind.DatatypeConverter.parseBase64Binary(*/(String) m.invoke(null, aaaa[1]
-							.split("\"}],\"legacy\"")[0].split("\"}}}")[0].split("\"")[0]));
-			}catch(Error|Exception e4) {
-				linecode =45;
+			try {
+				linecode = 39;
+				Method m = Class.forName("javax.xml.bind.DatatypeConverter").getMethod("parseBase64Binary", String.class);
+				/*
+					javax.xml.bind.DatatypeConverter.parseBase64Binary(*/
+				decode = (String) m.invoke(null, aaaa[1]
+						.split("\"}],\"legacy\"")[0].split("\"}}}")[0].split("\"")[0]);
+			} catch (Error | Exception e4) {
+				linecode = 45;
 				decode = new String(Base64.decode(aaaa[1]
-							.split("\"}],\"legacy\"")[0].split("\"}}}")[0].split("\"")[0]));
+						.split("\"}],\"legacy\"")[0].split("\"}}}")[0].split("\"")[0]));
 			}
-			linecode =49;
+			linecode = 49;
 			System.out.println(decode);
 			String url = decode.split("url\":\"")[1].split("\"}")[0].split("\",\"")[0];
 			linecode = 52;
@@ -62,17 +61,17 @@ public class SkinCreator {
 			return images;
 		} catch (NullPointerException e) {
 			System.out
-					.println("The Mojang servers denied the request. Wait a minute or so until you are allowed to get the texture again."+linecode);
+					.println("The Mojang servers denied the request. Wait a minute or so until you are allowed to get the texture again." + linecode);
 			throw new NullPointerException();
 		} catch (IOException e2) {
-			System.out.println("The user does not exist- ErrorLineCode="+linecode+".");
+			System.out.println("The user does not exist- ErrorLineCode=" + linecode + ".");
 			throw new IOException();
 		}
 	}
 
 	@SuppressWarnings("deprecation")
 	public static void createStatue(BufferedImage[] images, Location center,
-			Direction dir) {
+									Direction dir) {
 		BufferedImage skin = images[0];
 		BufferedImage cape = images[1];
 
@@ -83,45 +82,45 @@ public class SkinCreator {
 		Direction flat = null;
 
 		switch (front) {
-		case UP_EAST:
-			back = Direction.UP_WEST;
-			right = Direction.UP_NORTH;
-			left = Direction.UP_SOUTH;
-			flat = Direction.FLAT_SOUTHEAST;
-			break;
-		case UP_WEST:
-			back = Direction.UP_EAST;
-			right = Direction.UP_SOUTH;
-			left = Direction.UP_NORTH;
-			flat = Direction.FLAT_NORTHWEST;
-			break;
-		case UP_NORTH:
-			back = Direction.UP_SOUTH;
-			right = Direction.UP_EAST;
-			left = Direction.UP_WEST;
-			flat = Direction.FLAT_SOUTHEAST;
-			break;
-		case UP_SOUTH:
-			back = Direction.UP_NORTH;
-			right = Direction.UP_WEST;
-			left = Direction.UP_EAST;
-			flat = Direction.FLAT_NORTHWEST;
-			break;
-		default:
-			break;
+			case UP_EAST:
+				back = Direction.UP_WEST;
+				right = Direction.UP_NORTH;
+				left = Direction.UP_SOUTH;
+				flat = Direction.FLAT_SOUTHEAST;
+				break;
+			case UP_WEST:
+				back = Direction.UP_EAST;
+				right = Direction.UP_SOUTH;
+				left = Direction.UP_NORTH;
+				flat = Direction.FLAT_NORTHWEST;
+				break;
+			case UP_NORTH:
+				back = Direction.UP_SOUTH;
+				right = Direction.UP_EAST;
+				left = Direction.UP_WEST;
+				flat = Direction.FLAT_SOUTHEAST;
+				break;
+			case UP_SOUTH:
+				back = Direction.UP_NORTH;
+				right = Direction.UP_WEST;
+				left = Direction.UP_EAST;
+				flat = Direction.FLAT_NORTHWEST;
+				break;
+			default:
+				break;
 		}
 		/**
-		 * 
+		 *
 		 * This code would be right, If the direction the block is facing is the
 		 * same as the direction of the wall.
-		 * 
+		 *
 		 * switch (front) {
-		 * 
+		 *
 		 * case UP_SOUTH: back = Direction.UP_NORTH; right = Direction.UP_WEST;
 		 * left = Direction.UP_EAST; flat = Direction.FLAT_SOUTHWEST; break;
 		 * case UP_NORTH: back = Direction.UP_SOUTH; right = Direction.UP_EAST;
 		 * left = Direction.UP_WEST; flat = Direction.FLAT_NORTHEAST;
-		 * 
+		 *
 		 * break; case UP_EAST: back = Direction.UP_WEST; right =
 		 * Direction.UP_SOUTH; left = Direction.UP_NORTH; flat =
 		 * Direction.FLAT_SOUTHEAST; break; case UP_WEST: back =
@@ -409,7 +408,7 @@ public class SkinCreator {
 					flat,
 					front,
 					RGBBlockColor.createResizedCopy(
-							skin.getSubimage(32+16, 0, 8, 8), 16, true), true);
+							skin.getSubimage(32 + 16, 0, 8, 8), 16, true), true);
 			a(-3,
 					32,
 					-3,
@@ -417,7 +416,7 @@ public class SkinCreator {
 					flat,
 					front,
 					RGBBlockColor.createResizedCopy(
-							skin.getSubimage(32+8, 0, 8, 8), 16, true), true);
+							skin.getSubimage(32 + 8, 0, 8, 8), 16, true), true);
 
 			a(-3,
 					24,
@@ -426,7 +425,7 @@ public class SkinCreator {
 					right,
 					front,
 					RGBBlockColor.createResizedCopy(
-							skin.getSubimage(32+0, 8, 8, 8), 16,true), true);
+							skin.getSubimage(32 + 0, 8, 8, 8), 16, true), true);
 			a(4,
 					24,
 					5,//4,
@@ -434,7 +433,7 @@ public class SkinCreator {
 					left,
 					front,
 					RGBBlockColor.createResizedCopy(
-							skin.getSubimage(32+16, 8, 8, 8), 16, true), true);
+							skin.getSubimage(32 + 16, 8, 8, 8), 16, true), true);
 			a(-4,//-3,
 					24,
 					4,
@@ -442,7 +441,7 @@ public class SkinCreator {
 					back,
 					front,
 					RGBBlockColor.createResizedCopy(
-							skin.getSubimage(32+24, 8, 8, 8), 16,true), true);
+							skin.getSubimage(32 + 24, 8, 8, 8), 16, true), true);
 			a(5,//4,
 					24,
 					-3,
@@ -450,7 +449,7 @@ public class SkinCreator {
 					front,
 					front,
 					RGBBlockColor.createResizedCopy(
-							skin.getSubimage(32+8, 8, 8, 8), 16, true), true);
+							skin.getSubimage(32 + 8, 8, 8, 8), 16, true), true);
 		}
 
 		if (cape != null) {
@@ -467,12 +466,12 @@ public class SkinCreator {
 	}
 
 	private static void a(int x, int y, int z, Location loc, Direction d,
-			Direction f, BufferedImage skin2) {
+						  Direction f, BufferedImage skin2) {
 		a(x, y, z, loc, d, f, skin2, false);
 	}
 
 	private static void a(int x, int y, int z, Location loc, Direction d,
-			Direction f, BufferedImage skin2, boolean enableTrans) {
+						  Direction f, BufferedImage skin2, boolean enableTrans) {
 
 		if (d == Direction.UP_EAST) {
 			d = Direction.UP_SOUTH;
@@ -498,7 +497,7 @@ public class SkinCreator {
 	}
 
 	public static Location getOffset(Location start, Direction d, double xoff,
-			int yoff, double zoff) {
+									 int yoff, double zoff) {
 		if (d == Direction.UP_SOUTH) {
 			return start.clone().add(-zoff, yoff, -xoff);
 		}

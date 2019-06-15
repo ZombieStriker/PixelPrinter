@@ -1,20 +1,20 @@
 package me.zombie_striker.pixelprinter.util;
 
+import org.bukkit.Bukkit;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-import org.bukkit.Bukkit;
-
 /**
  * A small help with reflection
  */
 public class ReflectionUtil {
 	private static final String SERVER_VERSION;
-	
-	
+
+
 	static {
 		String name = Bukkit.getServer().getClass().getName();
 		name = name.substring(name.indexOf("craftbukkit.")
@@ -22,8 +22,9 @@ public class ReflectionUtil {
 		name = name.substring(0, name.indexOf("."));
 		SERVER_VERSION = name;
 	}
+
 	public static boolean isVersionHigherThan(int mainVersion,
-			int secondVersion) {
+											  int secondVersion) {
 		String firstChar = SERVER_VERSION.substring(1, 2);
 		int fInt = Integer.parseInt(firstChar);
 		if (fInt < mainVersion)
@@ -36,17 +37,13 @@ public class ReflectionUtil {
 			secondChar.append(SERVER_VERSION.charAt(i));
 		}
 		int sInt = Integer.parseInt(secondChar.toString());
-		if (sInt < secondVersion)
-			return false;
-		return true;
+		return sInt >= secondVersion;
 	}
 
 	/**
 	 * Returns the NMS class.
-	 * 
-	 * @param name
-	 *            The name of the class
-	 * 
+	 *
+	 * @param name The name of the class
 	 * @return The NMS class or null if an error occurred
 	 */
 	public static Class<?> getNMSClass(String name) {
@@ -61,15 +58,13 @@ public class ReflectionUtil {
 
 	/**
 	 * Returns the CraftBukkit class.
-	 * 
-	 * @param name
-	 *            The name of the class
-	 * 
+	 *
+	 * @param name The name of the class
 	 * @return The CraftBukkit class or null if an error occurred
 	 */
 
 	public static Class<?> getCraftbukkitClass(String name,
-			String packageName) {
+											   String packageName) {
 		try {
 			return Class.forName("org.bukkit.craftbukkit." + SERVER_VERSION
 					+ "." + packageName + "." + name);
@@ -81,10 +76,8 @@ public class ReflectionUtil {
 
 	/**
 	 * Returns the CraftBukkit class.
-	 * 
-	 * @param name
-	 *            The name of the class
-	 * 
+	 *
+	 * @param name The name of the class
 	 * @return The CraftBukkit class or null if an error occurred
 	 */
 
@@ -100,10 +93,8 @@ public class ReflectionUtil {
 
 	/**
 	 * Returns the mojang.authlib class.
-	 * 
-	 * @param name
-	 *            The name of the class
-	 * 
+	 *
+	 * @param name The name of the class
 	 * @return The mojang.authlib class or null if an error occurred
 	 */
 
@@ -118,46 +109,35 @@ public class ReflectionUtil {
 
 	/**
 	 * Invokes the method
-	 * 
-	 * @param handle
-	 *            The handle to invoke it on
-	 * @param methodName
-	 *            The name of the method
-	 * @param parameterClasses
-	 *            The parameter types
-	 * @param args
-	 *            The arguments
-	 * 
+	 *
+	 * @param handle           The handle to invoke it on
+	 * @param methodName       The name of the method
+	 * @param parameterClasses The parameter types
+	 * @param args             The arguments
 	 * @return The resulting object or null if an error occurred / the
-	 *         method didn't return a thing
+	 * method didn't return a thing
 	 */
 	@SuppressWarnings("rawtypes")
 	public static Object invokeMethod(Object handle, String methodName,
-			Class[] parameterClasses, Object... args) {
+									  Class[] parameterClasses, Object... args) {
 		return invokeMethod(handle.getClass(), handle, methodName,
 				parameterClasses, args);
 	}
 
 	/**
 	 * Invokes the method
-	 * 
-	 * @param clazz
-	 *            The class to invoke it from
-	 * @param handle
-	 *            The handle to invoke it on
-	 * @param methodName
-	 *            The name of the method
-	 * @param parameterClasses
-	 *            The parameter types
-	 * @param args
-	 *            The arguments
-	 * 
+	 *
+	 * @param clazz            The class to invoke it from
+	 * @param handle           The handle to invoke it on
+	 * @param methodName       The name of the method
+	 * @param parameterClasses The parameter types
+	 * @param args             The arguments
 	 * @return The resulting object or null if an error occurred / the
-	 *         method didn't return a thing
+	 * method didn't return a thing
 	 */
 	@SuppressWarnings("rawtypes")
 	public static Object invokeMethod(Class<?> clazz, Object handle,
-			String methodName, Class[] parameterClasses, Object... args) {
+									  String methodName, Class[] parameterClasses, Object... args) {
 		Optional<Method> methodOptional = getMethod(clazz, methodName,
 				parameterClasses);
 
@@ -177,17 +157,14 @@ public class ReflectionUtil {
 
 	/**
 	 * Sets the value of an instance field
-	 * 
-	 * @param handle
-	 *            The handle to invoke it on
-	 * @param name
-	 *            The name of the field
-	 * @param value
-	 *            The new value of the field
+	 *
+	 * @param handle The handle to invoke it on
+	 * @param name   The name of the field
+	 * @param value  The new value of the field
 	 */
 	@SuppressWarnings("deprecation")
 	public static void setInstanceField(Object handle, String name,
-			Object value) {
+										Object value) {
 		Class<?> clazz = handle.getClass();
 		Optional<Field> fieldOptional = getField(clazz, name);
 		if (!fieldOptional.isPresent()) {
@@ -207,12 +184,9 @@ public class ReflectionUtil {
 
 	/**
 	 * Sets the value of an instance field
-	 * 
-	 * @param handle
-	 *            The handle to invoke it on
-	 * @param name
-	 *            The name of the field
-	 * 
+	 *
+	 * @param handle The handle to invoke it on
+	 * @param name   The name of the field
 	 * @return The result
 	 */
 	@SuppressWarnings("deprecation")
@@ -236,12 +210,9 @@ public class ReflectionUtil {
 
 	/**
 	 * Returns an enum constant
-	 * 
-	 * @param enumClass
-	 *            The class of the enum
-	 * @param name
-	 *            The name of the enum constant
-	 * 
+	 *
+	 * @param enumClass The class of the enum
+	 * @param name      The name of the enum constant
 	 * @return The enum entry or null
 	 */
 	public static Object getEnumConstant(Class<?> enumClass, String name) {
@@ -258,17 +229,14 @@ public class ReflectionUtil {
 
 	/**
 	 * Returns the constructor
-	 * 
-	 * @param clazz
-	 *            The class
-	 * @param params
-	 *            The Constructor parameters
-	 * 
+	 *
+	 * @param clazz  The class
+	 * @param params The Constructor parameters
 	 * @return The Constructor or an empty Optional if there is none with
-	 *         these parameters
+	 * these parameters
 	 */
 	public static Optional<?> getConstructor(Class<?> clazz,
-			Class<?>... params) {
+											 Class<?>... params) {
 		try {
 			return Optional.of(clazz.getConstructor(params));
 		} catch (NoSuchMethodException e) {
@@ -283,16 +251,13 @@ public class ReflectionUtil {
 
 	/**
 	 * Instantiates the class. Will print the errors it gets
-	 * 
-	 * @param constructor
-	 *            The constructor
-	 * @param arguments
-	 *            The initial arguments
-	 * 
+	 *
+	 * @param constructor The constructor
+	 * @param arguments   The initial arguments
 	 * @return The resulting object, or null if an error occurred.
 	 */
 	public static Object instantiate(Constructor<?> constructor,
-			Object... arguments) {
+									 Object... arguments) {
 		try {
 			return constructor.newInstance(arguments);
 		} catch (InstantiationException | IllegalAccessException
@@ -303,7 +268,7 @@ public class ReflectionUtil {
 	}
 
 	public static Optional<Method> getMethod(Class<?> clazz, String name,
-			Class<?>... params) {
+											 Class<?>... params) {
 		try {
 			return Optional.of(clazz.getMethod(name, params));
 		} catch (NoSuchMethodException e) {
@@ -316,14 +281,17 @@ public class ReflectionUtil {
 		}
 		return Optional.empty();
 	}
+
 	public static Optional<Field> getField(Class<?> clazz, String name) {
 		try {
 			return Optional.of(clazz.getField(name));
-		} catch (NoSuchFieldException e){}
+		} catch (NoSuchFieldException e) {
+		}
 
 		try {
 			return Optional.of(clazz.getDeclaredField(name));
-		} catch (NoSuchFieldException e) {}
+		} catch (NoSuchFieldException e) {
+		}
 		return Optional.empty();
 	}
 }

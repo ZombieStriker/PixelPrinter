@@ -1,11 +1,6 @@
 package me.zombie_striker.pixelprinter.util;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
+import me.zombie_striker.pixelprinter.data.CustomMapView;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +8,10 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
-import me.zombie_striker.pixelprinter.data.CustomMapView;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class SimilarMapUtil {
 
@@ -57,7 +55,7 @@ public class SimilarMapUtil {
 	public static int findSimilarImage(BufferedImage image) {
 		for (File f : mapFolder.listFiles()) {
 			String filename = f.getName();
-			if(filename.contains("."))
+			if (filename.contains("."))
 				filename = filename.split("\\.")[0];
 			int id = Integer.parseInt(filename);
 			try {
@@ -87,10 +85,8 @@ public class SimilarMapUtil {
 	/**
 	 * Compares two images pixel by pixel.
 	 *
-	 * @param imgA
-	 *            the first image.
-	 * @param imgB
-	 *            the second image.
+	 * @param imgA the first image.
+	 * @param imgB the second image.
 	 * @return whether the images are both the same or not.
 	 */
 	public static boolean compareImages(BufferedImage imgA, BufferedImage imgB) {

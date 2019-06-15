@@ -4,15 +4,17 @@ public class FileCreatorData {
 
 	String fileType;
 	String fileName;
-	
-	public FileCreatorData(String t, String n){
+
+	public FileCreatorData(String t, String n) {
 		this.fileName = n;
 		this.fileType = t;
 	}
-	public String getName(){
+
+	public String getName() {
 		return this.fileName;
 	}
-	public String getType(){
+
+	public String getType() {
 		return this.fileType;
 	}
 }

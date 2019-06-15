@@ -1,3 +1,10 @@
+1.0.45
+    Fixed 1.14 support.
+    Fixed large image loading for 1.14+
+    Fixed long wait times/crashes for multiple images
+    Fixed /pp undo
+    Fixed issue where directions for rotated blocks are not correct
+
 1.0.44
 	Added 1.14 support
 	Added /pp undo to undo images. Does not affect blocks that are air

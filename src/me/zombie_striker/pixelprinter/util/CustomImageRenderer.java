@@ -15,16 +15,18 @@
  */
 package me.zombie_striker.pixelprinter.util;
 
-import java.awt.image.BufferedImage;
-
 import org.bukkit.entity.Player;
-import org.bukkit.map.*;
+import org.bukkit.map.MapCanvas;
+import org.bukkit.map.MapRenderer;
+import org.bukkit.map.MapView;
+
+import java.awt.image.BufferedImage;
 
 public class CustomImageRenderer extends MapRenderer {
 
+	public static int TICK_FOR_STILLS = 500;
 	private BufferedImage[] image;
 	private int frameCount = 0;
-	public static int TICK_FOR_STILLS = 500;
 
 	public CustomImageRenderer(BufferedImage[] bi, int ticks) {
 		super(true);

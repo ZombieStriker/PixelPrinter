@@ -1,13 +1,16 @@
 package me.zombie_striker.pixelprinter;
 
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URL;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import javax.imageio.ImageIO;
-
-import org.bukkit.event.*;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
 
 public class PPListener implements Listener {
 
@@ -29,11 +32,11 @@ public class PPListener implements Listener {
 			}
 			File outputfile = new File(
 					inst.images + File.separator + inst.downloadFile.get(e.getPlayer().getUniqueId()).getName()
-					// + inst.downloadFile.get(e.getPlayer().getUniqueId())
-					// .getType()
+							// + inst.downloadFile.get(e.getPlayer().getUniqueId())
+							// .getType()
 							+ (inst.downloadFile.get(e.getPlayer().getUniqueId()).getType().equalsIgnoreCase(".txt")
-									? ".txt"
-									: (e.getMessage().endsWith("gif") ? ".gif" : ".jpg")));
+							? ".txt"
+							: (e.getMessage().endsWith("gif") ? ".gif" : ".jpg")));
 			if (outputfile.exists()) {
 				e.getPlayer().sendMessage(inst.getPrefix()
 						+ " A file already exists with this name. Either choose a new name or contact the server admin to delete this image.");

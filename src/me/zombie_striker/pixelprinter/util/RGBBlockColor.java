@@ -15,30 +15,40 @@
  */
 package me.zombie_striker.pixelprinter.util;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Transparency;
-import java.awt.image.*;
-import java.io.*;
-import java.util.*;
-import java.util.Map.Entry;
-
-import javax.imageio.ImageIO;
-
-import org.bukkit.*;
+import me.zombie_striker.pixelprinter.data.MaterialData;
+import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
-import me.zombie_striker.pixelprinter.data.MaterialData;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Created by Zombie_Striker on 3/30/2016
  **/
 public class RGBBlockColor {
 
+	private static final String SERVER_VERSION;
 	public static Map<MaterialData, RGBBlockValue> materialValue = new HashMap<>();
+
+	static {
+		String name = Bukkit.getServer().getClass().getName();
+		name = name.substring(name.indexOf("craftbukkit.") + "craftbukkit.".length());
+		name = name.substring(0, name.indexOf("."));
+		SERVER_VERSION = name;
+	}
 
 	public static RGBValue getRGBFromMatData(MaterialData m) {
 		return getRGBFromMatData(m, false);
@@ -52,10 +62,255 @@ public class RGBBlockColor {
 		return null;
 	}
 
+	private static void add(int r1, int g1, int b1, String mat) {
+		new RGBBlockValue(new Color(r1, g1, b1), mat);
+	}
+
+	private static void add(int r1, int g1, int b1, String mat, int data) {
+		new RGBBlockValue(new Color(r1, g1, b1), mat, data);
+	}
+	private static void add(int r, int g, int b, String mat, int data, BlockFace face) {
+		add(r,g,b,r,g,b,r,g,b,r,g,b,mat,data,face);
+	}
+
+	private static void add(int r1, int g1, int b1, int r2, int g2, int b2, int r3, int g3, int b3, int r4, int g4, int b4, String mat) {
+		new RGBBlockValue(new Color(r1, g1, b1), new Color(r2, g2, b2), new Color(r3, g3, b3),
+				new Color(r4, g4, b4), mat);
+	}
+
+	private static void add(int r1, int g1, int b1, int r2, int g2, int b2, int r3, int g3, int b3, int r4, int g4, int b4, String mat, int data) {
+		new RGBBlockValue(new Color(r1, g1, b1), new Color(r2, g2, b2), new Color(r3, g3, b3),
+				new Color(r4, g4, b4), mat, data);
+	}
+
+	private static void add(int r1, int g1, int b1, int r2, int g2, int b2, int r3, int g3, int b3, int r4, int g4, int b4, String mat, int data, BlockFace face) {
+		new RGBBlockValue(new Color(r1, g1, b1), new Color(r2, g2, b2), new Color(r3, g3, b3),
+				new Color(r4, g4, b4), mat, data, face);
+	}
+
+
+
+
+	private static void add(int r1, int g1, int b1, String mat, int data, boolean top) {
+		new RGBBlockValue(new Color(r1, g1, b1), mat, data, top);
+	}
+
+	private static void add(int r1, int g1, int b1, int r2, int g2, int b2, int r3, int g3, int b3, int r4, int g4, int b4, String mat, int data, boolean top) {
+		new RGBBlockValue(new Color(r1, g1, b1), new Color(r2, g2, b2), new Color(r3, g3, b3),
+				new Color(r4, g4, b4), mat, data, top);
+	}
+
+	private static void add(int r1, int g1, int b1, int r2, int g2, int b2, int r3, int g3, int b3, int r4, int g4, int b4, String mat, boolean top) {
+		new RGBBlockValue(new Color(r1, g1, b1), new Color(r2, g2, b2), new Color(r3, g3, b3),
+				new Color(r4, g4, b4), mat, 0, top);
+	}
+
 	@SuppressWarnings("deprecation")
 	public static void activateBlocks() {
 
 		if (ReflectionUtil.isVersionHigherThan(1, 14)) {
+
+
+			add(102,95,86,105,98,89,104,97,88,104,97,88,"ACACIA_LOG");
+			add(169,91,51,169,91,51,169,91,51,167,90,51,"ACACIA_PLANKS");
+			add(137,137,137,135,136,137,136,136,137,138,138,138,"ANDESITE");
+			add(112,85,53,106,80,50,111,84,51,104,78,48,"BARREL");
+			add(85,85,85,81,81,81,81,81,81,94,94,94,"BEDROCK");
+			add(209,207,202,225,224,220,221,220,215,212,210,205,"BIRCH_LOG");
+			add(194,177,122,193,176,121,194,176,122,191,175,121,"BIRCH_PLANKS");
+			add(8,10,15,9,11,16,9,11,16,9,11,16,"BLACK_CONCRETE");
+			add(26,28,33,26,27,32,26,27,33,25,27,32,"BLACK_CONCRETE_POWDER");
+			add(88,37,40,65,22,23,64,22,23,55,41,44,"BLACK_GLAZED_TERRACOTTA");
+			add(37,23,17,37,23,17,37,23,17,38,24,17,"BLACK_TERRACOTTA");
+			add(21,22,26,21,22,26,20,21,26,21,22,26,"BLACK_WOOL");
+			add(106,105,105,115,116,115,101,101,101,110,110,109,"BLAST_FURNACE",0,BlockFace.EAST);
+			add(94,93,93,125,124,125,93,93,93,122,122,122,"BLAST_FURNACE",0,BlockFace.NORTH);
+			add(45,47,144,"BLUE_CONCRETE");
+			add(70,73,167,71,74,167,72,74,168,70,73,167,"BLUE_CONCRETE_POWDER");
+			add(49,69,143,47,61,134,46,61,135,50,70,147,"BLUE_GLAZED_TERRACOTTA");
+			add(118,169,253,114,167,253,118,169,253,115,168,253,"BLUE_ICE");
+			add(75,60,92,74,60,91,75,60,92,75,61,92,"BLUE_TERRACOTTA");
+			add(54,58,158,53,58,158,53,57,157,53,58,158,"BLUE_WOOL");
+			add(230,227,209,230,227,209,229,226,207,229,226,208,"BONE_BLOCK");
+			add(126,77,46,115,100,71,112,109,72,118,95,52,"BOOKSHELF");
+			add(152,98,83,151,98,83,150,97,83,152,99,84,"BRICKS");
+			add(97,60,32,"BROWN_CONCRETE");
+			add(125,85,54,125,84,54,127,87,55,126,85,54,"BROWN_CONCRETE_POWDER");
+			add(149,103,65,114,111,97,114,111,97,104,102,86,"BROWN_GLAZED_TERRACOTTA");
+			add(150,112,82,149,112,82,150,112,82,150,112,82,"BROWN_MUSHROOM_BLOCK");
+			add(77,51,36,77,51,36,78,52,36,78,52,36,"BROWN_TERRACOTTA");
+			add(115,72,41,115,73,41,114,72,40,115,72,41,"BROWN_WOOL");
+			add(162,94,21,148,82,16,149,83,17,144,79,16,"CARVED_PUMPKIN");
+			add(232,227,218,233,228,219,232,226,217,233,228,219,"CHISELED_QUARTZ_BLOCK");
+			add(189,102,31,182,96,27,183,97,27,181,95,27,"CHISELED_RED_SANDSTONE");
+			add(222,212,167,217,203,157,216,203,154,212,195,144,"CHISELED_SANDSTONE");
+			add(125,124,125,122,121,122,121,120,121,113,112,113,"CHISELED_STONE_BRICKS");
+			add(161,167,180,161,167,181,160,166,178,162,168,181,"CLAY");
+			add(17,17,17,17,17,17,15,15,15,16,16,16,"COAL_BLOCK");
+			add(116,116,116,120,120,120,118,118,118,112,112,112,"COAL_ORE");
+			add(122,88,62,120,86,59,120,86,59,117,84,59,"COARSE_DIRT");
+			add(130,129,130,127,127,127,131,130,131,125,125,125,"COBBLESTONE");
+			add(117,73,34,108,68,30,119,75,35,106,67,29,"COMPOSTER");
+			add(121,120,121,117,117,117,116,115,116,121,121,121,"CRACKED_STONE_BRICKS");
+			add(196,107,36,190,103,32,189,102,32,183,98,29,"CUT_RED_SANDSTONE");
+			add(223,213,171,219,208,161,218,206,158,214,200,151,"CUT_SANDSTONE");
+			add(22,119,136,22,119,136,22,120,137,22,119,136,"CYAN_CONCRETE");
+			add(37,146,156,37,148,157,37,149,158,37,150,159,"CYAN_CONCRETE_POWDER");
+			add(61,130,133,56,101,111,34,112,122,59,133,137,"CYAN_GLAZED_TERRACOTTA");
+			add(87,91,91,86,91,91,87,92,92,88,92,92,"CYAN_TERRACOTTA");
+			add(22,139,146,22,139,146,22,137,145,22,138,146,"CYAN_WOOL");
+			add(59,46,26,62,48,27,61,47,27,61,47,27,"DARK_OAK_LOG");
+			add(68,44,21,67,44,21,67,44,21,66,43,20,"DARK_OAK_PLANKS");
+			add(52,91,76,52,92,76,52,92,76,53,93,77,"DARK_PRISMARINE");
+			add(122,116,112,128,121,118,121,115,113,128,119,115,"DEAD_BRAIN_CORAL_BLOCK");
+			add(133,125,121,132,124,120,131,123,118,132,124,120,"DEAD_BUBBLE_CORAL_BLOCK");
+			add(130,123,119,133,125,121,133,125,121,132,124,120,"DEAD_FIRE_CORAL_BLOCK");
+			add(137,130,125,134,126,122,138,131,127,128,120,117,"DEAD_HORN_CORAL_BLOCK");
+			add(135,128,124,130,122,119,134,127,124,124,117,114,"DEAD_TUBE_CORAL_BLOCK");
+			add(133,248,236,88,235,227,94,236,228,80,232,223,"DIAMOND_BLOCK");
+			add(127,142,141,126,138,136,124,138,136,125,154,153,"DIAMOND_ORE");
+			add(186,186,186,185,185,185,195,195,195,191,191,191,"DIORITE");
+			add(136,98,69,133,96,66,134,96,66,135,98,68,"DIRT");
+			add(65,221,113,36,202,84,38,204,87,31,189,70,"EMERALD_BLOCK");
+			add(114,140,123,120,141,127,122,131,125,115,138,123,"EMERALD_ORE");
+			add(220,224,159,220,223,159,221,224,160,218,222,157,"END_STONE");
+			add(221,227,165,221,228,165,217,223,161,216,220,159,"END_STONE_BRICKS");
+			add(138,180,252,140,181,252,141,181,252,145,184,254,"PACKED_ICE");
+			add(87,86,86,98,97,97,86,86,86,97,97,97,"FURNACE",0,BlockFace.EAST);
+			add(108,107,107,133,133,133,107,107,107,135,135,135,"FURNACE");
+			add(171,127,78,180,141,93,175,136,89,162,123,79,"GLOWSTONE");
+			add(253,226,80,247,204,55,246,206,59,242,199,55,"GOLD_BLOCK");
+			add(143,141,128,138,137,126,138,136,124,157,149,124,"GOLD_ORE");
+			add(148,102,84,152,105,88,150,104,87,150,104,86,"GRANITE");
+			add(132,127,125,134,129,128,132,128,127,133,128,127,"GRAVEL");
+			add(55,58,62,"GRAY_CONCRETE");
+			add(78,82,86,77,81,85,77,82,85,77,81,85,"GRAY_CONCRETE_POWDER");
+			add(89,96,99,79,88,92,72,81,85,94,98,101,"GRAY_GLAZED_TERRACOTTA");
+			add(58,43,36,58,42,36,58,43,36,59,43,36,"GRAY_TERRACOTTA");
+			add(64,69,72,63,69,72,63,68,71,63,69,72,"GRAY_WOOL");
+			add(74,92,37,"GREEN_CONCRETE");
+			add(97,118,46,97,118,45,98,120,45,99,122,44,"GREEN_CONCRETE_POWDER");
+			add(146,162,120,108,138,49,108,138,48,107,133,54,"GREEN_GLAZED_TERRACOTTA");
+			add(76,83,43,76,83,43,77,84,43,77,84,43,"GREEN_TERRACOTTA");
+			add(85,110,28,85,110,27,85,109,28,86,110,28,"GREEN_WOOL");
+			add(169,140,40,165,135,38,165,135,38,167,137,39,"HAY_BLOCK");
+			add(137,131,128,131,129,127,131,127,125,142,135,130,"IRON_ORE");
+			add(221,158,55,210,146,50,219,157,55,210,150,53,"JACK_O_LANTERN");
+			add(87,69,26,86,69,26,84,67,25,86,68,25,"JUNGLE_LOG");
+			add(162,117,82,161,116,81,160,116,82,159,114,80,"JUNGLE_PLANKS");
+			add(34,77,146,31,65,141,31,68,139,29,61,135,"LAPIS_BLOCK");
+			add(99,112,134,101,111,133,114,119,129,86,104,137,"LAPIS_ORE");
+			add(36,137,199,36,138,199,36,137,199,36,137,199,"LIGHT_BLUE_CONCRETE");
+			add(75,182,214,74,180,213,75,182,215,74,181,214,"LIGHT_BLUE_CONCRETE_POWDER");
+			add(69,140,196,96,152,202,98,169,211,117,200,228,"LIGHT_BLUE_GLAZED_TERRACOTTA");
+			add(114,109,138,113,109,138,114,109,138,115,109,139,"LIGHT_BLUE_TERRACOTTA");
+			add(59,176,218,59,177,219,57,174,217,58,175,218,"LIGHT_BLUE_WOOL");
+			add(125,125,115,"LIGHT_GRAY_CONCRETE");
+			add(155,155,148,155,155,148,155,155,148,157,157,150,"LIGHT_GRAY_CONCRETE_POWDER");
+			add(163,172,175,108,157,159,142,162,164,166,175,177,"LIGHT_GRAY_GLAZED_TERRACOTTA");
+			add(135,107,98,135,107,98,135,107,98,136,108,98,"LIGHT_GRAY_TERRACOTTA");
+			add(143,143,136,143,143,136,142,142,134,142,142,135,"LIGHT_GRAY_WOOL");
+			add(95,169,25,95,169,25,94,169,25,95,169,25,"LIME_CONCRETE");
+			add(125,189,42,126,189,43,127,191,43,125,189,42,"LIME_CONCRETE_POWDER");
+			add(138,196,48,180,199,62,179,198,60,156,199,52,"LIME_GLAZED_TERRACOTTA");
+			add(104,118,53,103,118,53,104,118,53,105,119,53,"LIME_TERRACOTTA");
+			add(113,186,26,113,186,26,112,185,26,113,186,26,"LIME_WOOL");
+			add(170,49,160,170,49,160,169,49,159,170,49,160,"MAGENTA_CONCRETE");
+			add(193,84,184,193,85,185,193,84,185,194,84,186,"MAGENTA_CONCRETE_POWDER");
+			add(205,97,187,212,103,196,205,98,188,213,105,198,"MAGENTA_GLAZED_TERRACOTTA");
+			add(150,88,109,149,88,108,150,89,109,150,89,109,"MAGENTA_TERRACOTTA");
+			add(190,70,181,191,70,181,189,68,179,190,69,180,"MAGENTA_WOOL");
+			add(115,121,103,103,115,82,112,121,96,113,120,100,"MOSSY_COBBLESTONE");
+			add(115,123,103,115,119,108,110,118,96,123,126,115,"MOSSY_STONE_BRICKS");
+			add(203,197,186,203,196,185,205,199,188,203,196,184,"MUSHROOM_STEM");
+			add(98,39,39,98,39,39,99,39,39,96,38,38,"NETHERRACK");
+			add(45,23,27,45,22,26,45,22,27,44,22,26,"NETHER_BRICKS");
+			add(92,15,194,94,15,196,86,9,190,95,16,196,"NETHER_PORTAL");
+			add(121,69,66,115,62,59,116,63,59,122,71,67,"NETHER_QUARTZ_ORE");
+			add(115,4,3,113,2,2,118,5,4,116,3,3,"NETHER_WART_BLOCK");
+			add(95,63,44,83,56,39,93,61,43,85,57,40,"NOTE_BLOCK");
+			add(106,83,49,111,87,52,111,87,51,110,85,51,"OAK_LOG");
+			add(164,132,80,163,131,79,163,131,79,161,130,78,"OAK_PLANKS");
+			add(69,67,67,77,74,74,71,69,69,73,71,71,"OBSERVER",0,BlockFace.WEST);
+			add(93,93,93,117,116,116,92,92,92,115,115,115,"OBSERVER",0,BlockFace.EAST);
+			add(67,66,66,75,73,73,69,68,68,72,70,70,"OBSERVER",0,BlockFace.NORTH);
+			add(16,12,26,16,12,26,15,11,24,15,10,24,"OBSIDIAN");
+			add(225,98,1,225,97,1,225,98,1,225,97,1,"ORANGE_CONCRETE");
+			add(228,133,33,227,131,32,227,131,31,228,134,33,"ORANGE_CONCRETE_POWDER");
+			add(190,152,78,164,134,75,164,138,77,102,168,140,"ORANGE_GLAZED_TERRACOTTA");
+			add(162,84,38,161,84,38,162,84,38,163,85,38,"ORANGE_TERRACOTTA");
+			add(242,119,21,242,119,21,240,117,19,241,118,20,"ORANGE_WOOL");
+			add(142,181,251,141,179,251,141,179,251,145,182,251,"PACKED_ICE");
+			add(214,101,143,214,101,143,214,101,143,214,102,143,"PINK_CONCRETE");
+			add(229,153,181,229,154,181,229,154,182,230,154,182,"PINK_CONCRETE_POWDER");
+			add(232,155,180,239,153,182,239,157,185,232,155,181,"PINK_GLAZED_TERRACOTTA");
+			add(162,79,79,162,78,79,162,79,79,163,79,79,"PINK_TERRACOTTA");
+			add(239,143,174,238,143,174,237,140,171,238,141,173,"PINK_WOOL");
+			add(142,144,142,133,136,135,131,134,133,124,128,127,"POLISHED_ANDESITE");
+			add(210,209,211,192,192,193,191,191,193,181,182,184,"POLISHED_DIORITE");
+			add(166,117,99,151,105,88,156,108,90,144,99,82,"POLISHED_GRANITE");
+			add(94,158,142,98,162,146,102,164,148,102,164,149,"PRISMARINE");
+			add(107,180,169,99,171,157,102,175,163,91,162,147,"PRISMARINE_BRICKS");
+			add(206,125,30,189,108,20,202,121,28,187,106,21,"PUMPKIN",0,BlockFace.WEST);
+			add(101,32,157,"PURPLE_CONCRETE");
+			add(132,56,178,133,57,178,131,55,177,133,56,178,"PURPLE_CONCRETE_POWDER");
+			add(124,63,167,102,44,141,102,44,142,113,43,161,"PURPLE_GLAZED_TERRACOTTA");
+			add(119,71,86,118,70,86,119,71,87,120,71,87,"PURPLE_TERRACOTTA");
+			add(123,43,174,122,42,172,121,42,172,122,43,173,"PURPLE_WOOL");
+			add(171,127,171,170,125,169,171,127,170,169,126,169,"PURPUR_BLOCK");
+			add(172,130,172,"PURPUR_PILLAR");
+			add(238,232,226,236,231,224,236,230,223,234,229,221,"QUARTZ_BLOCK");
+			add(236,231,224,236,231,225,236,231,225,235,231,224,"QUARTZ_PILLAR");
+			add(174,25,5,180,26,6,175,25,6,175,25,5,"REDSTONE_BLOCK");
+			add(97,56,30,94,54,30,97,55,30,95,54,30,"REDSTONE_LAMP");
+			add(133,108,108,132,115,115,131,111,111,138,99,99,"REDSTONE_ORE");
+			add(143,33,33,143,34,34,143,33,33,143,33,33,"RED_CONCRETE");
+			add(168,54,51,167,54,50,169,55,51,169,55,51,"RED_CONCRETE_POWDER");
+			add(169,47,43,192,70,61,177,54,49,192,70,61,"RED_GLAZED_TERRACOTTA");
+			add(202,49,47,199,45,43,199,45,43,203,50,48,"RED_MUSHROOM_BLOCK");
+			add(71,8,10,69,7,9,71,8,10,68,7,9,"RED_NETHER_BRICKS");
+			add(191,104,34,192,104,33,190,103,33,191,103,34,"RED_SAND");
+			add(188,101,30,187,99,29,187,100,30,186,99,29,"RED_SANDSTONE");
+			add(144,61,47,143,61,47,144,61,47,144,62,48,"RED_TERRACOTTA");
+			add(162,40,35,162,40,35,160,39,35,161,40,35,"RED_WOOL");
+			add(220,208,164,220,209,164,219,206,162,220,208,163,"SAND");
+			add(218,205,158,217,204,156,217,204,156,216,203,155,"SANDSTONE");
+			add(173,201,191,171,199,190,174,201,192,173,201,192,"SEA_LANTERN");
+			add(112,193,92,112,193,91,112,193,92,112,193,92,"SLIME_BLOCK");
+			add(50,42,47,62,35,33,49,34,36,62,32,30,"SMITHING_TABLE");
+			add(97,86,70,88,73,53,83,73,58,86,72,53,"SMOKER",0,BlockFace.EAST);
+			add(107,96,80,101,90,73,104,94,78,100,89,74,"SMOKER",0,BlockFace.NORTH);
+			add(158,158,158,159,159,159,158,158,158,160,160,160,"SMOOTH_STONE");
+			add(172,172,172,172,172,172,164,164,164,164,164,164,"STONE",1);
+			add(84,64,53,84,65,53,79,61,49,79,61,49,"SOUL_SAND");
+			add(197,194,75,196,192,76,197,193,75,195,191,74,"SPONGE");
+			add(57,37,16,61,39,18,59,38,17,59,38,17,"SPRUCE_LOG");
+			add(116,86,50,116,86,49,115,86,49,115,84,48,"SPRUCE_PLANKS");
+			add(125,125,125,127,127,127,124,124,124,128,128,128,"STONE");
+			add(127,126,127,119,119,119,119,119,119,127,126,127,"STONE_BRICKS");
+			add(175,93,60,175,94,60,174,93,60,176,93,60,"STRIPPED_ACACIA_LOG");
+			add(197,176,118,198,177,120,199,177,119,196,175,117,"STRIPPED_BIRCH_LOG");
+			add(97,77,50,97,76,50,98,77,50,97,76,50,"STRIPPED_DARK_OAK_LOG");
+			add(172,133,85,177,135,89,169,133,83,169,133,83,"STRIPPED_JUNGLE_LOG");
+			add(176,143,85,177,144,86,181,148,90,177,143,86,"STRIPPED_OAK_LOG");
+			add(118,91,53,117,91,53,115,90,53,114,90,52,"STRIPPED_SPRUCE_LOG");
+			add(89,74,89,89,74,89,90,76,91,90,75,91,"STRUCTURE_BLOCK");
+			add(152,94,68,153,94,68,152,94,68,153,95,68,"TERRACOTTA");
+			add(173,183,72,171,181,70,171,181,71,171,181,70,"WET_SPONGE");
+			add(208,214,215,208,214,215,207,213,214,208,213,214,"WHITE_CONCRETE");
+			add(227,229,229,224,226,227,227,229,229,226,228,228,"WHITE_CONCRETE_POWDER");
+			add(237,232,178,194,216,207,194,216,208,131,187,220,"WHITE_GLAZED_TERRACOTTA");
+			add(210,178,162,209,178,162,210,178,162,211,179,162,"WHITE_TERRACOTTA");
+			add(234,237,238,235,238,238,233,236,236,234,237,237,"WHITE_WOOL");
+			add(242,176,22,241,176,22,241,176,22,241,176,22,"YELLOW_CONCRETE");
+			add(233,199,53,233,199,56,234,200,58,233,200,55,"YELLOW_CONCRETE_POWDER");
+			add(251,217,114,241,197,81,240,197,82,206,159,79,"YELLOW_GLAZED_TERRACOTTA");
+			add(187,133,36,186,133,35,187,134,36,187,134,36,"YELLOW_TERRACOTTA");
+			add(249,199,40,249,199,40,249,197,39,249,198,40,"YELLOW_WOOL");
+
+
+
+
 
 		} else if (ReflectionUtil.isVersionHigherThan(1, 13)) {
 			new RGBBlockValue(new Color(105, 99, 89), new Color(104, 98, 88), new Color(108, 102, 91),
@@ -816,16 +1071,27 @@ public class RGBBlockColor {
 							.getMaterialData(f.getName().substring(0, f.getName().length() - 4));
 
 					if (md == null) {
-						// System.out.println("dead bug!");
 						continue;
 					}
 					if (fw != null) {
-						fw.append(("new RGBBlockValue(new Color(" + pixels[0][0].r + ", " + pixels[0][0].g + ", "
+						boolean same = ((pixels[0][0].r == pixels[0][1].r) && (pixels[1][0].r == pixels[1][1].r) && (pixels[0][0].r == pixels[1][1].r)) && ((pixels[0][0].g == pixels[0][1].g) && (pixels[1][0].g == pixels[1][1].g) && (pixels[0][0].g == pixels[1][1].g)) && ((pixels[0][0].b == pixels[0][1].b) && (pixels[1][0].b == pixels[1][1].b) && (pixels[0][0].b == pixels[1][1].b));
+						if (same) {
+							fw.append("add(" + pixels[0][0].r + "," + pixels[0][0].g + "," + pixels[0][0].b + ",\"" + md.getMaterial().name()+"\"" + (md.getData() == 0 ? "" : "," + md.getData())
+									+ (md.hasDirection() ? (",BlockFace." + md.getDirection().name()) : "")+");");
+						} else {
+							fw.append("add(" + pixels[0][0].r + "," + pixels[0][0].g + "," + pixels[0][0].b + ","
+									+ pixels[0][1].r + "," + pixels[0][1].g + "," + pixels[0][1].b + ","
+									+ pixels[1][0].r + "," + pixels[1][0].g + "," + pixels[1][0].b + ","
+									+ pixels[1][1].r + "," + pixels[1][1].g + "," + pixels[1][1].b + ","
+
+									+ "\""+md.getMaterial().name() +"\""+ (md.getData() == 0 ? "" : "," + md.getData()) + (md.hasDirection() ? (",BlockFace." + md.getDirection().name()) : "")+");");
+						}
+						/*fw.append(("new RGBBlockValue(new Color(" + pixels[0][0].r + ", " + pixels[0][0].g + ", "
 								+ pixels[0][0].b + ")," + "new Color(" + pixels[0][1].r + ", " + pixels[0][1].g + ", "
 								+ pixels[0][1].b + ")," + "new Color(" + pixels[1][0].r + ", " + pixels[1][0].g + ", "
 								+ pixels[1][0].b + ")," + "new Color(" + pixels[1][1].r + ", " + pixels[1][1].g + ", "
 								+ pixels[1][1].b + "), \"" + md.getMaterial().name() + "\"," + md.getData()
-								+ (md.hasDirection() ? (",BlockFace." + md.getDirection().name()) : "") + ");"));
+								+ (md.hasDirection() ? (",BlockFace." + md.getDirection().name()) : "") + ");"));*/
 						fw.append("\n");
 					}
 
@@ -872,24 +1138,11 @@ public class RGBBlockColor {
 		}
 	}
 
-	private static final String SERVER_VERSION;
-
-	static {
-		String name = Bukkit.getServer().getClass().getName();
-		name = name.substring(name.indexOf("craftbukkit.") + "craftbukkit.".length());
-		name = name.substring(0, name.indexOf("."));
-		SERVER_VERSION = name;
-	}
-
 	/**
 	 * This checks if the the server is running on a version higher or equal to the
 	 * one specified. Useage: upToDate(1,8) will check if the version is greater
 	 * than or equal to 1.8
-	 * 
-	 * @param The
-	 *            first value (will most likely only be 1 )
-	 * @param The
-	 *            second value (The 8 in 1.8.3 )
+	 *
 	 * @return if the server version is greater than or equal to specified version.
 	 */
 	public static boolean isVersionHigherThan(int mainVersion, int secondVersion) {
@@ -904,15 +1157,13 @@ public class RGBBlockColor {
 			secondChar.append(SERVER_VERSION.charAt(i));
 		}
 		int sInt = Integer.parseInt(secondChar.toString());
-		if (sInt < secondVersion)
-			return false;
-		return true;
+		return sInt >= secondVersion;
 	}
 
 	/**
 	 * Used for debugging: Finds the value with the highest addition of all rgb
 	 * blocks colors.
-	 * 
+	 *
 	 * @return
 	 */
 	public static int getFurthestColor() {
@@ -954,22 +1205,20 @@ public class RGBBlockColor {
 	/**
 	 * This will return the Material and durability that has the closest color to
 	 * Color "c".
-	 * 
-	 * @param c
-	 *            - The color value
+	 *
+	 * @param c - The color value
 	 * @return The closest material and durability.
 	 */
 	public static MaterialData getClosestBlockValue(Color c, boolean topView) {
-		Color[] color = { c, c, c, c };
+		Color[] color = {c, c, c, c};
 		return getClosestBlockValue(color, topView, false);
 	}
 
 	/**
 	 * This will return the Material and durability that has the closest color to
 	 * Color "c".
-	 * 
-	 * @param c
-	 *            - The color value
+	 *
+	 * @param c - The color value
 	 * @return The closest material and durability.
 	 */
 	public static MaterialData getClosestBlockValue(Color[] c, boolean topView) {
@@ -979,20 +1228,19 @@ public class RGBBlockColor {
 	/**
 	 * This will return the Material and durability that has the closest color to
 	 * Color "c".
-	 * 
-	 * @param c
-	 *            - The color value
+	 *
+	 * @param c - The color value
 	 * @return The closest material and durability.
 	 */
 	public static MaterialData getClosestBlockValue(Color c, boolean topView, boolean supportTransparent) {
-		Color[] color = { c, c, c, c };
+		Color[] color = {c, c, c, c};
 		return getClosestBlockValue(color, topView, supportTransparent);
 	}
 
 	/**
 	 * Returns if the color is transparent (if the image supports it) or black (for
 	 * non-transparent images)
-	 * 
+	 *
 	 * @param c
 	 * @return
 	 */
@@ -1004,16 +1252,15 @@ public class RGBBlockColor {
 	 * The color value of the four closest colors. Use this if you want to preserve
 	 * hard edges in images. For the array, you need four color values. Use the
 	 * following chart to understand which pixel should be at which index:
-	 * 
+	 * <p>
 	 * | 0 | 1 |
-	 * 
+	 * <p>
 	 * | 2 | 3 |
-	 * 
-	 * @param c
-	 *            - The color value
+	 *
+	 * @param c - The color value
 	 * @return The closest material and durability.
 	 */
-	public static MaterialData getClosestBlockValue(Color c[], boolean topView, boolean supportTransparent) {
+	public static MaterialData getClosestBlockValue(Color[] c, boolean topView, boolean supportTransparent) {
 		return getClosestBlockValue(c, topView, supportTransparent, null);
 	}
 
@@ -1021,17 +1268,16 @@ public class RGBBlockColor {
 	 * The color value of the four closest colors. Use this if you want to preserve
 	 * hard edges in images. For the array, you need four color values. Use the
 	 * following chart to understand which pixel should be at which index:
-	 * 
+	 * <p>
 	 * | 0 | 1 |
-	 * 
+	 * <p>
 	 * | 2 | 3 |
-	 * 
-	 * @param c
-	 *            - The color value
+	 *
+	 * @param c - The color value
 	 * @return The closest material and durability.
 	 */
-	public static MaterialData getClosestBlockValue(Color c[], boolean topView, boolean supportTransparent,
-			Material[] supportedMaterials) {
+	public static MaterialData getClosestBlockValue(Color[] c, boolean topView, boolean supportTransparent,
+													Material[] supportedMaterials) {
 
 		int cutoff = 20;
 
@@ -1139,7 +1385,7 @@ public class RGBBlockColor {
 	/**
 	 * Creates a resized version of an image. Since this takes 2x2 pixels to turn
 	 * into 1 block, you can resize this by 2 if you want a 1-1 scale image.
-	 * 
+	 *
 	 * @param originalImage
 	 * @param scaledHeight
 	 * @param preserveAlpha
@@ -1147,7 +1393,7 @@ public class RGBBlockColor {
 	 */
 	@Deprecated
 	public static BufferedImage createResizedCopy(BufferedImage originalImage, int scaledHeight,
-			boolean preserveAlpha) {
+												  boolean preserveAlpha) {
 		int imageType = BufferedImage.TYPE_INT_ARGB;
 		int WIDTH = (int) (((double) originalImage.getWidth()) * (((double) scaledHeight) / originalImage.getHeight()));
 		int HEIGHT = scaledHeight;
@@ -1156,14 +1402,13 @@ public class RGBBlockColor {
 		if (preserveAlpha) {
 			g.setComposite(AlphaComposite.Src);
 		}
-		g.drawImage(originalImage, 0, 0, (int) scaledBI.getWidth(), scaledBI.getHeight(), null);
+		g.drawImage(originalImage, 0, 0, scaledBI.getWidth(), scaledBI.getHeight(), null);
 		g.dispose();
 		return scaledBI;
 	}
 
 	/**
 	 * From:
-	 * 
 	 */
 
 	public static BufferedImage resize(BufferedImage image, int areaWidth, int areaHeight) {
@@ -1212,7 +1457,7 @@ public class RGBBlockColor {
 	 * This returns the pixels for block textures. Instead of shriking the image,
 	 * wich causes some blends, this uses sub-images being reduced to single pixels,
 	 * which prevents cross-over for certain pixels
-	 * 
+	 *
 	 * @param image
 	 * @return
 	 */
@@ -1230,16 +1475,16 @@ public class RGBBlockColor {
 	/**
 	 * This gets all the pixel values for an image. Use this to get all the pixels
 	 * for an image.
-	 * 
+	 * <p>
 	 * The first array stores the Row value (e.g. MC's "Y" value), and the second
 	 * array stores the Columb value (MC's X or Z)
-	 * 
+	 * <p>
 	 * For example: If you want to get the pixel at the top left of an image, use
 	 * convertTo2DWithoutUsingGetRGB(Image)[HEIGHT][0]
-	 * 
+	 * <p>
 	 * For example: If you want to get the pixel at the bottom right of an image,
 	 * use convertTo2DWithoutUsingGetRGB(Image)[0][WIDTH]
-	 * 
+	 *
 	 * @param image
 	 * @return
 	 */
@@ -1342,22 +1587,19 @@ public class RGBBlockColor {
 	/**
 	 * Creates a file with an image where each pixel represense the colorcode for a
 	 * block
-	 * 
-	 * @param output
-	 *            file
-	 * @param bottomLeft
-	 *            corner of the image
-	 * @param topRight
-	 *            corner of the image
+	 *
+	 * @param output     file
+	 * @param bottomLeft corner of the image
+	 * @param topRight   corner of the image
 	 */
 	@SuppressWarnings("deprecation")
 	public void createImageFromBlocks(File output, Location bottomLeft, Location topRight) {
 		boolean isX = bottomLeft.getBlockZ() == topRight.getBlockZ();
 		MaterialData[][] blocks = new MaterialData[topRight.getBlockY() - bottomLeft.getBlockY()][isX
 				? Math.max(topRight.getBlockX(), bottomLeft.getBlockX())
-						- Math.min(topRight.getBlockX(), bottomLeft.getBlockX())
+				- Math.min(topRight.getBlockX(), bottomLeft.getBlockX())
 				: Math.max(topRight.getBlockZ(), bottomLeft.getBlockZ())
-						- Math.min(topRight.getBlockZ(), bottomLeft.getBlockZ())];
+				- Math.min(topRight.getBlockZ(), bottomLeft.getBlockZ())];
 		for (int y = bottomLeft.getBlockY(); y < topRight.getBlockY(); y++) {
 			if (isX) {
 				for (int x = Math.min(topRight.getBlockX(), bottomLeft.getBlockX()); x < Math.max(topRight.getBlockX(),
@@ -1365,7 +1607,7 @@ public class RGBBlockColor {
 					Block t = new Location(topRight.getWorld(), x, y, topRight.getBlockZ()).getBlock();
 					blocks[y - bottomLeft.getBlockY()][x
 							- Math.min(topRight.getBlockX(), bottomLeft.getBlockX())] = MaterialData
-									.getMatDataByTypes(t.getType(), t.getData());
+							.getMatDataByTypes(t.getType(), t.getData());
 				}
 			} else {
 				for (int z = Math.min(topRight.getBlockZ(), bottomLeft.getBlockZ()); z < Math.max(topRight.getBlockZ(),
@@ -1373,7 +1615,7 @@ public class RGBBlockColor {
 					Block t = new Location(topRight.getWorld(), topRight.getBlockX(), y, z).getBlock();
 					blocks[y - bottomLeft.getBlockY()][z
 							- Math.min(topRight.getBlockZ(), bottomLeft.getBlockZ())] = MaterialData
-									.getMatDataByTypes(t.getType(), t.getData());
+							.getMatDataByTypes(t.getType(), t.getData());
 				}
 			}
 		}
@@ -1383,12 +1625,6 @@ public class RGBBlockColor {
 	/**
 	 * Creates a file with an image where each pixel represense the colorcode for a
 	 * block
-	 * 
-	 * @param output
-	 *            file
-	 * @param the
-	 *            material data for each block. first array being the Y, the second
-	 *            being the X or Z;
 	 */
 	public void createImageFromBlocks(File output, MaterialData[][] blocks) {
 		BufferedImage canvas = new BufferedImage(blocks[0].length, blocks.length, BufferedImage.TYPE_INT_ARGB);
@@ -1473,18 +1709,6 @@ class RGBBlockValue extends RGBValue {
 	private boolean hasFaces = false;
 	private boolean isTop = false;
 	private boolean hasTextureOnAllSides = true;
-
-	public boolean hasTextureOnAllSides() {
-		return hasTextureOnAllSides;
-	}
-
-	public boolean isTop() {
-		return isTop;
-	}
-
-	public boolean hasFaces() {
-		return hasFaces;
-	}
 
 	public RGBBlockValue(Color c, String mat) {
 		super(c);
@@ -1600,5 +1824,17 @@ class RGBBlockValue extends RGBValue {
 		else
 			dyecolor = (byte) ReflectionUtil.invokeMethod(d, "getData", null);
 		RGBBlockColor.materialValue.put(new MaterialData(Material.matchMaterial(mat), dyecolor), this);
+	}
+
+	public boolean hasTextureOnAllSides() {
+		return hasTextureOnAllSides;
+	}
+
+	public boolean isTop() {
+		return isTop;
+	}
+
+	public boolean hasFaces() {
+		return hasFaces;
 	}
 }

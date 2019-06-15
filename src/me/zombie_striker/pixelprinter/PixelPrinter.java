@@ -15,28 +15,11 @@
  */
 package me.zombie_striker.pixelprinter;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.imageio.ImageIO;
-
+import me.zombie_striker.pixelprinter.data.Direction;
+import me.zombie_striker.pixelprinter.data.FileCreatorData;
+import me.zombie_striker.pixelprinter.data.MaterialData;
+import me.zombie_striker.pixelprinter.util.*;
+import me.zombie_striker.pixelprinter.util.RGBBlockColor.Pixel;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -49,37 +32,52 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.pixelprinter.data.*;
-import me.zombie_striker.pixelprinter.util.*;
-import me.zombie_striker.pixelprinter.util.RGBBlockColor.Pixel;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URL;
+import java.util.List;
+import java.util.*;
 
 public class PixelPrinter extends JavaPlugin {
 
-	private String prefix = ChatColor.DARK_PURPLE + "[PixelPrinter]" + ChatColor.WHITE;
-	File images = null;
-	File resoucepackFolder = null;
+	public static boolean isAbove113 = false;
+	private static PixelPrinter instance;
+	private static int skin_creator_delay = 0;
 	public Map<UUID, FileCreatorData> downloadFile = new HashMap<UUID, FileCreatorData>();
 
 	public List<GifHolder> gifs = new ArrayList<GifHolder>();
 	public int loadCount = 500;
-
-	private static PixelPrinter instance;
-
-	public static boolean isAbove113 = false;
-
-	private static int skin_creator_delay = 0;
+	public Material[] supportedMaterials = null;
+	File images = null;
+	File resoucepackFolder = null;
+	private String prefix = ChatColor.DARK_PURPLE + "[PixelPrinter]" + ChatColor.WHITE;
+	private ArrayList<String> cAU = new ArrayList<>();
 
 	public static PixelPrinter getInstance() {
 		return instance;
 	}
 
-	public Material[] supportedMaterials = null;
+	public static void saveImage(URL url, File file) throws IOException {
+		InputStream is = url.openStream();
+		file.getParentFile().mkdirs();
+		file.createNewFile();
+		OutputStream os = new FileOutputStream(file);
+
+		byte[] b = new byte[2048];
+		int length;
+
+		while ((length = is.read(b)) != -1) {
+			os.write(b, 0, length);
+		}
+		is.close();
+		os.close();
+	}
 
 	public String getPrefix() {
 		return prefix;
 	}
-
-	private ArrayList<String> cAU = new ArrayList<>();
 
 	@Override
 	public void onEnable() {
@@ -131,12 +129,8 @@ public class PixelPrinter extends JavaPlugin {
 		}
 
 		// This will attempt to load the resourcepack.
-		try {
 			RGBBlockColor.activateBlocks();
 			RGBBlockColor.loadResourcepackTextures(resoucepackFolder);
-		} catch (NoClassDefFoundError e) {
-			e.printStackTrace();
-		}
 
 		initHelp();
 		if (getConfig() == null)
@@ -318,7 +312,7 @@ public class PixelPrinter extends JavaPlugin {
 			} else if (args[0].equalsIgnoreCase("undo")) {
 				List<String> ls = new ArrayList<String>();
 				for (String dir : UndoUtil.getSnapshots())
-					if (dir.toLowerCase().startsWith(args[1].toLowerCase()))
+					if (dir!=null && dir.toLowerCase().startsWith(args[1].toLowerCase()))
 						ls.add(dir);
 				return ls;
 			} else if (args[0].equalsIgnoreCase("createSkin")) {
@@ -503,11 +497,11 @@ public class PixelPrinter extends JavaPlugin {
 				sender.sendMessage("-Width: " + wid);
 				sender.sendMessage("-Height:  " + heigh);
 				BufferedImage bi2 = RGBBlockColor.resize(bi, (int) (wid * (((double) 20 * 2) / heigh)), 20 * 2);// createResizedCopy(bi,
-																												// 20
-																												// *
-																												// 2,
-																												// true);
-																												// //
+				// 20
+				// *
+				// 2,
+				// true);
+				// //
 				// ==================================================
 				final Pixel[][] result = RGBBlockColor.convertTo2DWithoutUsingGetRGB(bi2);
 
@@ -665,264 +659,265 @@ public class PixelPrinter extends JavaPlugin {
 				return true;
 			} else
 
-			// Commands that require Player
-			if (sender instanceof Player) {
-				Player player = (Player) sender;
-				/*
-				 * if (args[0].equalsIgnoreCase("download") || args[0].equalsIgnoreCase("d")) {
-				 * if (args.length < 2) { sender.sendMessage(prefix +
-				 * " You must provide the file name"); return true; } if
-				 * (!sender.hasPermission("pixelprinter.download")) { sender.sendMessage(prefix
-				 * + " You do not have permission to use this command."); return true; }
-				 * 
-				 * downloadFile.put(player.getUniqueId(), new FileCreatorData(".txt", args[1]));
-				 * if (args.length == 2) sender.sendMessage(prefix +
-				 * " Now paste the link into the chat."); if (args.length > 2) { File outputfile
-				 * = new File( images + File.separator +
-				 * downloadFile.get(player.getUniqueId()).getName() +
-				 * (downloadFile.get(player.getUniqueId()).getType().equalsIgnoreCase(".txt") ?
-				 * ".txt" : (args[2].endsWith("gif") ? ".gif" : ".jpg"))); if
-				 * (outputfile.exists()) { player.sendMessage(getPrefix() +
-				 * " A file already exists with this name. Either choose a new name or contact the server admin to delete this image."
-				 * ); return true; } if
-				 * (downloadFile.get(player.getUniqueId()).getType().equalsIgnoreCase(".txt")) {
-				 * try { BufferedWriter br = new BufferedWriter(new FileWriter(outputfile));
-				 * br.write(args[2]); br.flush(); br.close(); player.sendMessage(getPrefix() +
-				 * " Completed downloading image path. File \"" + outputfile.getName() +
-				 * "\" created."); } catch (IOException e2) { player.sendMessage(getPrefix() +
-				 * " Something failed when downloading the image. Check console for details.");
-				 * e2.printStackTrace(); } } else { try { if
-				 * (args[2].toLowerCase().endsWith(".gif")) { byte[] bytes =
-				 * IOUtils.toByteArray(new URL(args[2]).openStream());
-				 * FileUtils.writeByteArrayToFile(outputfile, bytes);
-				 * player.sendMessage(getPrefix() + " Completed downloading image. File \"" +
-				 * outputfile.getName() + "\" created."); } else { BufferedImage bi =
-				 * ImageIO.read(new URL(args[2])); ImageIO.write(bi, "jpg", outputfile);
-				 * player.sendMessage(getPrefix() + " Completed downloading image. File \"" +
-				 * outputfile.getName() + "\" created."); bi.flush(); } } catch (Exception er) {
-				 * player.sendMessage(getPrefix() +
-				 * " Something failed when downloading the image. Check console for details.");
-				 * er.printStackTrace();
-				 * 
-				 * } } downloadFile.remove(player.getUniqueId()); } } else if
-				 * (args[0].equalsIgnoreCase("downloadimage") || args[0].equalsIgnoreCase("di"))
-				 * { if (args.length < 2) { sender.sendMessage(prefix +
-				 * " You must provide the file name"); return true; } if
-				 * (!sender.hasPermission("pixelprinter.download")) { sender.sendMessage(prefix
-				 * + " You do not have permission to use this command."); return true; }
-				 * downloadFile.put(player.getUniqueId(), new FileCreatorData("fFind",
-				 * args[1])); if (args.length == 2) sender.sendMessage(prefix +
-				 * " Now paste the link into the chat."); if (args.length > 2) { File outputfile
-				 * = new File( images + File.separator +
-				 * downloadFile.get(player.getUniqueId()).getName() +
-				 * (downloadFile.get(player.getUniqueId()).getType().equalsIgnoreCase(".txt") ?
-				 * ".txt" : (args[2].endsWith("gif") ? ".gif" : ".png"))); if
-				 * (outputfile.exists()) { player.sendMessage(getPrefix() +
-				 * " A file already exists with this name. Either choose a new name or contact the server admin to delete this image."
-				 * ); return true; } try { if (args[2].toLowerCase().endsWith(".gif")) { byte[]
-				 * bytes = IOUtils.toByteArray(new URL(args[2]).openStream());
-				 * FileUtils.writeByteArrayToFile(outputfile, bytes);
-				 * player.sendMessage(getPrefix() + " Completed downloading gif. File \"" +
-				 * outputfile.getName() + "\" created."); } else { BufferedImage bi =
-				 * ImageIO.read(new URL(args[2])); ImageIO.write(bi, "png", outputfile);
-				 * player.sendMessage(getPrefix() + " Completed downloading image. File \"" +
-				 * outputfile.getName() + "\" created."); bi.flush(); } } catch (Exception er) {
-				 * player.sendMessage(getPrefix() +
-				 * " Something failed when downloading the image. Check console for details.");
-				 * er.printStackTrace();
-				 * 
-				 * } downloadFile.remove(player.getUniqueId()); } } else
-				 */if (args[0].equalsIgnoreCase("createFrame") || args[0].equalsIgnoreCase("cf")) {
-					try {
-						if (args.length < 4) {
-							sender.sendMessage(prefix + " You must specify the image you want to render");
-							return true;
-						}
-						Direction dir = Direction.getDir(args[1]);
-						File f = new File(images, args[2]);
-						if (!f.exists()) {
-							sender.sendMessage("You did something wrong");
-							return true;
-						}
-						int height = 0;
+				// Commands that require Player
+				if (sender instanceof Player) {
+					Player player = (Player) sender;
+					/*
+					 * if (args[0].equalsIgnoreCase("download") || args[0].equalsIgnoreCase("d")) {
+					 * if (args.length < 2) { sender.sendMessage(prefix +
+					 * " You must provide the file name"); return true; } if
+					 * (!sender.hasPermission("pixelprinter.download")) { sender.sendMessage(prefix
+					 * + " You do not have permission to use this command."); return true; }
+					 *
+					 * downloadFile.put(player.getUniqueId(), new FileCreatorData(".txt", args[1]));
+					 * if (args.length == 2) sender.sendMessage(prefix +
+					 * " Now paste the link into the chat."); if (args.length > 2) { File outputfile
+					 * = new File( images + File.separator +
+					 * downloadFile.get(player.getUniqueId()).getName() +
+					 * (downloadFile.get(player.getUniqueId()).getType().equalsIgnoreCase(".txt") ?
+					 * ".txt" : (args[2].endsWith("gif") ? ".gif" : ".jpg"))); if
+					 * (outputfile.exists()) { player.sendMessage(getPrefix() +
+					 * " A file already exists with this name. Either choose a new name or contact the server admin to delete this image."
+					 * ); return true; } if
+					 * (downloadFile.get(player.getUniqueId()).getType().equalsIgnoreCase(".txt")) {
+					 * try { BufferedWriter br = new BufferedWriter(new FileWriter(outputfile));
+					 * br.write(args[2]); br.flush(); br.close(); player.sendMessage(getPrefix() +
+					 * " Completed downloading image path. File \"" + outputfile.getName() +
+					 * "\" created."); } catch (IOException e2) { player.sendMessage(getPrefix() +
+					 * " Something failed when downloading the image. Check console for details.");
+					 * e2.printStackTrace(); } } else { try { if
+					 * (args[2].toLowerCase().endsWith(".gif")) { byte[] bytes =
+					 * IOUtils.toByteArray(new URL(args[2]).openStream());
+					 * FileUtils.writeByteArrayToFile(outputfile, bytes);
+					 * player.sendMessage(getPrefix() + " Completed downloading image. File \"" +
+					 * outputfile.getName() + "\" created."); } else { BufferedImage bi =
+					 * ImageIO.read(new URL(args[2])); ImageIO.write(bi, "jpg", outputfile);
+					 * player.sendMessage(getPrefix() + " Completed downloading image. File \"" +
+					 * outputfile.getName() + "\" created."); bi.flush(); } } catch (Exception er) {
+					 * player.sendMessage(getPrefix() +
+					 * " Something failed when downloading the image. Check console for details.");
+					 * er.printStackTrace();
+					 *
+					 * } } downloadFile.remove(player.getUniqueId()); } } else if
+					 * (args[0].equalsIgnoreCase("downloadimage") || args[0].equalsIgnoreCase("di"))
+					 * { if (args.length < 2) { sender.sendMessage(prefix +
+					 * " You must provide the file name"); return true; } if
+					 * (!sender.hasPermission("pixelprinter.download")) { sender.sendMessage(prefix
+					 * + " You do not have permission to use this command."); return true; }
+					 * downloadFile.put(player.getUniqueId(), new FileCreatorData("fFind",
+					 * args[1])); if (args.length == 2) sender.sendMessage(prefix +
+					 * " Now paste the link into the chat."); if (args.length > 2) { File outputfile
+					 * = new File( images + File.separator +
+					 * downloadFile.get(player.getUniqueId()).getName() +
+					 * (downloadFile.get(player.getUniqueId()).getType().equalsIgnoreCase(".txt") ?
+					 * ".txt" : (args[2].endsWith("gif") ? ".gif" : ".png"))); if
+					 * (outputfile.exists()) { player.sendMessage(getPrefix() +
+					 * " A file already exists with this name. Either choose a new name or contact the server admin to delete this image."
+					 * ); return true; } try { if (args[2].toLowerCase().endsWith(".gif")) { byte[]
+					 * bytes = IOUtils.toByteArray(new URL(args[2]).openStream());
+					 * FileUtils.writeByteArrayToFile(outputfile, bytes);
+					 * player.sendMessage(getPrefix() + " Completed downloading gif. File \"" +
+					 * outputfile.getName() + "\" created."); } else { BufferedImage bi =
+					 * ImageIO.read(new URL(args[2])); ImageIO.write(bi, "png", outputfile);
+					 * player.sendMessage(getPrefix() + " Completed downloading image. File \"" +
+					 * outputfile.getName() + "\" created."); bi.flush(); } } catch (Exception er) {
+					 * player.sendMessage(getPrefix() +
+					 * " Something failed when downloading the image. Check console for details.");
+					 * er.printStackTrace();
+					 *
+					 * } downloadFile.remove(player.getUniqueId()); } } else
+					 */
+					if (args[0].equalsIgnoreCase("createFrame") || args[0].equalsIgnoreCase("cf")) {
 						try {
-							height = Integer.parseInt(args[3]);
-						} catch (Exception e) {
-							sender.sendMessage(prefix + " you must provide a valid height");
-							return true;
-						}
-						if (f.getName().contains(".gif")) {
-
-							createMapAnim(dir, (Player) sender, GifHolder.getFrames(f, height * 128), height);
-						} else if (f.getName().contains(".txt")) {
-							try {
-								BufferedReader br = new BufferedReader(new FileReader(f));
-								String urlString = br.readLine();
-								br.close();
-								if (urlString.contains(".gif")) {
-									createMapAnim(dir, ((Player) sender),
-											GifHolder.getFrames(new URL(urlString), height), height);
-								} else {
-									BufferedImage bi2 = ImageIO.read(new URL(urlString));
-									createMap(dir, ((Player) sender), bi2, height);
-								}
-							} catch (Exception e) {
-								e.printStackTrace();
+							if (args.length < 4) {
+								sender.sendMessage(prefix + " You must specify the image you want to render");
+								return true;
 							}
-						} else {
-							try {
-								BufferedImage bi2 = ImageIO.read(f);
-								createMap(dir, ((Player) sender), bi2, height);
-							} catch (Exception e) {
-								sender.sendMessage(
-										getPrefix() + " Something failed. Please check console for more details.");
-								e.printStackTrace();
+							Direction dir = Direction.getDir(args[1]);
+							File f = new File(images, args[2]);
+							if (!f.exists()) {
+								sender.sendMessage("You did something wrong");
+								return true;
 							}
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-
-				} else if (args[0].equalsIgnoreCase("createskin")) {
-					if (args.length < 2) {
-						sender.sendMessage(prefix + " You must provide all the required arguments.");
-					}
-
-					if (player.hasPermission("pixelprinter.create")) {
-						String uuid = player.getUniqueId().toString();
-						if (Bukkit.getOnlineMode()) {
-							if (args.length > 2) {
-								try {
-									UUID temp = UUID.fromString(args[2]);
-									if (temp.equals(null)) {
-										// Purposfully trying to throw NPE to
-										// make sure the UUID is valid.
-										uuid = temp.toString();
-										System.out.println("1  - " + uuid);
-									}
-								} catch (Exception e) {
-									if (Bukkit.getOfflinePlayer(args[2]).hasPlayedBefore()) {
-										uuid = Bukkit.getOfflinePlayer(args[2]).getUniqueId().toString();
-										System.out.println("2  - " + uuid);
-									} else {
-										if ((uuid = MojangAPI.getUUIDFromName(args[2])) == null) {
-											uuid = args[2];
-											System.out.println("3  - " + uuid);
-										}
-									}
-								}
-							}
-						} else {
-							if (args.length > 2) {
-								if ((uuid = MojangAPI.getUUIDFromName(args[2])) == null) {
-									uuid = args[2];
-								}
-							}
-						}
-						try {
-							SkinCreator.createStatue(SkinCreator.getSkin(uuid), player.getLocation(),
-									Direction.getDir(args[1]));
-							skin_creator_delay = 2 * 30;
-						} catch (NullPointerException e) {
-							player.sendMessage(prefix + " The UUID/Name you entered is not valid.");
-							skin_creator_delay = 2 * 30;
-						} catch (IOException e) {
-							player.sendMessage(prefix + " Please wait " + (skin_creator_delay / 2)
-									+ " seconds before issuing the command again.");
-						}
-					}
-				} else if (args[0].equalsIgnoreCase("undo")) {
-					if (args.length < 2) {
-						sender.sendMessage(prefix + " You must provide all the required arguments.");
-						return true;
-					}
-					if (!UndoUtil.snapshotExists(args[1])) {
-						sender.sendMessage(prefix + " There is no snapshot registered with that name,");
-						return true;
-					}
-
-					if (player.hasPermission("pixelprinter.create")) {
-						UndoUtil.undo(args[1]);
-						sender.sendMessage(prefix
-								+ " Image has been undone. If you made a mistake, or wish to have that image again, resend the command to have the image reappear.");
-					} else {
-						sender.sendMessage(prefix + " You do not have permission to undo images.");
-					}
-				} else if (args[0].equalsIgnoreCase("create")) {
-					if (args.length < 4) {
-						sender.sendMessage(prefix + " You must provide all the required arguments.");
-						return true;
-					}
-					File loadedImage = new File(images + File.separator + args[2]);
-					if (!loadedImage.exists()) {
-						sender.sendMessage(getPrefix() + " That Image does not exist");
-						return true;
-					} else {
-						final String dir = args[1];
-						if (player.hasPermission("pixelprinter.create")) {
 							int height = 0;
 							try {
 								height = Integer.parseInt(args[3]);
-							} catch (NumberFormatException e) {
-								sender.sendMessage(getPrefix() + " You can only use numbers for the size. \"" + args[3]
-										+ "\" is not acceptable");
+							} catch (Exception e) {
+								sender.sendMessage(prefix + " you must provide a valid height");
 								return true;
 							}
+							if (f.getName().contains(".gif")) {
 
-							boolean enableTrans = false;
-							try {
-								enableTrans = Boolean.parseBoolean(args[4]);
-							} catch (Exception e) {
-								enableTrans = false;
-							}
-
-							final Location loc = new Location(player.getWorld(), player.getLocation().getBlockX(),
-									player.getLocation().getBlockY(), player.getLocation().getBlockZ());
-							if (loadedImage.getName().contains(".gif")) {
-								createGif(args, loc, height, dir, player);
-							} else if (loadedImage.getName().contains(".txt")) {
+								createMapAnim(dir, (Player) sender, GifHolder.getFrames(f, height * 128), height);
+							} else if (f.getName().contains(".txt")) {
 								try {
-									BufferedReader br = new BufferedReader(new FileReader(loadedImage));
+									BufferedReader br = new BufferedReader(new FileReader(f));
 									String urlString = br.readLine();
 									br.close();
 									if (urlString.contains(".gif")) {
-										createGif(args, loc, height, dir, player);
+										createMapAnim(dir, ((Player) sender),
+												GifHolder.getFrames(new URL(urlString), height), height);
 									} else {
-										BufferedImage bi2;
-										try {
-											bi2 = ImageIO.read(new URL(urlString));
-											createImage(player, bi2, dir, height, enableTrans, loadedImage.getName());
-										} catch (IOException e) {
-											sender.sendMessage(prefix
-													+ " Error: The image cannot be found. Make sure that the link is valid and that the image still exists.");
-										}
+										BufferedImage bi2 = ImageIO.read(new URL(urlString));
+										createMap(dir, ((Player) sender), bi2, height);
 									}
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
 							} else {
 								try {
-									BufferedImage bi2 = ImageIO.read(loadedImage);
-									createImage(player, bi2, dir, height, enableTrans, loadedImage.getName());
+									BufferedImage bi2 = ImageIO.read(f);
+									createMap(dir, ((Player) sender), bi2, height);
 								} catch (Exception e) {
 									sender.sendMessage(
 											getPrefix() + " Something failed. Please check console for more details.");
+									e.printStackTrace();
+								}
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					} else if (args[0].equalsIgnoreCase("createskin")) {
+						if (args.length < 2) {
+							sender.sendMessage(prefix + " You must provide all the required arguments.");
+						}
+
+						if (player.hasPermission("pixelprinter.create")) {
+							String uuid = player.getUniqueId().toString();
+							if (Bukkit.getOnlineMode()) {
+								if (args.length > 2) {
+									try {
+										UUID temp = UUID.fromString(args[2]);
+										if (temp.equals(null)) {
+											// Purposfully trying to throw NPE to
+											// make sure the UUID is valid.
+											uuid = temp.toString();
+											System.out.println("1  - " + uuid);
+										}
+									} catch (Exception e) {
+										if (Bukkit.getOfflinePlayer(args[2]).hasPlayedBefore()) {
+											uuid = Bukkit.getOfflinePlayer(args[2]).getUniqueId().toString();
+											System.out.println("2  - " + uuid);
+										} else {
+											if ((uuid = MojangAPI.getUUIDFromName(args[2])) == null) {
+												uuid = args[2];
+												System.out.println("3  - " + uuid);
+											}
+										}
+									}
+								}
+							} else {
+								if (args.length > 2) {
+									if ((uuid = MojangAPI.getUUIDFromName(args[2])) == null) {
+										uuid = args[2];
+									}
+								}
+							}
+							try {
+								SkinCreator.createStatue(SkinCreator.getSkin(uuid), player.getLocation(),
+										Direction.getDir(args[1]));
+								skin_creator_delay = 2 * 30;
+							} catch (NullPointerException e) {
+								player.sendMessage(prefix + " The UUID/Name you entered is not valid.");
+								skin_creator_delay = 2 * 30;
+							} catch (IOException e) {
+								player.sendMessage(prefix + " Please wait " + (skin_creator_delay / 2)
+										+ " seconds before issuing the command again.");
+							}
+						}
+					} else if (args[0].equalsIgnoreCase("undo")) {
+						if (args.length < 2) {
+							sender.sendMessage(prefix + " You must provide all the required arguments.");
+							return true;
+						}
+						if (!UndoUtil.snapshotExists(args[1])) {
+							sender.sendMessage(prefix + " There is no snapshot registered with that name,");
+							return true;
+						}
+
+						if (player.hasPermission("pixelprinter.create")) {
+							UndoUtil.undo(args[1]);
+							sender.sendMessage(prefix
+									+ " Image has been undone. If you made a mistake, or wish to have that image again, resend the command to have the image reappear.");
+						} else {
+							sender.sendMessage(prefix + " You do not have permission to undo images.");
+						}
+					} else if (args[0].equalsIgnoreCase("create")) {
+						if (args.length < 4) {
+							sender.sendMessage(prefix + " You must provide all the required arguments.");
+							return true;
+						}
+						File loadedImage = new File(images + File.separator + args[2]);
+						if (!loadedImage.exists()) {
+							sender.sendMessage(getPrefix() + " That Image does not exist");
+							return true;
+						} else {
+							final String dir = args[1];
+							if (player.hasPermission("pixelprinter.create")) {
+								int height = 0;
+								try {
+									height = Integer.parseInt(args[3]);
+								} catch (NumberFormatException e) {
+									sender.sendMessage(getPrefix() + " You can only use numbers for the size. \"" + args[3]
+											+ "\" is not acceptable");
+									return true;
+								}
+
+								boolean enableTrans = false;
+								try {
+									enableTrans = Boolean.parseBoolean(args[4]);
+								} catch (Exception e) {
+									enableTrans = false;
+								}
+
+								final Location loc = new Location(player.getWorld(), player.getLocation().getBlockX(),
+										player.getLocation().getBlockY(), player.getLocation().getBlockZ());
+								if (loadedImage.getName().contains(".gif")) {
+									createGif(args, loc, height, dir, player);
+								} else if (loadedImage.getName().contains(".txt")) {
+									try {
+										BufferedReader br = new BufferedReader(new FileReader(loadedImage));
+										String urlString = br.readLine();
+										br.close();
+										if (urlString.contains(".gif")) {
+											createGif(args, loc, height, dir, player);
+										} else {
+											BufferedImage bi2;
+											try {
+												bi2 = ImageIO.read(new URL(urlString));
+												createImage(player, bi2, dir, height, enableTrans, loadedImage.getName());
+											} catch (IOException e) {
+												sender.sendMessage(prefix
+														+ " Error: The image cannot be found. Make sure that the link is valid and that the image still exists.");
+											}
+										}
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+								} else {
+									try {
+										BufferedImage bi2 = ImageIO.read(loadedImage);
+										createImage(player, bi2, dir, height, enableTrans, loadedImage.getName());
+									} catch (Exception e) {
+										sender.sendMessage(
+												getPrefix() + " Something failed. Please check console for more details.");
+									}
 								}
 							}
 						}
+					} else {
+						sender.sendMessage(getPrefix() + " The subbcomands " + args[0]
+								+ " does not exist. To see all commands or command useages, please type /pp help");
+						return true;
 					}
 				} else {
-					sender.sendMessage(getPrefix() + " The subbcomands " + args[0]
-							+ " does not exist. To see all commands or command useages, please type /pp help");
-					return true;
+					{
+						sender.sendMessage(getPrefix() + " The subbcomands " + args[0]
+								+ " does not exist. To see all commands or command useages, please type /pp help");
+						return true;
+					}
 				}
-			} else {
-				{
-					sender.sendMessage(getPrefix() + " The subbcomands " + args[0]
-							+ " does not exist. To see all commands or command useages, please type /pp help");
-					return true;
-				}
-			}
 
 		}
 		return false;
@@ -1017,22 +1012,6 @@ public class PixelPrinter extends JavaPlugin {
 	public File getImageFile() {
 		return this.images;
 	}
-	
-	public static void saveImage(URL url, File file) throws IOException {
-	    InputStream is = url.openStream();
-	    file.getParentFile().mkdirs();
-	    file.createNewFile();
-	    OutputStream os = new FileOutputStream(file);
-
-	    byte[] b = new byte[2048];
-	    int length;
-
-	    while ((length = is.read(b)) != -1) {
-	        os.write(b, 0, length);
-	    }
-	    is.close();
-	    os.close();
-	}
 	/*
 	 * public BufferedImage createResizedCopy(BufferedImage originalImage, int
 	 * scaledHeight, boolean preserveAlpha) { int imageType =
@@ -1043,7 +1022,7 @@ public class PixelPrinter extends JavaPlugin {
 	 * scaledBI.createGraphics(); if (preserveAlpha) {
 	 * g.setComposite(AlphaComposite.Src); } g.drawImage(originalImage, 0, 0, (int)
 	 * scaledBI.getWidth(), scaledBI.getHeight(), null); g.dispose();
-	 * 
+	 *
 	 * return scaledBI; }
 	 */
 }

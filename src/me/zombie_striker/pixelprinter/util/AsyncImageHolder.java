@@ -16,23 +16,27 @@
 
 package me.zombie_striker.pixelprinter.util;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map.Entry;
-
 import me.zombie_striker.pixelprinter.PixelPrinter;
-import me.zombie_striker.pixelprinter.data.*;
+import me.zombie_striker.pixelprinter.data.DataHolder;
+import me.zombie_striker.pixelprinter.data.Direction;
+import me.zombie_striker.pixelprinter.data.IntHolder;
+import me.zombie_striker.pixelprinter.data.MaterialData;
 import me.zombie_striker.pixelprinter.util.RGBBlockColor.Pixel;
-
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
 
 public class AsyncImageHolder extends Image {
 
@@ -41,12 +45,12 @@ public class AsyncImageHolder extends Image {
 	private String name = null;
 
 	public AsyncImageHolder(Pixel[][] result1, Player p1, Location loc1, Direction dir1, BufferedImage bi1,
-			boolean enableTrans) {
+							boolean enableTrans) {
 		this(null, result1, p1, loc1, dir1, bi1, enableTrans);
 	}
 
 	public AsyncImageHolder(String name, Pixel[][] result1, Player p1, Location loc1, Direction dir1, BufferedImage bi1,
-			boolean enableTrans) {
+							boolean enableTrans) {
 		p = (p1 == null ? "Plugin" : p1.getName());
 		result = result1;
 		dir = dir1;
@@ -58,158 +62,6 @@ public class AsyncImageHolder extends Image {
 
 	}
 
-	@SuppressWarnings("deprecation")
-	public void loadImage(boolean allowUndo) {
-
-		final IntHolder isDone = new IntHolder();
-		isDone.setI(0);
-		for (Player p2 : minCorner.getWorld().getPlayers())
-			p2.sendMessage(PixelPrinter.getInstance().getPrefix() + " Loading image requested by " + p);
-		Location start = getBlockAt(0, bi.getHeight(), bi.getHeight());
-		Location end = getBlockAt(0, 0, bi.getHeight());
-		UndoUtil.addNewSnapshot(name, start, end);
-		new BukkitRunnable() {
-			public void run() {
-				final HashMap<String, List<DataHolder>> chunksorter = new HashMap<String, List<DataHolder>>();
-
-				for (int width = 0; width < (bi.getWidth()); width += 2) {
-					for (int height = (bi.getHeight() - 1); height >= 0; height -= 2) {
-						Location b = getBlockAt(height, width, bi.getHeight());
-						if (b == null || b.getY() > 256) {
-							continue;
-						}
-						Color[] color = new Color[4];
-						for (int i = 0; i < 4; i++) {
-							int y = (height + 1 < result.length) ? height + (i % 2) : height;
-							int x = (width + 1 < result[y].length) ? width + (i % 2) : width;
-							color[i] = new Color(result[y][x].r, result[y][x].g, result[y][x].b, result[y][x].a);
-						}
-						MaterialData m = RGBBlockColor.getClosestBlockValue(color,
-								(dir == Direction.FLAT_NORTHEAST || dir == Direction.FLAT_NORTHWEST
-										|| dir == Direction.FLAT_SOUTHEAST || dir == Direction.FLAT_SOUTHWEST),
-								enableTransparent, PixelPrinter.getInstance().supportedMaterials);
-						String tempkey = (b.getBlockX() / 16) + "," + (b.getBlockZ() / 16);
-						if (chunksorter.containsKey(tempkey)) {
-							List<DataHolder> temp = chunksorter.get(tempkey);
-							if (temp == null)
-								temp = new ArrayList<DataHolder>();
-							temp.add(new DataHolder(b, m, m.hasDirection()));
-							chunksorter.put(tempkey, temp);
-						} else {
-							List<DataHolder> temp = new ArrayList<DataHolder>();
-							temp.add(new DataHolder(b, m));
-							chunksorter.put(tempkey, temp);
-						}
-					}
-				}
-				int delayLoadingMessage = 0;
-				final int maxDelay = 7;
-				int timesTicked = 0;
-
-				final IntHolder blocksUpdated = new IntHolder();
-				final IntHolder didNotHaveToReplace = new IntHolder();
-
-				for (Entry<String, List<DataHolder>> ent : chunksorter.entrySet()) {
-					final List<DataHolder> gg = ent.getValue();
-					timesTicked++;
-					final int tempDel = delayLoadingMessage++;
-					delayLoadingMessage %= maxDelay;
-					final int currTick = timesTicked;
-
-					new BukkitRunnable() {
-						@Override
-						public void run() {
-							for (final DataHolder dh : gg) {
-								final BlockState bs = dh.b.getBlock().getState();
-
-								if (dh.md.getMaterial() != Material.AIR) {
-
-									byte rd = dh.md.getData();
-									BlockFace bf = null;
-
-									if (dh.hasFaces()) {
-										bf = getBlockFace(dh, dir);
-										rd = getBlockData(dh, dir);
-									}
-									if (dh.md.getMaterial() != bs.getType()
-											|| (((int) bs.getRawData()) != ((int) rd))) {
-										if (PixelPrinter.isAbove113) {
-											bs.getBlock().setType(dh.md.getMaterial());
-											if (bf != null) {
-												Update13Handler.setFacing(bs, bf);
-											}
-										} else {
-											bs.setType(dh.md.getMaterial());
-											if (bs.getRawData() != rd)
-												bs.setRawData(rd);
-											bs.update(true, false);
-										}
-										if (dh.md.getMaterial().hasGravity()) {
-											Block below = bs.getBlock().getLocation().subtract(0, 1, 0).getBlock();
-											if (below.getType() == Material.AIR)
-												below.setType(Material.STONE);
-										}
-										blocksUpdated.setI(blocksUpdated.getI() + 1);
-										final BlockFace bf2 = bf;
-										new BukkitRunnable() {
-
-											@Override
-											public void run() {
-												boolean tryBoolean = Update13Handler.isFacing(bs, bf2);
-
-												if (bs.getBlock().getType() != dh.md.getMaterial()
-														|| ((bf2 != null) ? (!tryBoolean)
-																: (PixelPrinter.isAbove113 ? false
-																		: bs.getBlock().getData() != dh.md.getData()))
-														|| bs.getBlock().getType() == Material.AIR) {
-													if (bs.getBlock().getType().name().equals("VOID_AIR"))
-														return;
-													BlockFace test = null;
-													if (Update13Handler.isDirectional(bs.getBlock().getState())) {
-														test = Update13Handler.getFacing(bs.getBlock().getState());
-													}
-													for (Player p2 : minCorner.getWorld().getPlayers()) {
-														p2.sendMessage(PixelPrinter.getInstance().getPrefix()
-																+ "Incorrect value: " + dh.md.getMaterial().name() + ":"
-																+ ((bf2 != null) ? bf2.name() : dh.md.getData())
-																+ " is " + bs.getBlock().getType() + ":"
-																+ (test != null ? test.name() : bs.getBlock().getData())
-																+ " at " + bs.getBlock().getLocation().getBlockX() + ","
-																+ bs.getBlock().getLocation().getBlockY() + ","
-																+ bs.getBlock().getLocation().getBlockZ());
-													}
-												}
-											}
-										}.runTaskLater(PixelPrinter.getInstance(), 20 * 3);
-									} else {
-										didNotHaveToReplace.setI(2);
-									}
-								}
-							}
-							if (tempDel == 0)
-								for (Player p2 : minCorner.getWorld().getPlayers())
-									p2.sendMessage(PixelPrinter.getInstance().getPrefix() + " Loading: "
-											+ ((int) (((double) currTick) / chunksorter.size() * 100)) + "%");
-
-						}
-					}.runTaskLater(PixelPrinter.getInstance(), 3 * timesTicked);
-
-				}
-
-				new BukkitRunnable() {
-					@Override
-					public void run() {
-						for (Player p2 : minCorner.getWorld().getPlayers()) {
-							p2.sendMessage(PixelPrinter.getInstance().getPrefix() + " Done!"
-									+ (didNotHaveToReplace.getI() == 2 ? " Updated " + blocksUpdated.getI() + " blocks."
-											: ""));
-						}
-					}
-				}.runTaskLater(PixelPrinter.getInstance(), 3 * timesTicked);
-			}
-		}.runTaskAsynchronously(PixelPrinter.getInstance());
-	}
-	
 	public static BlockFace getBlockFace(DataHolder dh, Direction dir) {
 
 		try {
@@ -420,5 +272,161 @@ public class AsyncImageHolder extends Image {
 		} catch (Error | Exception e54) {
 		}
 		return dh.md.getData();
+	}
+
+	@SuppressWarnings("deprecation")
+	public void loadImage(boolean allowUndo) {
+		final IntHolder isDone = new IntHolder();
+		isDone.setI(0);
+		for (Player p2 : minCorner.getWorld().getPlayers())
+			p2.sendMessage(PixelPrinter.getInstance().getPrefix() + " Loading image requested by " + p);
+		Location start = getBlockAt(0, bi.getHeight(), bi.getHeight());
+		Location end = getBlockAt(0, 0, bi.getHeight());
+		UndoUtil.addNewSnapshot(name, start, end);
+
+		new BukkitRunnable() {
+			public void run() {
+				final HashMap<String, List<DataHolder>> chunksorter = new HashMap<String, List<DataHolder>>();
+
+				for (int width = 0; width < (bi.getWidth()); width += 2) {
+					for (int height = (bi.getHeight() - 1); height >= 0; height -= 2) {
+						Location b = getBlockAt(height, width, bi.getHeight());
+						if (b == null || b.getY() > 256) {
+							continue;
+						}
+						Color[] color = new Color[4];
+						for (int i = 0; i < 4; i++) {
+							int y = (height + 1 < result.length) ? height + (i % 2) : height;
+							int x = (width + 1 < result[y].length) ? width + (i % 2) : width;
+							color[i] = new Color(result[y][x].r, result[y][x].g, result[y][x].b, result[y][x].a);
+						}
+						MaterialData m = RGBBlockColor.getClosestBlockValue(color,
+								(dir == Direction.FLAT_NORTHEAST || dir == Direction.FLAT_NORTHWEST
+										|| dir == Direction.FLAT_SOUTHEAST || dir == Direction.FLAT_SOUTHWEST),
+								enableTransparent, PixelPrinter.getInstance().supportedMaterials);
+						String tempkey = (b.getBlockX() / 16) + "," + (b.getBlockZ() / 16);
+						if (chunksorter.containsKey(tempkey)) {
+							List<DataHolder> temp = chunksorter.get(tempkey);
+							if (temp == null)
+								temp = new ArrayList<DataHolder>();
+							temp.add(new DataHolder(b, m, m.hasDirection()));
+							chunksorter.put(tempkey, temp);
+						} else {
+							List<DataHolder> temp = new ArrayList<DataHolder>();
+							temp.add(new DataHolder(b, m));
+							chunksorter.put(tempkey, temp);
+						}
+					}
+				}
+				int delayLoadingMessage = 0;
+				final int maxDelay = 7;
+				int timesTicked = 0;
+
+				final IntHolder blocksUpdated = new IntHolder();
+				final IntHolder didNotHaveToReplace = new IntHolder();
+
+				for (Entry<String, List<DataHolder>> ent : chunksorter.entrySet()) {
+					final List<DataHolder> gg = ent.getValue();
+					timesTicked++;
+					final int tempDel = delayLoadingMessage++;
+					delayLoadingMessage %= maxDelay;
+					final int currTick = timesTicked;
+
+					new BukkitRunnable() {
+						@Override
+						public void run() {
+							for (final DataHolder dh : gg) {
+								final BlockState bs = dh.b.getBlock().getState();
+
+								if (dh.md.getMaterial() != Material.AIR) {
+
+									byte rd = dh.md.getData();
+									BlockFace bf = null;
+
+									if (dh.hasFaces()) {
+										bf = getBlockFace(dh, dir);
+										rd = getBlockData(dh, dir);
+									}
+									if (dh.md.getMaterial() != bs.getType()
+											|| (((int) bs.getRawData()) != ((int) rd))) {
+										if (PixelPrinter.isAbove113) {
+											bs.getBlock().setType(dh.md.getMaterial());
+											bs.setType(dh.md.getMaterial());
+											if (bf != null) {
+												Update13Handler.setFacing(bs, bf);
+											}
+										} else {
+											bs.setType(dh.md.getMaterial());
+											if (bs.getRawData() != rd)
+												bs.setRawData(rd);
+											bs.update(true, false);
+										}
+										if (dh.md.getMaterial().hasGravity()) {
+											Block below = bs.getBlock().getLocation().subtract(0, 1, 0).getBlock();
+											if (below.getType() == Material.AIR)
+												below.setType(Material.STONE);
+										}
+										blocksUpdated.setI(blocksUpdated.getI() + 1);
+										final BlockFace bf2 = bf;
+										new BukkitRunnable() {
+
+											@Override
+											public void run() {
+												boolean tryBoolean = Update13Handler.isFacing(bs, bf2);
+
+												if (bs.getBlock().getType() != dh.md.getMaterial()
+														|| ((bf2 != null) ? (!tryBoolean)
+														: (!PixelPrinter.isAbove113 && bs.getBlock().getData() != dh.md.getData()))
+														|| bs.getBlock().getType() == Material.AIR) {
+													if (bs.getBlock().getType().name().equals("VOID_AIR"))
+														return;
+													BlockFace test = null;
+													if (Update13Handler.isDirectional(bs.getBlock().getState())) {
+														test = Update13Handler.getFacing(bs.getBlock().getState());
+													}
+													for (Player p2 : minCorner.getWorld().getPlayers()) {
+														p2.sendMessage(PixelPrinter.getInstance().getPrefix()
+																+ "Incorrect value: " + dh.md.getMaterial().name() + ":"
+																+ ((bf2 != null) ? bf2.name() : dh.md.getData())
+																+ " is " + bs.getBlock().getType() + ":"
+																+ (test != null ? test.name() : bs.getBlock().getData())
+																+ " at " + bs.getBlock().getLocation().getBlockX() + ","
+																+ bs.getBlock().getLocation().getBlockY() + ","
+																+ bs.getBlock().getLocation().getBlockZ());
+													}
+												}
+												cancel();
+											}
+										}.runTaskLater(PixelPrinter.getInstance(), 20);
+									} else {
+										didNotHaveToReplace.setI(2);
+									}
+								}
+							}
+							if (tempDel == 0)
+								for (Player p2 : minCorner.getWorld().getPlayers())
+									p2.sendMessage(PixelPrinter.getInstance().getPrefix() + " Loading: "
+											+ ((int) (((double) currTick) / chunksorter.size() * 100)) + "%");
+
+							cancel();
+						}
+					}.runTaskLater(PixelPrinter.getInstance(), 3 * timesTicked);
+
+				}
+
+				new BukkitRunnable() {
+					@Override
+					public void run() {
+						for (Player p2 : minCorner.getWorld().getPlayers()) {
+							p2.sendMessage(PixelPrinter.getInstance().getPrefix() + " Done!"
+									+ (didNotHaveToReplace.getI() == 2 ? " Updated " + blocksUpdated.getI() + " blocks."
+									: ""));
+						}
+						cancel();
+					}
+				}.runTaskLater(PixelPrinter.getInstance(), 3 * timesTicked);
+				cancel();
+			}
+		}.runTaskAsynchronously(PixelPrinter.getInstance());
 	}
 }

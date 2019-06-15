@@ -1,11 +1,10 @@
 package me.zombie_striker.pixelprinter.util;
 
+import me.zombie_striker.pixelprinter.data.MaterialData;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
-
-import me.zombie_striker.pixelprinter.data.MaterialData;
 
 public class FileNameToMaterialUtil {
 
@@ -40,7 +39,7 @@ public class FileNameToMaterialUtil {
 				|| filename.contains("shulker") || filename.endsWith("sapling") || filename.equals("tripwire")
 				|| filename.equals("tripwire_hook") || filename.equals("tripwire_hook") || filename.equals("iron_block")
 				|| filename.equals("snow") || filename.equals("beacon") || filename.equals("cobweb")
-				|| filename.equals("dandelion") || filename.equals("comparator") || filename.equals("conduit")
+				|| filename.equals("dandelion") || filename.equals("wither_rose") || filename.equals("cornflower") || filename.equals("lily_of_the_valley") || filename.equals("comparator") || filename.equals("conduit")
 				|| filename.equals("repeater") || filename.equals("poppy") || filename.equals("white_tulip")
 				|| filename.equals("pink_tulip") || filename.equals("red_tulip") || filename.equals("orange_tulip")
 				|| filename.equals("allium") || filename.equals("azure_bluet") || filename.equals("blue_orchid")
@@ -50,7 +49,7 @@ public class FileNameToMaterialUtil {
 
 				|| filename.equals("turtle_egg") || filename.contains("coral_fan") || filename.equals("sea_pickle")
 				|| filename.equals("seagrass") || filename.equals("farmland") || filename.equals("oxeye_daisy")
-				|| filename.endsWith("_coral")||filename.startsWith("stonecutter")||filename.startsWith("grindstone")
+				|| filename.endsWith("_coral") || filename.startsWith("stonecutter") || filename.startsWith("grindstone")
 
 				|| filename.equalsIgnoreCase("lantern")) {
 			return null;
@@ -86,7 +85,6 @@ public class FileNameToMaterialUtil {
 			if (!Material.matchMaterial(m).isBlock())
 				return null;
 		} else {
-			// gfdasgdfssgdfgfdsgdsgdfgfgdsfdsgfdgsfgfsdfgfgsgfsfggfd
 			if (ReflectionUtil.isVersionHigherThan(1, 14)) {
 
 				if (filename.equalsIgnoreCase("smithing_table_side")) {
@@ -103,6 +101,8 @@ public class FileNameToMaterialUtil {
 				} else if (filename.equalsIgnoreCase("smoker_side")) {
 					m = "SMOKER";
 					facing = BlockFace.NORTH;
+				} else if (filename.equals("composter_side")) {
+					m = "COMPOSTER";
 				}
 			}
 
@@ -273,7 +273,7 @@ public class FileNameToMaterialUtil {
 			} else if (filename.equalsIgnoreCase("mycelium_side")) {
 				if (ReflectionUtil.isVersionHigherThan(1, 13))
 					return null;
-				// m = "MYCELIUM";
+					// m = "MYCELIUM";
 				else
 					m = "MYCEL";
 			} else if (filename.equalsIgnoreCase("noteblock")) {

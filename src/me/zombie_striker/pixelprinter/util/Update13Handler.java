@@ -1,5 +1,6 @@
 package me.zombie_striker.pixelprinter.util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 
@@ -36,6 +37,7 @@ public class Update13Handler {
 			bs.setBlockData(d);
 			bs.update(true, false);
 		} catch (Error | Exception e45) {
+
 		}
 	}
 

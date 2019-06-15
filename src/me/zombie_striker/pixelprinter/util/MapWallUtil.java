@@ -15,8 +15,8 @@
  */
 package me.zombie_striker.pixelprinter.util;
 
-import java.awt.image.BufferedImage;
-
+import me.zombie_striker.pixelprinter.PixelPrinter;
+import me.zombie_striker.pixelprinter.data.Direction;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,8 +28,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapRenderer;
 
-import me.zombie_striker.pixelprinter.PixelPrinter;
-import me.zombie_striker.pixelprinter.data.Direction;
+import java.awt.image.BufferedImage;
 
 public class MapWallUtil {
 
@@ -57,7 +56,7 @@ public class MapWallUtil {
 
 	/**
 	 * Remember: The image has to be a multiple of 128
-	 * 
+	 *
 	 * @param whole
 	 * @return
 	 */
@@ -147,34 +146,34 @@ public class MapWallUtil {
 		final BlockFace bf;
 		final Material type = Material.GLASS;
 		switch (dir) {
-		case UP_EAST:
-			loc.add(width, height, 0);
-			loc.getBlock().setType(type);
-			frame_loc = loc.clone();
-			frame_loc.setZ(loc.getZ() + 1);
-			bf = BlockFace.EAST;
-			break;
-		case UP_WEST:
-			loc.add(-width, height, 0);
-			loc.getBlock().setType(type);
-			frame_loc = loc.clone();
-			frame_loc.setZ(loc.getZ() - 1);
-			bf = BlockFace.WEST;
-			break;
-		case UP_NORTH:
-			loc.add(0, height, -width);
-			loc.getBlock().setType(type);
-			frame_loc = loc.clone();
-			frame_loc.setX(loc.getX() + 1);
-			bf = BlockFace.NORTH;
-			break;
-		default:
-			loc.add(0, height, width);
-			loc.getBlock().setType(type);
-			frame_loc = loc.clone();
-			frame_loc.setX(loc.getX() - 1);
-			bf = BlockFace.SOUTH;
-			break;
+			case UP_EAST:
+				loc.add(width, height, 0);
+				loc.getBlock().setType(type);
+				frame_loc = loc.clone();
+				frame_loc.setZ(loc.getZ() + 1);
+				bf = BlockFace.EAST;
+				break;
+			case UP_WEST:
+				loc.add(-width, height, 0);
+				loc.getBlock().setType(type);
+				frame_loc = loc.clone();
+				frame_loc.setZ(loc.getZ() - 1);
+				bf = BlockFace.WEST;
+				break;
+			case UP_NORTH:
+				loc.add(0, height, -width);
+				loc.getBlock().setType(type);
+				frame_loc = loc.clone();
+				frame_loc.setX(loc.getX() + 1);
+				bf = BlockFace.NORTH;
+				break;
+			default:
+				loc.add(0, height, width);
+				loc.getBlock().setType(type);
+				frame_loc = loc.clone();
+				frame_loc.setX(loc.getX() - 1);
+				bf = BlockFace.SOUTH;
+				break;
 		}
 		if (frame_loc.getBlock().getType() != Material.AIR)
 			frame_loc.getBlock().setType(Material.AIR);
@@ -182,7 +181,7 @@ public class MapWallUtil {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(PixelPrinter.getInstance(), new Runnable() {
 				public void run() {
 					ItemFrame i = (ItemFrame) p.getWorld().spawnEntity(frame_loc, EntityType.ITEM_FRAME);// .spawn(frame_loc,
-																											// ItemFrame.class);
+					// ItemFrame.class);
 					i.setFacingDirection(bf);
 					i.setItem(is);
 				}

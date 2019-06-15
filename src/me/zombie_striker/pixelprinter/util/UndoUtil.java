@@ -1,9 +1,9 @@
 package me.zombie_striker.pixelprinter.util;
 
+import org.bukkit.Location;
+
 import java.util.HashMap;
 import java.util.Set;
-
-import org.bukkit.Location;
 
 public class UndoUtil {
 
@@ -12,7 +12,7 @@ public class UndoUtil {
 	public static String verifyNewName(String start) {
 		String test = start;
 		int id = 0;
-		while (savedLocs.containsKey(start)) {
+		while (savedLocs.containsKey(test)) {
 			id++;
 			test = test + "(" + id + ")";
 		}

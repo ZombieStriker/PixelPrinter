@@ -15,19 +15,12 @@
  */
 package me.zombie_striker.pixelprinter.util;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URL;
-import java.util.*;
-
-import javax.imageio.*;
-import javax.imageio.stream.ImageInputStream;
-
 import me.zombie_striker.pixelprinter.PixelPrinter;
-import me.zombie_striker.pixelprinter.data.*;
+import me.zombie_striker.pixelprinter.data.DataHolder;
+import me.zombie_striker.pixelprinter.data.Direction;
+import me.zombie_striker.pixelprinter.data.IntHolder;
+import me.zombie_striker.pixelprinter.data.MaterialData;
 import me.zombie_striker.pixelprinter.util.RGBBlockColor.Pixel;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -37,31 +30,30 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.*;
+
 public class GifHolder extends Image implements ConfigurationSerializable {
 
+	public static List<Integer> freeID = new ArrayList<Integer>();
 	private BufferedImage[] frames;
 	private int currentFrame = 0;
 	private boolean isFulluLoaded = false;
-
 	private DataHolder[][][] materials;
 	private boolean[][][] isTrans;
-
 	private int gifID;
 	private UUID owner;
-
 	private String fileName;
 	private int height;
-
-	public boolean isLoaded() {
-		return isFulluLoaded;
-	}
-
-	public static void registerClass() {
-		ConfigurationSerialization.registerClass(GifHolder.class);
-		ConfigurationSerialization.registerClass(DataHolder.class);
-	}
-
-	public static List<Integer> freeID = new ArrayList<Integer>();;
 
 	public GifHolder(String filename, Location minLocation, int height, String dir, UUID owner) {
 		this.dir = Direction.getDir(dir);
@@ -79,6 +71,102 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 		}
 		createFrames(new File(PixelPrinter.getInstance().getImageFile() + File.separator + this.fileName), this.height,
 				owner);
+	}
+
+	public GifHolder(Map<String, Object> data) {
+		final Map<String, Object> tempData = data;
+		this.currentFrame = (int) data.get("currentframe");
+		this.fileName = (String) data.get("fileName");
+		this.gifID = (int) data.get("gifID");
+		this.dir = Direction.getDir((String) data.get("dir"));
+		freeID.add(gifID);
+		this.height = (int) data.get("height");
+		this.moving = (boolean) data.get("moving");
+		this.neg = (boolean) data.get("neg");
+		this.owner = UUID.fromString((String) data.get("owner"));
+		createFrames(new File(PixelPrinter.getInstance().getImageFile() + File.separator + this.fileName), this.height,
+				owner);
+		final IntHolder temp = new IntHolder();
+		temp.setI(Bukkit.getScheduler().scheduleSyncRepeatingTask(PixelPrinter.getInstance(), new Runnable() {
+			public void run() {
+				if (Bukkit.getWorld((String) tempData.get("minCorner.w")) != null) {
+					minCorner = Bukkit.getWorld((String) tempData.get("minCorner.w"))
+							.getBlockAt((int) tempData.get("minCorner.x"), (int) tempData.get("minCorner.y"),
+									(int) tempData.get("minCorner.z"))
+							.getLocation();
+					Bukkit.getScheduler().cancelTask(temp.getI());
+				}
+			}
+		}, 0, 20));
+		final IntHolder temp2 = new IntHolder();
+		temp2.setI(Bukkit.getScheduler().scheduleSyncRepeatingTask(PixelPrinter.getInstance(), new Runnable() {
+			public void run() {
+				if (minCorner != null && getFrames() != null && getFrames().length > 1) {
+					init();
+					Bukkit.getScheduler().cancelTask(temp2.getI());
+				}
+			}
+		}, 0, 20));
+	}
+
+	public static void registerClass() {
+		ConfigurationSerialization.registerClass(GifHolder.class);
+		ConfigurationSerialization.registerClass(DataHolder.class);
+	}
+
+	public static BufferedImage[] getFrames(File gif, int height) {
+		ImageInputStream iis = null;
+		try {
+			iis = ImageIO.createImageInputStream(gif);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return getFrames(iis, height);
+	}
+
+	public static BufferedImage[] getFrames(URL gif, int height) {
+		try {
+			return getFrames((ImageInputStream) gif.openStream(), height);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private static BufferedImage[] getFrames(ImageInputStream gif, int height) {
+		try {
+			ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
+			reader.setInput(gif, true);
+			Iterator<IIOImage> iter = reader.readAll(null);
+			List<BufferedImage> bii = new ArrayList<>();
+			while (iter.hasNext()) {
+				IIOImage img = iter.next();
+				BufferedImage frame = (BufferedImage) img.getRenderedImage();
+				frame = RGBBlockColor.resize(frame, (int) (frame.getWidth() * ((double) height) / frame.getHeight()),
+						height);// .createResizedCopy(frame,
+				// height, false);
+				bii.add(frame);
+			}
+			gif.flush();
+			gif.close();
+			Object[] array1 = bii.toArray();
+			BufferedImage[] array = new BufferedImage[array1.length];
+			for (int i = 0; i < array1.length; i++) {
+				if (array1[i] instanceof BufferedImage) {
+					array[i] = (BufferedImage) array1[i];
+				} else {
+					System.out.println("ERROR: Image is not an image.");
+				}
+			}
+			return array;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public boolean isLoaded() {
+		return isFulluLoaded;
 	}
 
 	public void init() {
@@ -108,7 +196,7 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 						for (int height = (bi.getHeight() - 1); height >= 0; height -= 2) {
 							if (width / 2 >= fWidth || height / 2 >= fHeight)
 								continue;
-								
+
 							Location b = getBlockAt(height, width, bi.getHeight());
 							Color[] color = new Color[4];
 							boolean allTrans = true;
@@ -147,7 +235,7 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 												|| dir == Direction.FLAT_SOUTHEAST || dir == Direction.FLAT_SOUTHWEST));
 								DataHolder dh = new DataHolder(b, m);
 								holders.add(dh);
-									materials[frame][width / 2][height / 2] = dh;
+								materials[frame][width / 2][height / 2] = dh;
 							}
 						}
 					}
@@ -187,11 +275,11 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 					Block b = dh.b.getBlock();
 					if (b.getType() != dh.md.getMaterial()) {
 						BlockState state = b.getState();
-						BlockFace bf=null;
+						BlockFace bf = null;
 						byte rd = dh.md.getData();
 						if (dh.hasFaces()) {
 							bf = AsyncImageHolder.getBlockFace(dh, dir);
-							rd=AsyncImageHolder.getBlockData(dh, dir);
+							rd = AsyncImageHolder.getBlockData(dh, dir);
 						}
 						if (PixelPrinter.isAbove113) {
 							b.setType(dh.md.getMaterial());
@@ -204,14 +292,14 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 						} else {
 							state.setType(dh.md.getMaterial());
 							//b.setType(dh.md.getMaterial());
-						try {
-							if (dh.md.getData() != 0&&b.getData() != rd)
-								state.setRawData(rd);
+							try {
+								if (dh.md.getData() != 0 && b.getData() != rd)
+									state.setRawData(rd);
 								//b.setData(dh.md.getData());
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						state.update(true, false);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							state.update(true, false);
 						}
 					}
 				}
@@ -269,42 +357,6 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 		return data;
 	}
 
-	public GifHolder(Map<String, Object> data) {
-		final Map<String, Object> tempData = data;
-		this.currentFrame = (int) data.get("currentframe");
-		this.fileName = (String) data.get("fileName");
-		this.gifID = (int) data.get("gifID");
-		this.dir = Direction.getDir((String) data.get("dir"));
-		freeID.add(gifID);
-		this.height = (int) data.get("height");
-		this.moving = (boolean) data.get("moving");
-		this.neg = (boolean) data.get("neg");
-		this.owner = UUID.fromString((String) data.get("owner"));
-		createFrames(new File(PixelPrinter.getInstance().getImageFile() + File.separator + this.fileName), this.height,
-				owner);
-		final IntHolder temp = new IntHolder();
-		temp.setI(Bukkit.getScheduler().scheduleSyncRepeatingTask(PixelPrinter.getInstance(), new Runnable() {
-			public void run() {
-				if (Bukkit.getWorld((String) tempData.get("minCorner.w")) != null) {
-					minCorner = Bukkit.getWorld((String) tempData.get("minCorner.w"))
-							.getBlockAt((int) tempData.get("minCorner.x"), (int) tempData.get("minCorner.y"),
-									(int) tempData.get("minCorner.z"))
-							.getLocation();
-					Bukkit.getScheduler().cancelTask(temp.getI());
-				}
-			}
-		}, 0, 20));
-		final IntHolder temp2 = new IntHolder();
-		temp2.setI(Bukkit.getScheduler().scheduleSyncRepeatingTask(PixelPrinter.getInstance(), new Runnable() {
-			public void run() {
-				if (minCorner != null && getFrames() != null && getFrames().length > 1) {
-					init();
-					Bukkit.getScheduler().cancelTask(temp2.getI());
-				}
-			}
-		}, 0, 20));
-	}
-
 	@SuppressWarnings("deprecation")
 	public void createFrames(final File gif, final int height, UUID owner) {
 		Bukkit.getScheduler().scheduleAsyncDelayedTask(PixelPrinter.getInstance(), new Runnable() {
@@ -313,57 +365,6 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 			}
 		}, 0);
 
-	}
-
-	public static BufferedImage[] getFrames(File gif, int height) {
-		ImageInputStream iis = null;
-		try {
-			iis = ImageIO.createImageInputStream(gif);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return getFrames(iis, height);
-	}
-
-	public static BufferedImage[] getFrames(URL gif, int height) {
-		try {
-			return getFrames((ImageInputStream) gif.openStream(), height);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private static BufferedImage[] getFrames(ImageInputStream gif, int height) {
-		try {
-			ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName("gif").next();
-			reader.setInput((ImageInputStream) gif, true);
-			Iterator<IIOImage> iter = reader.readAll(null);
-			List<BufferedImage> bii = new ArrayList<>();
-			while (iter.hasNext()) {
-				IIOImage img = iter.next();
-				BufferedImage frame = (BufferedImage) img.getRenderedImage();
-				frame = RGBBlockColor.resize(frame, (int) (frame.getWidth() * ((double) height) / frame.getHeight()),
-						height);// .createResizedCopy(frame,
-				// height, false);
-				bii.add(frame);
-			}
-			gif.flush();
-			gif.close();
-			Object[] array1 = bii.toArray();
-			BufferedImage[] array = new BufferedImage[array1.length];
-			for (int i = 0; i < array1.length; i++) {
-				if (array1[i] instanceof BufferedImage) {
-					array[i] = (BufferedImage) array1[i];
-				} else {
-					System.out.println("ERROR: Image is not an image.");
-				}
-			}
-			return array;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 }
 

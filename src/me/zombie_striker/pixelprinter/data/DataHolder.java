@@ -1,14 +1,13 @@
 package me.zombie_striker.pixelprinter.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import me.zombie_striker.pixelprinter.PixelPrinter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.zombie_striker.pixelprinter.PixelPrinter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DataHolder implements ConfigurationSerializable {
 	public MaterialData md;
@@ -19,6 +18,7 @@ public class DataHolder implements ConfigurationSerializable {
 		this.b = b2;
 		this.md = md;
 	}
+
 	public DataHolder(Location b, MaterialData md, boolean hasFaces) {
 		this.b = b;
 		this.md = md;
@@ -28,14 +28,14 @@ public class DataHolder implements ConfigurationSerializable {
 	public DataHolder(Map<String, Object> data) {
 		final Map<String, Object> tempData = data;
 		new BukkitRunnable() {
-			
+
 			@Override
 			public void run() {
 				if (Bukkit.getWorld((String) tempData.get("b.w")) != null) {
 					b = new Location(Bukkit.getWorld((String) tempData.get("b.w")), (int) tempData.get("b.x"),
 							(int) tempData.get("b.y"), (int) tempData.get("b.z"));
 					cancel();
-				}				
+				}
 			}
 		}.runTaskTimer(PixelPrinter.getInstance(), 0, 20);
 		this.md = (MaterialData) data.get("md");
@@ -51,6 +51,7 @@ public class DataHolder implements ConfigurationSerializable {
 		data.put("md", this.md);
 		return data;
 	}
+
 	public boolean hasFaces() {
 		return hasFaces;
 	}
