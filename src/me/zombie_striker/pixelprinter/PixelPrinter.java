@@ -273,6 +273,8 @@ public class PixelPrinter extends JavaPlugin {
 					ls.add("stopGif");
 				if ("debug".toLowerCase().startsWith(args[0].toLowerCase()))
 					ls.add("debug");
+				if ("debug2".toLowerCase().startsWith(args[0].toLowerCase()))
+					ls.add("debug2");
 				if ("setLoadCount".toLowerCase().startsWith(args[0].toLowerCase()))
 					ls.add("SetLoadCount");
 				if ("stopallGifs".toLowerCase().startsWith(args[0].toLowerCase()))
@@ -416,14 +418,7 @@ public class PixelPrinter extends JavaPlugin {
 							&& !m.name().endsWith("GLASS_PANE") && !m.name().endsWith("FENCE")
 							&& !m.name().endsWith("FENCE_GATE") && !m.name().endsWith("_BUTTON")
 							&& !m.name().endsWith("PRESSURE_PLATE") && !m.name().endsWith("_DOOR")) {
-						try {
-							if (!m.isLegacy())
-								continue;
-						} catch (Error | Exception e4) {
-						}
 						mat.add(m);
-						// sb.append(ccc[color] + m.name() + ", &"+ChatColor.RESET.getChar());
-						// color = (color+1) % ccc.length;
 					}
 				}
 				int size = ((mat.size() / 9) + 1) * 9;
@@ -433,6 +428,10 @@ public class PixelPrinter extends JavaPlugin {
 				for (Material a : mat)
 					test.addItem(new ItemStack(a));
 				((Player) sender).openInventory(test);
+
+			}else if (args[0].equalsIgnoreCase("debug2")) {
+				RGBBlockColor.loadResourcepackTextures(resoucepackFolder,true);
+				sender.sendMessage(prefix+" Output text generated.");
 
 			} else if (args.length > 0 && args[0].equalsIgnoreCase("list")) {
 				sender.sendMessage(getPrefix() + " All the saved images:");
@@ -662,71 +661,7 @@ public class PixelPrinter extends JavaPlugin {
 				// Commands that require Player
 				if (sender instanceof Player) {
 					Player player = (Player) sender;
-					/*
-					 * if (args[0].equalsIgnoreCase("download") || args[0].equalsIgnoreCase("d")) {
-					 * if (args.length < 2) { sender.sendMessage(prefix +
-					 * " You must provide the file name"); return true; } if
-					 * (!sender.hasPermission("pixelprinter.download")) { sender.sendMessage(prefix
-					 * + " You do not have permission to use this command."); return true; }
-					 *
-					 * downloadFile.put(player.getUniqueId(), new FileCreatorData(".txt", args[1]));
-					 * if (args.length == 2) sender.sendMessage(prefix +
-					 * " Now paste the link into the chat."); if (args.length > 2) { File outputfile
-					 * = new File( images + File.separator +
-					 * downloadFile.get(player.getUniqueId()).getName() +
-					 * (downloadFile.get(player.getUniqueId()).getType().equalsIgnoreCase(".txt") ?
-					 * ".txt" : (args[2].endsWith("gif") ? ".gif" : ".jpg"))); if
-					 * (outputfile.exists()) { player.sendMessage(getPrefix() +
-					 * " A file already exists with this name. Either choose a new name or contact the server admin to delete this image."
-					 * ); return true; } if
-					 * (downloadFile.get(player.getUniqueId()).getType().equalsIgnoreCase(".txt")) {
-					 * try { BufferedWriter br = new BufferedWriter(new FileWriter(outputfile));
-					 * br.write(args[2]); br.flush(); br.close(); player.sendMessage(getPrefix() +
-					 * " Completed downloading image path. File \"" + outputfile.getName() +
-					 * "\" created."); } catch (IOException e2) { player.sendMessage(getPrefix() +
-					 * " Something failed when downloading the image. Check console for details.");
-					 * e2.printStackTrace(); } } else { try { if
-					 * (args[2].toLowerCase().endsWith(".gif")) { byte[] bytes =
-					 * IOUtils.toByteArray(new URL(args[2]).openStream());
-					 * FileUtils.writeByteArrayToFile(outputfile, bytes);
-					 * player.sendMessage(getPrefix() + " Completed downloading image. File \"" +
-					 * outputfile.getName() + "\" created."); } else { BufferedImage bi =
-					 * ImageIO.read(new URL(args[2])); ImageIO.write(bi, "jpg", outputfile);
-					 * player.sendMessage(getPrefix() + " Completed downloading image. File \"" +
-					 * outputfile.getName() + "\" created."); bi.flush(); } } catch (Exception er) {
-					 * player.sendMessage(getPrefix() +
-					 * " Something failed when downloading the image. Check console for details.");
-					 * er.printStackTrace();
-					 *
-					 * } } downloadFile.remove(player.getUniqueId()); } } else if
-					 * (args[0].equalsIgnoreCase("downloadimage") || args[0].equalsIgnoreCase("di"))
-					 * { if (args.length < 2) { sender.sendMessage(prefix +
-					 * " You must provide the file name"); return true; } if
-					 * (!sender.hasPermission("pixelprinter.download")) { sender.sendMessage(prefix
-					 * + " You do not have permission to use this command."); return true; }
-					 * downloadFile.put(player.getUniqueId(), new FileCreatorData("fFind",
-					 * args[1])); if (args.length == 2) sender.sendMessage(prefix +
-					 * " Now paste the link into the chat."); if (args.length > 2) { File outputfile
-					 * = new File( images + File.separator +
-					 * downloadFile.get(player.getUniqueId()).getName() +
-					 * (downloadFile.get(player.getUniqueId()).getType().equalsIgnoreCase(".txt") ?
-					 * ".txt" : (args[2].endsWith("gif") ? ".gif" : ".png"))); if
-					 * (outputfile.exists()) { player.sendMessage(getPrefix() +
-					 * " A file already exists with this name. Either choose a new name or contact the server admin to delete this image."
-					 * ); return true; } try { if (args[2].toLowerCase().endsWith(".gif")) { byte[]
-					 * bytes = IOUtils.toByteArray(new URL(args[2]).openStream());
-					 * FileUtils.writeByteArrayToFile(outputfile, bytes);
-					 * player.sendMessage(getPrefix() + " Completed downloading gif. File \"" +
-					 * outputfile.getName() + "\" created."); } else { BufferedImage bi =
-					 * ImageIO.read(new URL(args[2])); ImageIO.write(bi, "png", outputfile);
-					 * player.sendMessage(getPrefix() + " Completed downloading image. File \"" +
-					 * outputfile.getName() + "\" created."); bi.flush(); } } catch (Exception er) {
-					 * player.sendMessage(getPrefix() +
-					 * " Something failed when downloading the image. Check console for details.");
-					 * er.printStackTrace();
-					 *
-					 * } downloadFile.remove(player.getUniqueId()); } } else
-					 */
+
 					if (args[0].equalsIgnoreCase("createFrame") || args[0].equalsIgnoreCase("cf")) {
 						try {
 							if (args.length < 4) {

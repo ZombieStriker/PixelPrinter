@@ -1,5 +1,6 @@
 package me.zombie_striker.pixelprinter.util;
 
+import me.zombie_striker.pixelprinter.data.ImageRelativeBlockDirection;
 import me.zombie_striker.pixelprinter.data.MaterialData;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
@@ -13,7 +14,7 @@ public class FileNameToMaterialUtil {
 		byte b = 0;
 		String m = filename;
 
-		BlockFace facing = null;
+		ImageRelativeBlockDirection facing = null;
 
 		if (filename.equalsIgnoreCase("end_rod") || filename.equalsIgnoreCase("ice")
 				|| filename.equalsIgnoreCase("vine") || filename.equalsIgnoreCase("web")
@@ -37,6 +38,16 @@ public class FileNameToMaterialUtil {
 				|| filename.equalsIgnoreCase("MELON_STEM") || filename.equalsIgnoreCase("CHORUS_FLOWER")
 				|| filename.equalsIgnoreCase("DEAD_BUSH") || filename.equalsIgnoreCase("SUGAR_CANE")
 				|| filename.contains("shulker") || filename.endsWith("sapling") || filename.equals("tripwire")
+
+
+				|| filename.startsWith("bell") || filename.startsWith("anvil") || filename.startsWith("cactus")
+
+				|| filename.equalsIgnoreCase("crimson_fungi") || filename.equalsIgnoreCase("crimson_roots") ||
+				filename.equalsIgnoreCase("crimson_stem") || filename.equalsIgnoreCase("nether_sprouts") ||
+				filename.equalsIgnoreCase("soul_fire_lantern") || filename.equalsIgnoreCase("soul_fire_torch") ||
+				filename.equalsIgnoreCase("warped_fungi") || filename.equalsIgnoreCase("warped_roots") ||
+				filename.equalsIgnoreCase("weeping_vines")
+
 				|| filename.equals("tripwire_hook") || filename.equals("tripwire_hook") || filename.equals("iron_block")
 				|| filename.equals("snow") || filename.equals("beacon") || filename.equals("cobweb")
 				|| filename.equals("dandelion") || filename.equals("wither_rose") || filename.equals("cornflower") || filename.equals("lily_of_the_valley") || filename.equals("comparator") || filename.equals("conduit")
@@ -51,9 +62,37 @@ public class FileNameToMaterialUtil {
 				|| filename.equals("seagrass") || filename.equals("farmland") || filename.equals("oxeye_daisy")
 				|| filename.endsWith("_coral") || filename.startsWith("stonecutter") || filename.startsWith("grindstone")
 
-				|| filename.equalsIgnoreCase("lantern")) {
+				|| filename.equalsIgnoreCase("lantern") ||filename.equals("grass_block_side") ||filename.equals("mycelium_side")||filename.startsWith("sunflower_")
+
+		||filename.equals("scaffolding_side") || filename.startsWith("grass_path_")|| filename.equals("cake_side") || m.equals("daylight_detector_side") || filename.equals("enchanting_table_side")||filename.equals("end_portal_frame_side")
+
+		||filename.equals("jigsaw_side") ||filename.equals("structure_block")) {
 			return null;
 		}
+
+		if(filename.equals("smooth_stone_slab_side")){
+			return null;
+		}
+
+		if (m.endsWith("_front")) {
+			m = m.split("_front")[0];
+			facing = ImageRelativeBlockDirection.FRONT;
+		}else if (m.endsWith("_top")) {
+			m = m.split("_top")[0];
+			facing = ImageRelativeBlockDirection.TOP;
+		}else if (m.endsWith("_side")) {
+			m = m.split("_side")[0];
+			facing = ImageRelativeBlockDirection.SIDE;
+		}else if (m.endsWith("_back")) {
+			m = m.split("_back")[0];
+			facing = ImageRelativeBlockDirection.BACK;
+		}else if(m.endsWith("_bottom")){
+			m=m.split("_bottom")[0];
+			facing = ImageRelativeBlockDirection.BOTTOM;
+		}
+
+		if(m.equals("bell") )
+			return null;
 
 		if (Material.matchMaterial(m) != null) {
 			if (filename.equalsIgnoreCase("snow")) {
@@ -84,23 +123,23 @@ public class FileNameToMaterialUtil {
 			}
 			if (!Material.matchMaterial(m).isBlock())
 				return null;
-		} else {
+		}else {
 			if (ReflectionUtil.isVersionHigherThan(1, 14)) {
 
 				if (filename.equalsIgnoreCase("smithing_table_side")) {
 					m = "SMITHING_TABLE";
 				} else if (filename.equalsIgnoreCase("blast_furnace_front")) {
 					m = "BLAST_FURNACE";
-					facing = BlockFace.EAST;
+					facing = ImageRelativeBlockDirection.FRONT;
 				} else if (filename.equalsIgnoreCase("blast_furnace_side")) {
 					m = "BLAST_FURNACE";
-					facing = BlockFace.NORTH;
+					facing = ImageRelativeBlockDirection.SIDE;
 				} else if (filename.equalsIgnoreCase("smoker_front")) {
 					m = "SMOKER";
-					facing = BlockFace.EAST;
+					facing = ImageRelativeBlockDirection.FRONT;
 				} else if (filename.equalsIgnoreCase("smoker_side")) {
 					m = "SMOKER";
-					facing = BlockFace.NORTH;
+					facing = ImageRelativeBlockDirection.SIDE;
 				} else if (filename.equals("composter_side")) {
 					m = "COMPOSTER";
 				}
@@ -110,46 +149,45 @@ public class FileNameToMaterialUtil {
 			if (ReflectionUtil.isVersionHigherThan(1, 13)) {
 				if (filename.equalsIgnoreCase("barrel_side")) {
 					m = "BARREL";
-					if (filename.equalsIgnoreCase("acacia_planks")) {
-						m = "ACACIA_WOOD";
-					} else if (filename.equalsIgnoreCase("birtch_planks")) {
-						m = "BIRTCH_WOOD";
-					} else if (filename.equalsIgnoreCase("oak_planks")) {
-						m = "OAK_WOOD";
-					} else if (filename.equalsIgnoreCase("dark_oak_planks")) {
-						m = "DARK_OAK_WOOD";
-					} else if (filename.equalsIgnoreCase("spruce_planks")) {
-						m = "SPRUCE_WOOD";
-					} else if (filename.equalsIgnoreCase("jungle_planks")) {
-						m = "JUNGLE_WOOD";
-					} else if (filename.equalsIgnoreCase("chain_command_block_front")) {
-						m = "CHAIN_COMMAND_BLOCK";
-					} else if (filename.equalsIgnoreCase("command_block_front")) {
-						m = "COMMAND_BLOCK";
-					} else if (filename.equalsIgnoreCase("crafting_table_side")) {
-						m = "CRAFTING_TABLE";
-					} else if (filename.equalsIgnoreCase("dispenser_front")) {
-						m = "DISPENCER";
-						facing = BlockFace.EAST;
-					} else if (filename.equalsIgnoreCase("dried_kelp_side")) {
-						m = "DRIED_KELP_BLOCK";
-					} else if (filename.equalsIgnoreCase("frosted_ice_0")) {
-						m = "FROSTED_ICE";
-					} else if (filename.equalsIgnoreCase("iron_block")) {
-						m = "IRON_BLOCK";
-					} else if (filename.equalsIgnoreCase("magma")) {
-						m = "MAGMA_BLOCK";
-					} else if (filename.equalsIgnoreCase("melon_side")) {
-						m = "MELON";
-					} else if (filename.equalsIgnoreCase("repeating_command_block_front")) {
-						m = "REPEATING_COMMAND_BLOCK";
-					} else if (filename.equalsIgnoreCase("sandstone_top")) {
-						m = "SMOOTH_SANDSTONE";
-					} else if (filename.equalsIgnoreCase("red_sandstone_top")) {
-						m = "SMOOTH_RED_SANDSTONE";
-					} else if (filename.equalsIgnoreCase("stone_slab_top")) {
-						m = "SMOOTH_STONE";
-					}
+				} else if (filename.equalsIgnoreCase("acacia_planks")) {
+					m = "ACACIA_WOOD";
+				} else if (filename.equalsIgnoreCase("birtch_planks")) {
+					m = "BIRTCH_WOOD";
+				} else if (filename.equalsIgnoreCase("oak_planks")) {
+					m = "OAK_WOOD";
+				} else if (filename.equalsIgnoreCase("dark_oak_planks")) {
+					m = "DARK_OAK_WOOD";
+				} else if (filename.equalsIgnoreCase("spruce_planks")) {
+					m = "SPRUCE_WOOD";
+				} else if (filename.equalsIgnoreCase("jungle_planks")) {
+					m = "JUNGLE_WOOD";
+				} else if (filename.equalsIgnoreCase("chain_command_block_front")) {
+					m = "CHAIN_COMMAND_BLOCK";
+				} else if (filename.equalsIgnoreCase("command_block_front")) {
+					m = "COMMAND_BLOCK";
+				} else if (filename.equalsIgnoreCase("crafting_table_side")) {
+					m = "CRAFTING_TABLE";
+				} else if (filename.equalsIgnoreCase("dispenser_front")) {
+					m = "DISPENCER";
+					facing = ImageRelativeBlockDirection.FRONT;
+				} else if (filename.equalsIgnoreCase("dried_kelp_side")) {
+					m = "DRIED_KELP_BLOCK";
+				} else if (filename.equalsIgnoreCase("frosted_ice_0")) {
+					m = "FROSTED_ICE";
+				} else if (filename.equalsIgnoreCase("iron_block")) {
+					m = "IRON_BLOCK";
+				} else if (filename.equalsIgnoreCase("magma")) {
+					m = "MAGMA_BLOCK";
+				} else if (filename.equalsIgnoreCase("melon_side")) {
+					m = "MELON";
+				} else if (filename.equalsIgnoreCase("repeating_command_block_front")) {
+					m = "REPEATING_COMMAND_BLOCK";
+				} else if (filename.equalsIgnoreCase("sandstone_top")) {
+					m = "SMOOTH_SANDSTONE";
+				} else if (filename.equalsIgnoreCase("red_sandstone_top")) {
+					m = "SMOOTH_RED_SANDSTONE";
+				} else if (filename.equalsIgnoreCase("stone_slab_top")) {
+					m = "SMOOTH_STONE";
 				}
 			}
 			if (filename.equalsIgnoreCase("bone_block_side")) {
@@ -157,46 +195,46 @@ public class FileNameToMaterialUtil {
 
 			} else if (filename.equalsIgnoreCase("pumpkin_face_on")) {
 				m = "JACK_O_LANTERN";
-				facing = BlockFace.EAST;
+				facing =ImageRelativeBlockDirection.FRONT;
 			} else if (filename.equalsIgnoreCase("pumpkin_face")) {
 				m = "PUMPKIN";
-				facing = BlockFace.EAST;
+				facing = ImageRelativeBlockDirection.FRONT;
 			} else if (filename.equalsIgnoreCase("cobblestone_mossy")) {
 				m = "MOSSY_COBBLESTONE";
 			} else if (filename.equalsIgnoreCase("pumpkin_side")) {
 				m = "PUMPKIN";
-				facing = BlockFace.WEST;
+				facing = ImageRelativeBlockDirection.BACK;
 			} else if (filename.equalsIgnoreCase("dispenser_front")) {
 				m = "DISPENCER";
-				facing = BlockFace.EAST;
+				facing = ImageRelativeBlockDirection.FRONT;
 			} else if (filename.equalsIgnoreCase("furnace_front")) {
 				m = "FURNACE";
-				facing = BlockFace.EAST;
+				facing = ImageRelativeBlockDirection.FRONT;
 			} else if (filename.equalsIgnoreCase("furnace_front_on")) {
 				if (ReflectionUtil.isVersionHigherThan(1, 13))
 					return null;
 				m = "BURNING_FURNACE";
-				facing = BlockFace.EAST;
+				facing =ImageRelativeBlockDirection.FRONT;
 			} else if (filename.equalsIgnoreCase("observer_back")) {
 				m = "OBSERVER";
-				facing = BlockFace.WEST;
+				facing = ImageRelativeBlockDirection.BACK;
 				// } else if (filename.equalsIgnoreCase("observer_top")) {
 				// m = "OBSERVER";
 			} else if (filename.equalsIgnoreCase("observer_side")) {
 				m = "OBSERVER";
-				facing = BlockFace.NORTH;
+				facing = ImageRelativeBlockDirection.SIDE;
 			} else if (filename.equalsIgnoreCase("observer_front")) {
 				m = "OBSERVER";
-				facing = BlockFace.EAST;
+				facing = ImageRelativeBlockDirection.FRONT;
 			} else if (filename.equalsIgnoreCase("piston_top")) {
 				m = "PISTON_BASE";
-				facing = BlockFace.EAST;
+				facing = ImageRelativeBlockDirection.FRONT;
 			} else if (filename.equalsIgnoreCase("piston_top_sticky")) {
 				m = "PISTON_STICKY_BASE";
-				facing = BlockFace.EAST;
+				facing = ImageRelativeBlockDirection.FRONT;
 			} else if (filename.equalsIgnoreCase("piston_bottom")) {
 				m = "PISTON_BASE";
-				facing = BlockFace.WEST;
+				facing = ImageRelativeBlockDirection.BACK;
 
 			} else if (filename.equalsIgnoreCase("repeating_command_block_front")) {
 				m = "COMMAND_REPEATING";
@@ -302,12 +340,6 @@ public class FileNameToMaterialUtil {
 				}
 			} else if (filename.equalsIgnoreCase("pumpkin_side")) {
 				m = "PUMKIN";
-				/*
-				 * } else if (filename.equalsIgnoreCase("piston_top_normal")) { m =
-				 * "PISTON_BASE"; b=1; } else if
-				 * (filename.equalsIgnoreCase("piston_top_STICKY")) { m = "PISTON_STICKY_BASE";
-				 * b=1;
-				 */
 			} else if (filename.equalsIgnoreCase("quartz_block_side")) {
 				m = "QUARTZ_BLOCK";
 			} else if (filename.equalsIgnoreCase("quartz_block_chiseled")) {

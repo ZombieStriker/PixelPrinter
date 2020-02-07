@@ -1,3 +1,10 @@
+1.0.46
+    Added 1.16 pre-support.
+    Added 1.15 blocks to RGB color system.
+    Fixed updated block count to correctly display right amount.
+    Changed internal direction system to new ImageRelativeBlockDirection enum instead of BlockFace.
+    Implemented new system that makes loading new blocks easier.
+
 1.0.45
     Fixed 1.14 support.
     Fixed large image loading for 1.14+

@@ -9,14 +9,14 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MaterialData implements ConfigurationSerializable {
+public class MaterialData implements ConfigurationSerializable, Comparable<MaterialData> {
 
 	private Material m;
 	private byte data;
 
-	private BlockFace direction = null;
+	private ImageRelativeBlockDirection direction = null;
 
-	public MaterialData(Material m, byte data, BlockFace direction) {
+	public MaterialData(Material m, byte data, ImageRelativeBlockDirection direction) {
 		ConfigurationSerialization.registerClass(MaterialData.class);
 		this.setMaterial(m);
 		this.data = data;
@@ -41,7 +41,7 @@ public class MaterialData implements ConfigurationSerializable {
 		return getMatDataByTypes(mat, data, null);
 	}
 
-	public static MaterialData getMatDataByTypes(Material mat, byte data, BlockFace direction) {
+	public static MaterialData getMatDataByTypes(Material mat, byte data, ImageRelativeBlockDirection direction) {
 		for (MaterialData key : RGBBlockColor.materialValue.keySet())
 			if (key.getData() == data && key.getMaterial() == mat && ((direction == null && !key.hasDirection()) || direction == key.getDirection()))
 				return key;
@@ -52,8 +52,11 @@ public class MaterialData implements ConfigurationSerializable {
 		return direction != null;
 	}
 
-	public BlockFace getDirection() {
+	public ImageRelativeBlockDirection getDirection() {
 		return direction;
+	}
+	public BlockFace getBlockFace() {
+		return direction.convertToBlockFace();
 	}
 
 	public byte getData() {
@@ -74,5 +77,15 @@ public class MaterialData implements ConfigurationSerializable {
 		data.put("m", this.getMaterial().toString());
 		data.put("data", this.data + "");
 		return data;
+	}
+
+	@Override
+	public int compareTo(MaterialData o) {
+		if(this.m==o.m){
+			String dir1 = this.direction==null?"":this.direction.name();
+			String dir2 = o.direction==null?"":o.direction.name();
+			return dir1.compareTo(dir2);
+		}
+		return this.m.name().compareTo(o.m.name());
 	}
 }

@@ -34,7 +34,6 @@ public class MapWallUtil {
 
 	@SuppressWarnings("deprecation")
 	public static ItemStack getMap(BufferedImage BUFFEREDIMAGE) {
-		// MapView mv = Bukkit.createMap(Bukkit.getWorlds().get(0));
 		Material map = Material.MAP;
 		ItemStack is;
 		if (ReflectionUtil.isVersionHigherThan(1, 13)) {
@@ -46,11 +45,6 @@ public class MapWallUtil {
 		} else {
 			is = new ItemStack(map, 1, (short) SimilarMapUtil.findSimilarImage(BUFFEREDIMAGE));
 		}
-		/*
-		 * ItemStack is = new ItemStack(map, 1, (short) mapIds); for (MapRenderer mr :
-		 * mv.getRenderers()) { mv.removeRenderer(mr); } mv.addRenderer(new
-		 * CustomImageRenderer(BUFFEREDIMAGE, CustomImageRenderer.TICK_FOR_STILLS));
-		 */
 		return is;
 	}
 

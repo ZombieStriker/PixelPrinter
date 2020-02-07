@@ -17,10 +17,7 @@
 package me.zombie_striker.pixelprinter.util;
 
 import me.zombie_striker.pixelprinter.PixelPrinter;
-import me.zombie_striker.pixelprinter.data.DataHolder;
-import me.zombie_striker.pixelprinter.data.Direction;
-import me.zombie_striker.pixelprinter.data.IntHolder;
-import me.zombie_striker.pixelprinter.data.MaterialData;
+import me.zombie_striker.pixelprinter.data.*;
 import me.zombie_striker.pixelprinter.util.RGBBlockColor.Pixel;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -92,7 +89,7 @@ public class AsyncImageHolder extends Image {
 			}
 
 			if (dh.md.getMaterial() == Material.OBSERVER) {
-				if (dh.md.getDirection() == BlockFace.EAST) {
+				if (dh.md.getDirection() == ImageRelativeBlockDirection.FRONT) {
 					if (PixelPrinter.isAbove113) {
 						if (dir == Direction.UP_EAST)
 							return BlockFace.SOUTH;
@@ -104,7 +101,7 @@ public class AsyncImageHolder extends Image {
 							return BlockFace.EAST;
 					}
 
-					if (dh.md.getDirection() == BlockFace.WEST) {
+					if (dh.md.getDirection() == ImageRelativeBlockDirection.BACK) {
 						// Go eat, then we need south.
 						// Go south, then face west, ect.
 						if (dir == Direction.UP_EAST)
@@ -117,7 +114,7 @@ public class AsyncImageHolder extends Image {
 							return BlockFace.WEST;
 					}
 
-					if (dh.md.getDirection() == BlockFace.NORTH) {
+					if (dh.md.getDirection() == ImageRelativeBlockDirection.SIDE) {
 						// Go eat, then we need south.
 						// Go south, then face west, ect.
 						if (dir == Direction.UP_EAST)
@@ -179,7 +176,7 @@ public class AsyncImageHolder extends Image {
 			}
 			if (dh.md.getMaterial().name().equals("PISTON_BASE")
 					|| dh.md.getMaterial().name().equals("PISTON_STICKY_BASE")) {
-				if (dh.md.getDirection() == BlockFace.UP) {
+				if (dh.md.getDirection() == ImageRelativeBlockDirection.TOP) {
 					if (dir == Direction.UP_NORTH)
 						return ((byte) 5);
 					if (dir == Direction.UP_EAST)
@@ -189,7 +186,7 @@ public class AsyncImageHolder extends Image {
 					if (dir == Direction.UP_WEST)
 						return ((byte) 2);
 				}
-				if (dh.md.getDirection() == BlockFace.WEST) {
+				if (dh.md.getDirection() == ImageRelativeBlockDirection.BACK) {
 					if (dir == Direction.UP_NORTH)
 						return ((byte) 4);
 					if (dir == Direction.UP_EAST)
@@ -201,7 +198,7 @@ public class AsyncImageHolder extends Image {
 				}
 			}
 			if (dh.md.getMaterial() == Material.PUMPKIN || dh.md.getMaterial() == Material.JACK_O_LANTERN) {
-				if (dh.md.getDirection() == BlockFace.EAST) {
+				if (dh.md.getDirection() == ImageRelativeBlockDirection.FRONT) {
 					// Go eat, then we need south.
 					// Go south, then face west, ect.
 					if (dir == Direction.UP_NORTH)
@@ -214,7 +211,7 @@ public class AsyncImageHolder extends Image {
 						return ((byte) 2);
 				}
 
-				if (dh.md.getDirection() == BlockFace.WEST) {
+				if (dh.md.getDirection() == ImageRelativeBlockDirection.BACK) {
 					if (dir == Direction.UP_NORTH)
 						return ((byte) 0);
 					if (dir == Direction.UP_EAST)
@@ -228,7 +225,7 @@ public class AsyncImageHolder extends Image {
 			}
 
 			if (dh.md.getMaterial() == Material.OBSERVER) {
-				if (dh.md.getDirection() == BlockFace.EAST) {
+				if (dh.md.getDirection() == ImageRelativeBlockDirection.FRONT) {
 					// Go eat, then we need south.
 					// Go south, then face west, ect.
 					if (dir == Direction.UP_NORTH)
@@ -242,7 +239,7 @@ public class AsyncImageHolder extends Image {
 
 				}
 
-				if (dh.md.getDirection() == BlockFace.WEST) {
+				if (dh.md.getDirection() == ImageRelativeBlockDirection.BACK) {
 					// Go eat, then we need south.
 					// Go south, then face west, ect.
 					if (dir == Direction.UP_NORTH)
@@ -255,7 +252,7 @@ public class AsyncImageHolder extends Image {
 						return ((byte) 2);
 				}
 
-				if (dh.md.getDirection() == BlockFace.NORTH) {
+				if (dh.md.getDirection() == ImageRelativeBlockDirection.SIDE) {
 					// Go eat, then we need south.
 					// Go south, then face west, ect.
 					if (dir == Direction.UP_NORTH)
@@ -291,7 +288,7 @@ public class AsyncImageHolder extends Image {
 				for (int width = 0; width < (bi.getWidth()); width += 2) {
 					for (int height = (bi.getHeight() - 1); height >= 0; height -= 2) {
 						Location b = getBlockAt(height, width, bi.getHeight());
-						if (b == null || b.getY() > 256) {
+						if (b == null || b.getBlockY() > 255) {
 							continue;
 						}
 						Color[] color = new Color[4];
@@ -323,7 +320,9 @@ public class AsyncImageHolder extends Image {
 				int timesTicked = 0;
 
 				final IntHolder blocksUpdated = new IntHolder();
-				final IntHolder didNotHaveToReplace = new IntHolder();
+				final BoolHolder hadToReplace = new BoolHolder();
+
+				final boolean is113 = ReflectionUtil.isVersionHigherThan  (1,13);
 
 				for (Entry<String, List<DataHolder>> ent : chunksorter.entrySet()) {
 					final List<DataHolder> gg = ent.getValue();
@@ -348,7 +347,10 @@ public class AsyncImageHolder extends Image {
 										rd = getBlockData(dh, dir);
 									}
 									if (dh.md.getMaterial() != bs.getType()
-											|| (((int) bs.getRawData()) != ((int) rd))) {
+											|| (!is113 && ((int) bs.getRawData()) != ((int) rd))){
+										hadToReplace.setB(true);
+										blocksUpdated.setI(blocksUpdated.getI() + 1);
+
 										if (PixelPrinter.isAbove113) {
 											bs.getBlock().setType(dh.md.getMaterial());
 											bs.setType(dh.md.getMaterial());
@@ -366,7 +368,6 @@ public class AsyncImageHolder extends Image {
 											if (below.getType() == Material.AIR)
 												below.setType(Material.STONE);
 										}
-										blocksUpdated.setI(blocksUpdated.getI() + 1);
 										final BlockFace bf2 = bf;
 										new BukkitRunnable() {
 
@@ -398,8 +399,6 @@ public class AsyncImageHolder extends Image {
 												cancel();
 											}
 										}.runTaskLater(PixelPrinter.getInstance(), 20);
-									} else {
-										didNotHaveToReplace.setI(2);
 									}
 								}
 							}
@@ -419,7 +418,7 @@ public class AsyncImageHolder extends Image {
 					public void run() {
 						for (Player p2 : minCorner.getWorld().getPlayers()) {
 							p2.sendMessage(PixelPrinter.getInstance().getPrefix() + " Done!"
-									+ (didNotHaveToReplace.getI() == 2 ? " Updated " + blocksUpdated.getI() + " blocks."
+									+ (hadToReplace.getB() ? " Updated " + blocksUpdated.getI() + " blocks."
 									: ""));
 						}
 						cancel();

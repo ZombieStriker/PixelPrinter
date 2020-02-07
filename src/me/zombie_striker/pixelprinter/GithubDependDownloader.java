@@ -13,34 +13,6 @@ import java.net.URLConnection;
 
 public class GithubDependDownloader {
 
-	/*
-	 * public void update(Player p){ String version = Main.version; String
-	 * parsedVersion = version.replace(".", "");
-	 *
-	 * try { URL api = new
-	 * URL("https://api.github.com/repos/greeves12/COD/releases/latest");
-	 * URLConnection con = api.openConnection(); con.setConnectTimeout(15000);
-	 * con.setReadTimeout(15000);
-	 *
-	 * String tagName = null;
-	 *
-	 * try{ JsonObject json = new JsonParser().parse(new
-	 * InputStreamReader(con.getInputStream())).getAsJsonObject(); tagName =
-	 * json.get("tag_name").getAsString();
-	 *
-	 * String finalTagName = tagName.replace(".", ""); int latestVersion =
-	 * Integer.parseInt(finalTagName.substring(1, finalTagName.length()));
-	 *
-	 * if(latestVersion > Integer.parseInt(parsedVersion)) {
-	 *
-	 * p.sendMessage("§8*** [COD] §bThere is a new version available §a" + tagName +
-	 * "§8***"); p.sendMessage("§8*** §dDownload the new build from here §8***");
-	 * p.sendMessage("§8*** §6§6https://github.com/greeves12/COD/releases §8***");
-	 * p.sendMessage("§bOnly Admins can see this message!"); }
-	 *
-	 * }catch(JsonIOException e){ e.printStackTrace(); } } catch (IOException e) {
-	 * e.printStackTrace(); } }
-	 */
 
 	public static boolean autoUpdate(final Plugin main, final File output, String author, String githubProject,
 									 String jarname) {

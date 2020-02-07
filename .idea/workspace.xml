@@ -2,196 +2,40 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c0079e3f-9f9a-47c2-8af4-76031d59bd8b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/BoolHolder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/ImageRelativeBlockDirection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/changelog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/resources/changelog.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/resources/plugin.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/GithubDependDownloader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/GithubDependDownloader.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/GithubUpdater.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/GithubUpdater.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/Metrics.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/Metrics.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/PPListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/PPListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/PixelPrinter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/PixelPrinter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/CustomMapView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/CustomMapView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/DataHolder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/DataHolder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/Direction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/Direction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/FileCreatorData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/FileCreatorData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/IntHolder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/IntHolder.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/MaterialData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/MaterialData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/AsyncImageHolder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/AsyncImageHolder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/BlockTypeSnapshot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/BlockTypeSnapshot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/CustomImageRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/CustomImageRenderer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/FileNameToMaterialUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/FileNameToMaterialUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/GifHolder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/GifHolder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/Image.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/Image.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/MapWallUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/MapWallUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/RGBBlockColor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/RGBBlockColor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/RGBChatColor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/RGBChatColor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/ReflectionUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/ReflectionUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/SimilarMapUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/SimilarMapUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/SkinCreator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/SkinCreator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/UndoUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/UndoUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/Update13Handler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/Update13Handler.java" afterDir="false" />
     </list>
-    <ignored path="$PROJECT_DIR$/out/" />
-    <ignored path="$PROJECT_DIR$/target/" />
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
   <component name="DefaultGradleProjectSettings">
     <option name="isMigrated" value="true" />
   </component>
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/AsyncImageHolder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="353" column="74" selection-start-line="353" selection-start-column="74" selection-end-line="353" selection-end-column="74" />
-              <folding>
-                <element signature="e#8921#14355#0" expanded="true" />
-                <element signature="e#10937#13889#0" expanded="true" />
-                <element signature="e#12145#13495#0" expanded="true" />
-                <element signature="e#13494#13495#0" expanded="true" />
-                <element signature="e#13888#13889#0" expanded="true" />
-                <element signature="e#13961#14287#0" expanded="true" />
-                <element signature="e#14286#14287#0" expanded="true" />
-                <element signature="e#14354#14355#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/Update13Handler.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="414">
-              <caret line="35" column="13" lean-forward="true" selection-start-line="35" selection-start-column="13" selection-end-line="35" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/UndoUtil.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="11" column="54" lean-forward="true" selection-start-line="11" selection-start-column="54" selection-end-line="11" selection-end-column="54" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/BlockTypeSnapshot.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="33" column="85" selection-start-line="33" selection-start-column="85" selection-end-line="33" selection-end-column="85" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/RGBBlockColor.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="557">
-              <caret line="308" column="75" selection-start-line="308" selection-start-column="75" selection-end-line="308" selection-end-column="75" />
-              <folding>
-                <element signature="e#2258#2259#0" expanded="true" />
-                <element signature="e#77029#77030#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/MaterialData.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="16" column="25" lean-forward="true" selection-start-line="16" selection-start-column="25" selection-end-line="16" selection-end-column="25" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/FileNameToMaterialUtil.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="156">
-              <caret line="133" column="78" lean-forward="true" selection-start-line="133" selection-start-column="78" selection-end-line="133" selection-end-column="78" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/PixelPrinter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="404">
-              <caret line="314" column="37" selection-start-line="314" selection-start-column="37" selection-end-line="314" selection-end-column="37" />
-              <folding>
-                <element signature="e#10098#10106#0" expanded="true" />
-                <element signature="e#38861#38862#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/resources/changelog.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="493">
-              <caret line="29" column="11" lean-forward="true" selection-start-line="29" selection-start-column="11" selection-end-line="29" selection-end-column="11" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>return null</find>
-      <find>getclose</find>
-      <find>init</find>
-      <find>activate</find>
-      <find>debug</find>
-      <find>loadimag</find>
-      <find>createim</find>
-      <find>createimag</find>
-      <find>load</find>
-      <find>setty</find>
-      <find>top</find>
-      <find>txt</find>
-    </findStrings>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/CustomMapView.java" />
-        <option value="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/GithubDependDownloader.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/BlockTypeSnapshot.java" />
-        <option value="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/UndoUtil.java" />
-        <option value="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/Update13Handler.java" />
-        <option value="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/AsyncImageHolder.java" />
-        <option value="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/PixelPrinter.java" />
-        <option value="$PROJECT_DIR$/resources/changelog.txt" />
-        <option value="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/FileNameToMaterialUtil.java" />
-        <option value="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/RGBBlockColor.java" />
-      </list>
-    </option>
   </component>
   <component name="MavenImportPreferences">
     <option name="importingSettings">
@@ -203,66 +47,15 @@
       </MavenImportingSettings>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1400" />
-    <option name="height" value="1000" />
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
   </component>
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="PixelPrinter" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PixelPrinter" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="PixelPrinter" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PixelPrinter" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="PixelPrinter" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PixelPrinter" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="PixelPrinter" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PixelPrinter" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="pixelprinter" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="PixelPrinter" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PixelPrinter" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="pixelprinter" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="PixelPrinter" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PixelPrinter" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="pixelprinter" type="462c0819:PsiDirectoryNode" />
-              <item name="util" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="PixelPrinter" type="b2602c69:ProjectViewProjectNode" />
-              <item name="PixelPrinter" type="462c0819:PsiDirectoryNode" />
-              <item name="target" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
-    </panes>
+  <component name="ProjectId" id="1RJdLLbHd4Iam8lGugx6BXn9wzm" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
@@ -275,21 +68,12 @@
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="me.zombie_striker.pixelprinter.data" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="F:\GitHub\PixelPrinter\libs" />
     </key>
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
   </component>
   <component name="RunManager">
     <configuration name="PixelPrinter [clean,package]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
@@ -319,6 +103,18 @@
       <method v="2" />
     </configuration>
   </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -332,157 +128,44 @@
     </task>
     <servers />
   </component>
-  <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
-    <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18176973" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Designer" order="2" />
-      <window_info id="Image Layers" order="3" />
-      <window_info id="Capture Tool" order="4" />
-      <window_info id="UI Designer" order="5" />
-      <window_info id="Learn" order="6" />
-      <window_info id="Favorites" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32950193" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Palette" order="3" />
-      <window_info anchor="right" id="Capture Analysis" order="4" />
-      <window_info anchor="right" id="Theme Preview" order="5" />
-      <window_info anchor="right" id="Maven" order="6" />
-      <window_info anchor="right" id="Palette&#9;" order="7" />
-    </layout>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
-  <component name="editorHistoryManager">
-    <entry file="jar://C:/Program Files/Java/jdk-10.0.1/lib/src.zip!/java.base/java/lang/Runnable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="539">
-          <caret line="67" column="25" selection-start-line="67" selection-start-column="25" selection-end-line="67" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/MojangAPI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="9" column="13" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/CustomMapView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="618">
-          <caret line="91" column="8" selection-start-line="91" selection-start-column="8" selection-end-line="91" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/GithubDependDownloader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="30" column="74" selection-start-line="30" selection-start-column="74" selection-end-line="30" selection-end-column="74" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/MaterialData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="16" column="25" lean-forward="true" selection-start-line="16" selection-start-column="25" selection-end-line="16" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/BlockTypeSnapshot.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="33" column="85" selection-start-line="33" selection-start-column="85" selection-end-line="33" selection-end-column="85" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/UndoUtil.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="11" column="54" lean-forward="true" selection-start-line="11" selection-start-column="54" selection-end-line="11" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/AsyncImageHolder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="353" column="74" selection-start-line="353" selection-start-column="74" selection-end-line="353" selection-end-column="74" />
-          <folding>
-            <element signature="e#8921#14355#0" expanded="true" />
-            <element signature="e#10937#13889#0" expanded="true" />
-            <element signature="e#12145#13495#0" expanded="true" />
-            <element signature="e#13494#13495#0" expanded="true" />
-            <element signature="e#13888#13889#0" expanded="true" />
-            <element signature="e#13961#14287#0" expanded="true" />
-            <element signature="e#14286#14287#0" expanded="true" />
-            <element signature="e#14354#14355#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/Update13Handler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="35" column="13" lean-forward="true" selection-start-line="35" selection-start-column="13" selection-end-line="35" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/PixelPrinter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="404">
-          <caret line="314" column="37" selection-start-line="314" selection-start-column="37" selection-end-line="314" selection-end-column="37" />
-          <folding>
-            <element signature="e#10098#10106#0" expanded="true" />
-            <element signature="e#38861#38862#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/plugin.yml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="29" column="11" lean-forward="true" selection-start-line="29" selection-start-column="11" selection-end-line="29" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/resources/changelog.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/FileNameToMaterialUtil.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="133" column="78" lean-forward="true" selection-start-line="133" selection-start-column="78" selection-end-line="133" selection-end-column="78" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/RGBBlockColor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="557">
-          <caret line="308" column="75" selection-start-line="308" selection-start-column="75" selection-end-line="308" selection-end-column="75" />
-          <folding>
-            <element signature="e#2258#2259#0" expanded="true" />
-            <element signature="e#77029#77030#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+  <component name="WindowStateProjectService">
+    <state x="765" y="288" key="#com.intellij.ide.util.MemberChooser" timestamp="1580952090479">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="765" y="288" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1160@0.0.1920.1160" timestamp="1580952090479" />
+    <state width="1876" height="316" key="GridCell.Tab.0.bottom" timestamp="1580956790880">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state width="1876" height="316" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1580956790880" />
+    <state width="1876" height="316" key="GridCell.Tab.0.center" timestamp="1580956790880">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state width="1876" height="316" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1580956790880" />
+    <state width="1876" height="316" key="GridCell.Tab.0.left" timestamp="1580956790880">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state width="1876" height="316" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1580956790880" />
+    <state width="1876" height="316" key="GridCell.Tab.0.right" timestamp="1580956790880">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state width="1876" height="316" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1580956790880" />
+    <state x="666" y="198" key="refactoring.ChangeSignatureDialog" timestamp="1580956063496">
+      <screen x="0" y="0" width="1920" height="1160" />
+    </state>
+    <state x="666" y="198" key="refactoring.ChangeSignatureDialog/0.0.1920.1160@0.0.1920.1160" timestamp="1580956063496" />
   </component>
   <component name="masterDetails">
     <states>

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>PixelPrinter</artifactId>
-    <version>1.0.45</version>
+    <version>1.0.46</version>
     <repositories>
         <repository>
             <id>spigot-repo</id>
@@ -22,6 +22,14 @@
                     <include>plugin.yml</include>
                     <include>changelog.txt</include>
                     <include>config.yml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src</directory>
+                <targetPath>src</targetPath>
+                <includes>
+                    <include>**/*.java</include>
+                    <include>**/*.gwt.xml</include>
                 </includes>
             </resource>
         </resources>
@@ -53,7 +61,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.14.2-R0.1-SNAPSHOT</version>
+            <version>1.15-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
