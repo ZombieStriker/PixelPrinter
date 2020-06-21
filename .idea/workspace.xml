@@ -2,19 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c0079e3f-9f9a-47c2-8af4-76031d59bd8b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/BoolHolder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/ImageRelativeBlockDirection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/changelog.txt" beforeDir="false" afterPath="$PROJECT_DIR$/resources/changelog.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/GithubDependDownloader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/GithubDependDownloader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/GithubUpdater.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/GithubUpdater.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/PixelPrinter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/PixelPrinter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/MaterialData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/data/MaterialData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/AsyncImageHolder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/AsyncImageHolder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/FileNameToMaterialUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/FileNameToMaterialUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/MapWallUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/MapWallUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/RGBBlockColor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/RGBBlockColor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/SkinCreator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/me/zombie_striker/pixelprinter/util/SkinCreator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,7 +33,6 @@
       <MavenImportingSettings>
         <option name="downloadDocsAutomatically" value="true" />
         <option name="downloadSourcesAutomatically" value="true" />
-        <option name="importAutomatically" value="true" />
         <option name="jdkForImporter" value="10" />
       </MavenImportingSettings>
     </option>
@@ -53,7 +43,6 @@
   <component name="ProjectId" id="1RJdLLbHd4Iam8lGugx6BXn9wzm" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
     <option name="showMembers" value="true" />
   </component>
@@ -103,18 +92,6 @@
       <method v="2" />
     </configuration>
   </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
-      <list>
-        <serviceView>
-          <treeState>
-            <expand />
-            <select />
-          </treeState>
-        </serviceView>
-      </list>
-    </option>
-  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -133,39 +110,30 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="765" y="288" key="#com.intellij.ide.util.MemberChooser" timestamp="1580952090479">
+    <state width="1876" height="316" key="GridCell.Tab.0.bottom" timestamp="1592765292556">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state x="765" y="288" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1160@0.0.1920.1160" timestamp="1580952090479" />
-    <state width="1876" height="316" key="GridCell.Tab.0.bottom" timestamp="1580956790880">
+    <state width="1876" height="316" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1592765292556" />
+    <state width="1876" height="316" key="GridCell.Tab.0.center" timestamp="1592765292556">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="316" key="GridCell.Tab.0.bottom/0.0.1920.1160@0.0.1920.1160" timestamp="1580956790880" />
-    <state width="1876" height="316" key="GridCell.Tab.0.center" timestamp="1580956790880">
+    <state width="1876" height="316" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1592765292556" />
+    <state width="1876" height="316" key="GridCell.Tab.0.left" timestamp="1592765292556">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="316" key="GridCell.Tab.0.center/0.0.1920.1160@0.0.1920.1160" timestamp="1580956790880" />
-    <state width="1876" height="316" key="GridCell.Tab.0.left" timestamp="1580956790880">
+    <state width="1876" height="316" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1592765292556" />
+    <state width="1876" height="316" key="GridCell.Tab.0.right" timestamp="1592765292556">
       <screen x="0" y="0" width="1920" height="1160" />
     </state>
-    <state width="1876" height="316" key="GridCell.Tab.0.left/0.0.1920.1160@0.0.1920.1160" timestamp="1580956790880" />
-    <state width="1876" height="316" key="GridCell.Tab.0.right" timestamp="1580956790880">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state width="1876" height="316" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1580956790880" />
-    <state x="666" y="198" key="refactoring.ChangeSignatureDialog" timestamp="1580956063496">
-      <screen x="0" y="0" width="1920" height="1160" />
-    </state>
-    <state x="666" y="198" key="refactoring.ChangeSignatureDialog/0.0.1920.1160@0.0.1920.1160" timestamp="1580956063496" />
+    <state width="1876" height="316" key="GridCell.Tab.0.right/0.0.1920.1160@0.0.1920.1160" timestamp="1592765292556" />
   </component>
   <component name="masterDetails">
     <states>

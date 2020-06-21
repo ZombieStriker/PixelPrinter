@@ -27,9 +27,10 @@ public class SkinCreator {
 				code.append(((char) charI));
 			}
 			linecode = 31;
-			String[] aaaa = code.toString().split("\"value\":\"");
+			String[] aaaa = code.toString().split("\"value\" : \"");
 			if (aaaa.length == 1) {
-				System.out.println("The user does not exist- AAAA does not contain value.");
+				System.out.println("The user does not exist- AAAA does not contain value. Response:");
+				System.out.println(code.toString());
 				throw new NullPointerException();
 			}
 			String decode;
@@ -47,14 +48,14 @@ public class SkinCreator {
 			}
 			linecode = 49;
 			System.out.println(decode);
-			String url = decode.split("url\":\"")[1].split("\"}")[0].split("\",\"")[0];
+			String url = decode.split("url\" : \"")[1].split("\"}")[0].split("\",")[0];
 			linecode = 52;
 			System.out.println(url);
 			BufferedImage[] images = new BufferedImage[2];
 			images[0] = ImageIO.read(new URL(url));
 			linecode = 56;
 			if (decode.contains("CAPE")) {
-				String urlcape = decode.split("url\":\"")[2].split("\"}")[0];
+				String urlcape = decode.split("url\" : \"")[2].split("\"}")[0];
 				linecode = 59;
 				images[1] = ImageIO.read(new URL(urlcape));
 			}
@@ -256,27 +257,12 @@ public class SkinCreator {
 		// arm (right)
 		{
 			int x = 32;
-			int y = 48;
+			int y = 20;
 			if (skin.getHeight() == 32) {
 				x = 32;
 				y = 20;
 			}
-			a(-1,
-					23,
-					-3 - 4,
-					loc,
-					flat,
-					front,
-					RGBBlockColor.createResizedCopy(
-							skin.getSubimage(x + 4, y - 4, 4, 4), 8, false));
-			a(-1,
-					12,
-					-3 - 4,
-					loc,
-					flat,
-					front,
-					RGBBlockColor.createResizedCopy(
-							skin.getSubimage(x + 4 + 4, y - 4, 4, 4), 8, false));
+
 			// Tops and bottoms
 
 			a(2,
@@ -311,6 +297,23 @@ public class SkinCreator {
 					front,
 					RGBBlockColor.createResizedCopy(
 							skin.getSubimage(x + 12, y, 4, 12), 24, false));
+
+			a(-1,
+					23,
+					-3 - 4,
+					loc,
+					flat,
+					front,
+					RGBBlockColor.createResizedCopy(
+							skin.getSubimage(x + 4, y - 4, 4, 4), 8, false));
+			a(-1,
+					12,
+					-3 - 4,
+					loc,
+					flat,
+					front,
+					RGBBlockColor.createResizedCopy(
+							skin.getSubimage(x + 4 + 4, y - 4, 4, 4), 8, false));
 		}
 		// chest
 		{
@@ -347,6 +350,26 @@ public class SkinCreator {
 					RGBBlockColor.createResizedCopy(
 							skin.getSubimage(16 + 16, 20, 8, 12), 24, false));
 		}
+		//Helmet bottom
+		{
+			a(-3,
+					23,
+					-3,
+					loc,
+					flat,
+					front,
+					RGBBlockColor.createResizedCopy(
+							skin.getSubimage(32 + 16, 0, 8, 8), 16, true), true);
+			a(-3,
+					32,
+					-3,
+					loc,
+					flat,
+					front,
+					RGBBlockColor.createResizedCopy(
+							skin.getSubimage(32 + 8, 0, 8, 8), 16, true), true);
+		}
+
 		// head
 		{
 			a(-3,
@@ -401,22 +424,6 @@ public class SkinCreator {
 		}
 		// helmet
 		{
-			a(-3,
-					23,
-					-3,
-					loc,
-					flat,
-					front,
-					RGBBlockColor.createResizedCopy(
-							skin.getSubimage(32 + 16, 0, 8, 8), 16, true), true);
-			a(-3,
-					32,
-					-3,
-					loc,
-					flat,
-					front,
-					RGBBlockColor.createResizedCopy(
-							skin.getSubimage(32 + 8, 0, 8, 8), 16, true), true);
 
 			a(-3,
 					24,

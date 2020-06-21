@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.zombie_striker</groupId>
     <artifactId>PixelPrinter</artifactId>
-    <version>1.0.46</version>
+    <version>1.0.47</version>
     <repositories>
         <repository>
             <id>spigot-repo</id>
