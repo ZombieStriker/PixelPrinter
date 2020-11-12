@@ -19,7 +19,6 @@ package me.zombie_striker.pixelprinter.util;
 import me.zombie_striker.pixelprinter.PixelPrinter;
 import me.zombie_striker.pixelprinter.data.*;
 import me.zombie_striker.pixelprinter.util.RGBBlockColor.Pixel;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -90,7 +89,6 @@ public class AsyncImageHolder extends Image {
 
 			if (dh.md.getMaterial() == Material.OBSERVER) {
 				if (dh.md.getDirection() == ImageRelativeBlockDirection.FRONT) {
-					if (PixelPrinter.isAbove113) {
 						if (dir == Direction.UP_EAST)
 							return BlockFace.SOUTH;
 						if (dir == Direction.UP_SOUTH)
@@ -99,7 +97,7 @@ public class AsyncImageHolder extends Image {
 							return BlockFace.NORTH;
 						if (dir == Direction.UP_NORTH)
 							return BlockFace.EAST;
-					}
+				}
 
 					if (dh.md.getDirection() == ImageRelativeBlockDirection.BACK) {
 						// Go eat, then we need south.
@@ -126,7 +124,6 @@ public class AsyncImageHolder extends Image {
 						if (dir == Direction.UP_NORTH)
 							return BlockFace.NORTH;
 					}
-				}
 			}
 		} catch (Error | Exception e54) {
 		}
@@ -322,8 +319,6 @@ public class AsyncImageHolder extends Image {
 				final IntHolder blocksUpdated = new IntHolder();
 				final BoolHolder hadToReplace = new BoolHolder();
 
-				final boolean is113 = ReflectionUtil.isVersionHigherThan  (1,13);
-
 				for (Entry<String, List<DataHolder>> ent : chunksorter.entrySet()) {
 					final List<DataHolder> gg = ent.getValue();
 					timesTicked++;
@@ -346,8 +341,9 @@ public class AsyncImageHolder extends Image {
 										bf = getBlockFace(dh, dir);
 										rd = getBlockData(dh, dir);
 									}
+
 									if (dh.md.getMaterial() != bs.getType()
-											|| (!is113 && ((int) bs.getRawData()) != ((int) rd))){
+											|| (!PixelPrinter.isAbove113 && ((int) bs.getRawData()) != ((int) rd)) || (PixelPrinter.isAbove113 && bf != Update13Handler.getFacing(bs))){
 										hadToReplace.setB(true);
 										blocksUpdated.setI(blocksUpdated.getI() + 1);
 

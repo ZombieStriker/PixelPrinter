@@ -396,8 +396,6 @@ public class RGBBlockColor {
 			add(146,146,146,156,156,156,155,155,155,147,145,147,"TALL_GRASS",true,ImageRelativeBlockDirection.TOP);
 			add(72,147,28,53,134,7,69,147,29,51,132,4,"TALL_SEAGRASS",true,ImageRelativeBlockDirection.TOP);
 			add(152,94,68,153,94,68,152,94,68,153,95,68,"TERRACOTTA");
-			add(185,89,83,181,89,87,189,92,86,176,84,82,"TNT",false,ImageRelativeBlockDirection.SIDE);
-			add(153,64,54,143,63,53,141,61,54,135,61,55,"TNT",true,ImageRelativeBlockDirection.TOP);
 			add(173,183,72,171,181,70,171,181,71,171,181,70,"WET_SPONGE");
 			add(208,214,215,208,214,215,207,213,214,208,213,214,"WHITE_CONCRETE");
 			add(227,229,229,224,226,227,227,229,229,226,228,228,"WHITE_CONCRETE_POWDER");
@@ -1183,6 +1181,10 @@ public class RGBBlockColor {
 						isTop = false;
 					}
 					if (filename.endsWith("_top")) {
+						needsIsTop = true;
+						isTop = true;
+					}
+					if(md.isOnlyTop()){
 						needsIsTop = true;
 						isTop = true;
 					}

@@ -13,15 +13,18 @@ public class MaterialData implements ConfigurationSerializable, Comparable<Mater
 
 	private Material m;
 	private byte data;
-
 	private ImageRelativeBlockDirection direction = null;
+	private boolean onlyTop = false;
 
 	public MaterialData(Material m, byte data, ImageRelativeBlockDirection direction) {
+		this(m,data,direction,false);
+	}
+	public MaterialData(Material m, byte data, ImageRelativeBlockDirection direction, boolean onlyTop) {
 		ConfigurationSerialization.registerClass(MaterialData.class);
 		this.setMaterial(m);
 		this.data = data;
 		this.direction = direction;
-
+		this.onlyTop = onlyTop;
 	}
 
 	public MaterialData(Material m, byte data) {
@@ -50,6 +53,9 @@ public class MaterialData implements ConfigurationSerializable, Comparable<Mater
 
 	public boolean hasDirection() {
 		return direction != null;
+	}
+	public boolean isOnlyTop(){
+		return onlyTop;
 	}
 
 	public ImageRelativeBlockDirection getDirection() {

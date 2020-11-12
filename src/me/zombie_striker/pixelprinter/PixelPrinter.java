@@ -15,6 +15,7 @@
  */
 package me.zombie_striker.pixelprinter;
 
+import me.zombie_striker.easygui.EasyGUI;
 import me.zombie_striker.pixelprinter.data.Direction;
 import me.zombie_striker.pixelprinter.data.FileCreatorData;
 import me.zombie_striker.pixelprinter.data.MaterialData;
@@ -406,7 +407,7 @@ public class PixelPrinter extends JavaPlugin {
 						loaded.add(k.getMaterial());
 				}
 				// int color = 0;
-				List<Material> mat = new ArrayList<Material>();
+				List<ItemStack> mat = new ArrayList<ItemStack>();
 				for (Material m : Material.values()) {
 					if (m.isBlock() && !loaded.contains(m) && !m.name().endsWith("SHULKER_BOX")
 							&& !m.name().endsWith("CORAL_FAN") && !m.name().endsWith("SAPLING")
@@ -415,19 +416,23 @@ public class PixelPrinter extends JavaPlugin {
 							&& !m.name().endsWith("_TRAPDOOR") && !m.name().endsWith("RAIL")
 							&& !m.name().startsWith("INFESTED") && !m.name().endsWith("_BED")
 							&& !m.name().endsWith("_SLAB") && !m.name().endsWith("_STAIRS")
-							&& !m.name().endsWith("GLASS_PANE") && !m.name().endsWith("FENCE")
+							&& !m.name().endsWith("GLASS_PANE") && !m.name().endsWith("FENCE")  && !m.name().endsWith("_WALL")
 							&& !m.name().endsWith("FENCE_GATE") && !m.name().endsWith("_BUTTON")
 							&& !m.name().endsWith("PRESSURE_PLATE") && !m.name().endsWith("_DOOR")) {
-						mat.add(m);
+						if(m != Material.SPAWNER && m != Material.BREWING_STAND && m != Material.DRAGON_EGG) {
+							mat.add(new ItemStack(m));
+							Bukkit.broadcastMessage(m.name());
+						}
 					}
 				}
 				int size = ((mat.size() / 9) + 1) * 9;
 				if (size > 9 * 14)
 					size = 9 * 14;
-				Inventory test = Bukkit.createInventory(null, size);
-				for (Material a : mat)
-					test.addItem(new ItemStack(a));
-				((Player) sender).openInventory(test);
+				//Inventory test = Bukkit.createInventory(null, size);
+				//for (Material a : mat)
+				//	test.addItem(new ItemStack(a));
+				EasyGUI gui = EasyGUI.generateGUIIfNoneExist(mat.toArray(new ItemStack[mat.size()]),"LeftBehindMaterials",false);
+				((Player) sender).openInventory(gui.getPageByID(0));
 
 			}else if (args[0].equalsIgnoreCase("debug2")) {
 				RGBBlockColor.loadResourcepackTextures(resoucepackFolder,true);
@@ -821,6 +826,10 @@ public class PixelPrinter extends JavaPlugin {
 											BufferedImage bi2;
 											try {
 												bi2 = ImageIO.read(new URL(urlString));
+												if(bi2==null){
+													sender.sendMessage(prefix+" The image at "+urlString+" is cannot be read for some reason.");
+													return false;
+												}
 												createImage(player, bi2, dir, height, enableTrans, loadedImage.getName());
 											} catch (IOException e) {
 												sender.sendMessage(prefix

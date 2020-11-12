@@ -13,6 +13,7 @@ public class FileNameToMaterialUtil {
 	public static MaterialData getMaterialData(String filename) {
 		byte b = 0;
 		String m = filename;
+		boolean isOnlyTop = false;
 
 		ImageRelativeBlockDirection facing = null;
 
@@ -37,7 +38,7 @@ public class FileNameToMaterialUtil {
 				|| filename.equalsIgnoreCase("PUMPKIN_STEM") || filename.equalsIgnoreCase("PORTAL")
 				|| filename.equalsIgnoreCase("MELON_STEM") || filename.equalsIgnoreCase("CHORUS_FLOWER")
 				|| filename.equalsIgnoreCase("DEAD_BUSH") || filename.equalsIgnoreCase("SUGAR_CANE")
-				|| filename.contains("shulker") || filename.endsWith("sapling") || filename.equals("tripwire")
+				|| filename.contains("shulker") || filename.endsWith("sapling") || filename.equals("tripwire") || filename.equals("lecturn")
 
 
 				|| filename.startsWith("bell") || filename.startsWith("anvil") || filename.startsWith("cactus")
@@ -46,7 +47,7 @@ public class FileNameToMaterialUtil {
 				filename.equalsIgnoreCase("crimson_stem") || filename.equalsIgnoreCase("nether_sprouts") ||
 				filename.equalsIgnoreCase("soul_fire_lantern") || filename.equalsIgnoreCase("soul_fire_torch") ||
 				filename.equalsIgnoreCase("warped_fungi") || filename.equalsIgnoreCase("warped_roots") ||
-				filename.equalsIgnoreCase("weeping_vines")
+				filename.equalsIgnoreCase("weeping_vines")||filename.equals("soul_lantern")||filename.equals("soul_torch")
 
 				|| filename.equals("tripwire_hook") || filename.equals("tripwire_hook") || filename.equals("iron_block")
 				|| filename.equals("snow") || filename.equals("beacon") || filename.equals("cobweb")
@@ -57,6 +58,8 @@ public class FileNameToMaterialUtil {
 				|| filename.endsWith("_leaves") || filename.equals("lily_pad")
 				|| filename.equals("attached_pumpkin_stem") || filename.equals("attached_melon_stem")
 				|| filename.equals("kelp_plant") || filename.equals("kelp")
+				|| filename.equals("warped_fungus") || filename.equals("twisted_vines") || filename.equals("twisted_vines_plant") || filename.equals("crimson_roots") || filename.equals("crimson_fungus") || filename.equals("weeping_vines") || filename.equals("warped_roots")|| filename.equals("weeping_vines_plant")
+				|| filename.equals("chain") || filename.equals("tnt_bottom")||filename.equals("tnt_top")||filename.equals("tnt_side")
 
 				|| filename.equals("turtle_egg") || filename.contains("coral_fan") || filename.equals("sea_pickle")
 				|| filename.equals("seagrass") || filename.equals("farmland") || filename.equals("oxeye_daisy")
@@ -95,6 +98,45 @@ public class FileNameToMaterialUtil {
 			return null;
 
 		if (Material.matchMaterial(m) != null) {
+			if (ReflectionUtil.isVersionHigherThan(1, 16)) {
+				if(m.endsWith("_log"))
+					m=m.split("_log")[0].toUpperCase()+"_WOOD";
+				if(filename.equals("crimson_stem"))
+					m="CRIMSON_HYPHAE";
+				if(filename.equals("warped_stem"))
+					m="WARPED_HYPHAE";
+				if(filename.equals("crimson_stem_top")) {
+					m = "CRIMSON_STEM";
+					facing = ImageRelativeBlockDirection.TOP;
+				}
+				if(filename.equals("warped_stem_top")) {
+					m = "WARPED_STEM";
+					facing = ImageRelativeBlockDirection.TOP;
+				}
+				if(filename.equals("crimson_nylium")) {
+					m = "crimson_nylium";
+					facing = ImageRelativeBlockDirection.TOP;
+					isOnlyTop = true;
+				}
+				if(filename.equals("crimson_nylium_side")) {
+					return null;
+				}
+				if(filename.equals("warped_nylium")) {
+					m = "warped_nylium";
+					facing = ImageRelativeBlockDirection.TOP;
+					isOnlyTop = true;
+				}
+				if(filename.equals("warped_nylium_side")) {
+					return null;
+				}
+			}
+			if(filename.equals("dried_kelp")){
+				m = "DRIED_KELP_BLOCK";
+			}
+			if(filename.equals("dried_kelp_top")){
+				m = "DRIED_KELP_BLOCK";
+				facing = ImageRelativeBlockDirection.TOP;
+			}
 			if (filename.equalsIgnoreCase("snow")) {
 				m = "SNOW_BLOCK";
 			}
@@ -192,7 +234,6 @@ public class FileNameToMaterialUtil {
 			}
 			if (filename.equalsIgnoreCase("bone_block_side")) {
 				m = "BONE_BLOCK";
-
 			} else if (filename.equalsIgnoreCase("pumpkin_face_on")) {
 				m = "JACK_O_LANTERN";
 				facing =ImageRelativeBlockDirection.FRONT;
@@ -218,8 +259,11 @@ public class FileNameToMaterialUtil {
 			} else if (filename.equalsIgnoreCase("observer_back")) {
 				m = "OBSERVER";
 				facing = ImageRelativeBlockDirection.BACK;
-				// } else if (filename.equalsIgnoreCase("observer_top")) {
-				// m = "OBSERVER";
+			} else if (filename.equalsIgnoreCase("observer_back_on")) {
+				return null;
+			} else if (filename.equalsIgnoreCase("observer_top")) {
+				 m = "OBSERVER";
+				facing = ImageRelativeBlockDirection.TOP;
 			} else if (filename.equalsIgnoreCase("observer_side")) {
 				m = "OBSERVER";
 				facing = ImageRelativeBlockDirection.SIDE;
@@ -423,6 +467,6 @@ public class FileNameToMaterialUtil {
 		if (Material.matchMaterial(m) == null || Material.matchMaterial(m) == Material.AIR) {
 			return null;
 		}
-		return new MaterialData(Material.getMaterial(m.toUpperCase()), b, facing);
+		return new MaterialData(Material.getMaterial(m.toUpperCase()), b, facing, isOnlyTop);
 	}
 }
