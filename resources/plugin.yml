@@ -22,5 +22,4 @@ permissions:
     description: Allows you to stop gifs on the server
   pixelprinter.delete:
     description: Allows you to delete images inside the /Pixelprinter/images/ directory
-author:
-  Zombie_Striker
+author: Zombie_Striker, Kaspian
