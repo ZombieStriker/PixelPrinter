@@ -232,7 +232,7 @@ public class GifHolder extends Image implements ConfigurationSerializable {
 								}
 								MaterialData m = RGBBlockColor.getClosestBlockValue(color,
 										(dir == Direction.FLAT_NORTHEAST || dir == Direction.FLAT_NORTHWEST
-												|| dir == Direction.FLAT_SOUTHEAST || dir == Direction.FLAT_SOUTHWEST));
+												|| dir == Direction.FLAT_SOUTHEAST || dir == Direction.FLAT_SOUTHWEST),true,PixelPrinter.getInstance().supportedMaterials);
 								DataHolder dh = new DataHolder(b, m);
 								holders.add(dh);
 								materials[frame][width / 2][height / 2] = dh;
